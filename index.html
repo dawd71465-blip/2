@@ -2,310 +2,230 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>آکادمی قرآن کودک | آموزش قرآن برای کودکان</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+    <title>آکادمی قرآن کودک | Quran Kids Academy</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Vazir', 'Segoe UI', 'B Nazanin', Tahoma, sans-serif;
+            font-family: 'Vazir', 'B Nazanin', 'Segoe UI', Tahoma, sans-serif;
         }
 
         :root {
-            --primary-green: #2ecc71;
-            --primary-blue: #3498db;
-            --primary-gold: #f1c40f;
-            --primary-purple: #9b59b6;
+            --primary: #9b59b6;
+            --secondary: #3498db;
+            --success: #2ecc71;
+            --warning: #f1c40f;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f5f6fa;
+            --gold: #f39c12;
             --soft-pink: #f8bbd0;
-            --soft-green: #c8e6c9;
             --soft-blue: #bbdefb;
+            --soft-green: #c8e6c9;
             --soft-yellow: #fff9c4;
-            --text-dark: #2c3e50;
-            --text-soft: #5d6d7e;
-            --white: #ffffff;
-            --light-bg: #f5f8ff;
         }
 
-        html, body {
-            width: 100%;
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            background: linear-gradient(145deg, #f3e9ff 0%, #e0f2fe 100%);
-            direction: rtl;
-        }
-
-        /* کانتینر اصلی */
-        .site-container {
-            max-width: 1300px;
-            margin: 0 auto;
             padding: 20px;
         }
 
-        /* ===== هدر و ناوبری کودکانه ===== */
+        /* ===== دکمه تغییر رابط ===== */
+        .view-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 9999;
+            background: white;
+            border-radius: 60px;
+            padding: 15px 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            display: flex;
+            gap: 15px;
+            border: 4px solid var(--gold);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .view-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 35px;
+            border: 3px solid transparent;
+            background: var(--light);
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view-btn.active {
+            background: var(--success);
+            color: white;
+            border-color: var(--gold);
+            transform: scale(1.1);
+        }
+
+        .view-btn:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* ===== کانتینر اصلی ===== */
+        .site-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            transition: all 0.5s;
+        }
+
+        /* ===== استایل‌های مشترک ===== */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 60px 60px 60px 60px;
-            padding: 25px 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 60px;
+            padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-            100% { transform: translateY(0); }
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border: 5px solid rgba(255,255,255,0.3);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
 
         .logo-icon {
             font-size: 4em;
             background: var(--soft-yellow);
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            border: 4px solid white;
+            border: 5px solid white;
         }
 
         .logo-text h1 {
-            font-size: 2.2em;
+            font-size: 2.5em;
             color: white;
-            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
             font-weight: 800;
         }
 
         .logo-text p {
             color: var(--soft-yellow);
-            font-size: 1.1em;
+            font-size: 1.2em;
         }
 
-        .nav-icons {
+        .nav-menu {
             display: flex;
-            gap: 20px;
+            gap: 15px;
         }
 
-        .nav-icon {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            width: 60px;
-            height: 60px;
-            border-radius: 30px;
+        .nav-item {
+            background: rgba(255,255,255,0.2);
+            width: 70px;
+            height: 70px;
+            border-radius: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2em;
+            font-size: 2.2em;
             color: white;
-            border: 3px solid white;
             cursor: pointer;
             transition: all 0.3s;
+            border: 3px solid white;
         }
 
-        .nav-icon:hover {
+        .nav-item:hover {
+            background: var(--gold);
             transform: scale(1.2) rotate(5deg);
-            background: var(--soft-yellow);
-            color: var(--primary-purple);
         }
 
-        /* ===== بخش خوشامدگویی کودکانه ===== */
-        .welcome-section {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 80px 80px 80px 80px;
-            padding: 40px;
-            margin-bottom: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border: 4px dashed var(--primary-purple);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .welcome-section::before {
-            content: "⭐🌟🌟🌟🌟🌟🌟🌟🌟";
-            position: absolute;
-            top: 10px;
-            left: 0;
-            right: 0;
-            font-size: 2em;
-            color: var(--primary-gold);
-            opacity: 0.3;
-            white-space: nowrap;
-            animation: stars 20s linear infinite;
-        }
-
-        @keyframes stars {
-            from { transform: translateX(100%); }
-            to { transform: translateX(-100%); }
-        }
-
-        .welcome-title {
-            font-size: 3em;
-            color: var(--primary-purple);
-            margin-bottom: 15px;
-            font-weight: 800;
-            position: relative;
-            z-index: 1;
-        }
-
-        .welcome-text {
-            font-size: 1.4em;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .child-avatar {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 30px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .avatar {
-            background: var(--soft-blue);
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3.5em;
-            border: 5px solid white;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            animation: bounce 2s ease infinite;
-        }
-
-        .avatar:nth-child(2) { animation-delay: 0.3s; background: var(--soft-pink); }
-        .avatar:nth-child(3) { animation-delay: 0.6s; background: var(--soft-green); }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        /* ===== بخش‌های اصلی ===== */
-        .section-title {
-            font-size: 2.5em;
-            color: var(--primary-purple);
-            margin-bottom: 30px;
-            padding-right: 20px;
-            border-right: 15px solid var(--primary-gold);
-            font-weight: 700;
-            text-shadow: 2px 2px 0 var(--soft-yellow);
-        }
-
+        /* ===== کارت‌ها ===== */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-            margin-bottom: 50px;
+            margin: 40px 0;
         }
 
         .card {
             background: white;
-            border-radius: 60px 60px 60px 60px;
+            border-radius: 60px;
             padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            cursor: pointer;
             transition: all 0.3s;
             border: 4px solid transparent;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            animation: cardAppear 0.5s ease;
-        }
-
-        @keyframes cardAppear {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            text-align: center;
         }
 
         .card:hover {
             transform: translateY(-15px) scale(1.02);
-            border-color: var(--primary-gold);
-            box-shadow: 0 30px 60px rgba(155, 89, 182, 0.3);
+            border-color: var(--gold);
         }
 
         .card-icon {
-            font-size: 4.5em;
-            text-align: center;
-            margin-bottom: 15px;
+            font-size: 4em;
             background: var(--soft-blue);
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
             transform: rotate(-5deg);
-            transition: all 0.3s;
-        }
-
-        .card:hover .card-icon {
-            transform: rotate(0deg) scale(1.1);
-            background: var(--primary-gold);
         }
 
         .card h3 {
             font-size: 2em;
-            color: var(--primary-purple);
-            margin-bottom: 15px;
-            text-align: center;
+            color: var(--primary);
+            margin-bottom: 10px;
         }
 
         .card p {
-            color: var(--text-soft);
-            font-size: 1.1em;
-            text-align: center;
-            line-height: 1.6;
+            color: var(--dark);
+            font-size: 1.2em;
         }
 
         .card-badge {
             position: absolute;
             top: 20px;
             left: 20px;
-            background: var(--primary-gold);
-            color: var(--text-dark);
-            padding: 10px 15px;
+            background: var(--gold);
+            padding: 10px 20px;
             border-radius: 30px;
             font-weight: 700;
-            font-size: 1.1em;
-            transform: rotate(5deg);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
         }
 
-        /* ===== بخش آموزش قرآن ===== */
+        /* ===== بخش قرآن ===== */
         .quran-section {
             background: white;
-            border-radius: 100px 100px 100px 100px;
+            border-radius: 100px;
             padding: 40px;
-            margin-bottom: 50px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border: 5px solid var(--primary-green);
+            margin: 40px 0;
+            border: 5px solid var(--success);
         }
 
         .surah-selector {
             display: flex;
-            flex-wrap: wrap;
             gap: 15px;
-            margin-bottom: 30px;
+            flex-wrap: wrap;
             justify-content: center;
+            margin-bottom: 30px;
         }
 
         .surah-btn {
@@ -315,21 +235,14 @@
             background: var(--soft-blue);
             font-size: 1.3em;
             font-weight: 700;
-            color: var(--text-dark);
             cursor: pointer;
             transition: all 0.3s;
-            border: 3px solid transparent;
-        }
-
-        .surah-btn:hover {
-            background: var(--primary-gold);
-            transform: scale(1.1);
         }
 
         .surah-btn.active {
-            background: var(--primary-green);
+            background: var(--success);
             color: white;
-            border-color: var(--primary-purple);
+            transform: scale(1.1);
         }
 
         .quran-display {
@@ -337,28 +250,14 @@
             border-radius: 80px;
             padding: 40px;
             text-align: center;
-            border: 5px solid var(--primary-gold);
-            box-shadow: inset 0 0 30px rgba(241, 196, 15, 0.2);
+            border: 5px solid var(--gold);
         }
 
         .aya-text {
             font-size: 2.5em;
-            line-height: 2.2;
-            color: #2c3e50;
+            line-height: 2;
+            font-family: 'Amiri', 'Traditional Arabic', serif;
             margin-bottom: 30px;
-            font-family: 'Amiri', 'Traditional Arabic', 'B Nazanin', serif;
-            background: rgba(255,255,255,0.7);
-            padding: 30px;
-            border-radius: 60px;
-        }
-
-        .aya-translation {
-            font-size: 1.5em;
-            color: var(--primary-purple);
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(255,255,255,0.5);
-            border-radius: 40px;
         }
 
         .audio-controls {
@@ -372,26 +271,19 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: var(--primary-green);
+            background: var(--success);
             border: none;
             color: white;
             font-size: 2em;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
-        .audio-btn:hover {
-            transform: scale(1.2);
-            background: var(--primary-gold);
-        }
-
-        /* ===== بخش بازی و یادگیری ===== */
-        .game-section {
+        /* ===== بازی‌ها ===== */
+        .games-section {
             background: linear-gradient(135deg, var(--soft-pink), var(--soft-blue));
             border-radius: 100px;
             padding: 40px;
-            margin-bottom: 50px;
+            margin: 40px 0;
         }
 
         .game-container {
@@ -406,89 +298,55 @@
             padding: 30px;
             text-align: center;
             transition: all 0.3s;
-            border: 4px solid var(--primary-purple);
         }
 
         .game-item:hover {
-            transform: rotate(2deg) scale(1.05);
-        }
-
-        .game-emoji {
-            font-size: 5em;
-            margin-bottom: 15px;
-        }
-
-        .game-title {
-            font-size: 1.8em;
-            color: var(--primary-purple);
-            margin-bottom: 10px;
-        }
-
-        .game-desc {
-            color: var(--text-soft);
-            margin-bottom: 20px;
+            transform: scale(1.05) rotate(2deg);
         }
 
         .play-btn {
-            background: var(--primary-green);
+            background: var(--success);
             color: white;
             border: none;
             padding: 15px 30px;
             border-radius: 40px;
             font-size: 1.3em;
-            font-weight: 700;
+            margin-top: 20px;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
-        .play-btn:hover {
-            background: var(--primary-gold);
-            transform: scale(1.1);
-        }
-
-        /* ===== بخش پیشرفت کودک ===== */
+        /* ===== پیشرفت ===== */
         .progress-section {
             background: white;
             border-radius: 100px;
             padding: 40px;
-            margin-bottom: 50px;
-            border: 5px solid var(--primary-blue);
+            margin: 40px 0;
+            border: 5px solid var(--secondary);
         }
 
         .progress-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .stat-circle {
             text-align: center;
         }
 
-        .circle {
+        .circle-progress {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            background: conic-gradient(var(--primary-green) 0deg 270deg, #ecf0f1 270deg 360deg);
+            background: conic-gradient(var(--success) 0deg 270deg, #ecf0f1 270deg 360deg);
             margin: 0 auto 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5em;
-            font-weight: 800;
-            color: var(--primary-purple);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .stars-earned {
             font-size: 2em;
-            color: var(--primary-gold);
+            font-weight: 800;
         }
 
         /* ===== فوتر ===== */
         .footer {
-            background: linear-gradient(135deg, #2c3e50, #1a2634);
+            background: var(--dark);
             border-radius: 80px 80px 30px 30px;
             padding: 50px;
             color: white;
@@ -501,33 +359,7 @@
             gap: 40px;
         }
 
-        .footer-section h4 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            color: var(--primary-gold);
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        .footer-section ul li a {
-            color: #ecf0f1;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .footer-section ul li a:hover {
-            color: var(--primary-gold);
-            padding-right: 10px;
-        }
-
-        /* ===== مدال‌ها و نشان‌ها ===== */
+        /* ===== مدال ===== */
         .modal {
             display: none;
             position: fixed;
@@ -537,7 +369,7 @@
             bottom: 0;
             background: rgba(0,0,0,0.5);
             backdrop-filter: blur(5px);
-            z-index: 1000;
+            z-index: 10000;
             align-items: center;
             justify-content: center;
         }
@@ -551,57 +383,63 @@
             border-radius: 80px;
             padding: 50px;
             max-width: 500px;
-            width: 90%;
             text-align: center;
-            animation: modalPop 0.5s;
+            animation: pop 0.5s;
         }
 
-        @keyframes modalPop {
-            from { transform: scale(0.5); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        @keyframes pop {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
         }
 
-        .modal-icon {
-            font-size: 5em;
-            margin-bottom: 20px;
+        /* ===== حالت‌های مختلف دستگاه ===== */
+        .site-container.mobile {
+            max-width: 480px;
         }
 
-        .modal h2 {
-            font-size: 2.5em;
-            color: var(--primary-purple);
-            margin-bottom: 20px;
+        .site-container.mobile .header {
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .modal p {
-            font-size: 1.3em;
-            color: var(--text-dark);
-            margin-bottom: 30px;
+        .site-container.mobile .logo {
+            flex-direction: column;
+            text-align: center;
         }
 
-        .modal-btn {
-            background: var(--primary-green);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 40px;
-            font-size: 1.3em;
-            cursor: pointer;
-            transition: all 0.3s;
+        .site-container.mobile .nav-menu {
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .modal-btn:hover {
-            background: var(--primary-gold);
-            transform: scale(1.1);
+        .site-container.mobile .surah-selector {
+            flex-direction: column;
         }
 
-        /* ===== انیمیشن‌های اضافی ===== */
+        .site-container.mobile .aya-text {
+            font-size: 1.5em;
+        }
+
+        .site-container.tablet {
+            max-width: 900px;
+        }
+
+        .site-container.tablet .cards-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .site-container.laptop {
+            max-width: 1400px;
+        }
+
+        /* ===== انیمیشن‌ها ===== */
         .floating {
-            animation: floating 3s ease-in-out infinite;
+            animation: float 3s infinite;
         }
 
-        @keyframes floating {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(2deg); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .sparkle {
@@ -613,8 +451,7 @@
             position: absolute;
             top: -10px;
             right: -10px;
-            font-size: 2em;
-            animation: sparkle 1s ease infinite;
+            animation: sparkle 1s infinite;
         }
 
         @keyframes sparkle {
@@ -622,102 +459,118 @@
             50% { opacity: 0.5; transform: scale(1.5); }
         }
 
-        /* ===== ریسپانسیو ===== */
+        /* ===== استایل‌های اضافی ===== */
+        .star-display {
+            font-size: 2em;
+            color: var(--gold);
+            cursor: pointer;
+        }
+
+        .section-title {
+            font-size: 2.5em;
+            color: var(--primary);
+            margin-bottom: 30px;
+            border-right: 10px solid var(--gold);
+            padding-right: 20px;
+        }
+
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
+            .view-controls {
+                bottom: 10px;
+                left: 10px;
+                padding: 10px;
             }
             
-            .welcome-title {
-                font-size: 2em;
-            }
-            
-            .aya-text {
+            .view-btn {
+                width: 50px;
+                height: 50px;
                 font-size: 1.5em;
-            }
-            
-            .card {
-                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="site-container">
-        <!-- هدر کودکانه -->
+    <!-- دکمه‌های تغییر رابط -->
+    <div class="view-controls">
+        <button class="view-btn active" onclick="changeView('mobile')" title="حالت موبایل">📱</button>
+        <button class="view-btn" onclick="changeView('tablet')" title="حالت تبلت">📟</button>
+        <button class="view-btn" onclick="changeView('laptop')" title="حالت لپ‌تاپ">💻</button>
+    </div>
+
+    <!-- کانتینر اصلی سایت -->
+    <div class="site-container mobile" id="siteContainer">
+        <!-- هدر -->
         <header class="header">
             <div class="logo">
-                <div class="logo-icon">📖</div>
+                <div class="logo-icon floating">📖</div>
                 <div class="logo-text">
-                    <h1>🌙 آکادمی قرآن کودک</h1>
-                    <p>Quran Kids Academy</p>
+                    <h1>🌙 آکادمی قرآن</h1>
+                    <p>کودکان ایران زمین</p>
                 </div>
             </div>
-            <div class="nav-icons">
-                <div class="nav-icon" onclick="showSection('home')">🏠</div>
-                <div class="nav-icon" onclick="showSection('quran')">📖</div>
-                <div class="nav-icon" onclick="showSection('games')">🎮</div>
-                <div class="nav-icon" onclick="showSection('progress')">⭐</div>
-                <div class="nav-icon" onclick="showModal('help')">❓</div>
+            <div class="nav-menu">
+                <div class="nav-item" onclick="scrollToSection('home')">🏠</div>
+                <div class="nav-item" onclick="scrollToSection('quran')">📖</div>
+                <div class="nav-item" onclick="scrollToSection('games')">🎮</div>
+                <div class="nav-item" onclick="scrollToSection('progress')">⭐</div>
+                <div class="nav-item" onclick="showHelp()">❓</div>
             </div>
         </header>
 
         <!-- بخش خوشامدگویی -->
-        <section class="welcome-section" id="home-section">
-            <h2 class="welcome-title">✨ به آکادمی قرآن خوش آمدی! ✨</h2>
-            <p class="welcome-text">بیا با هم قرآن یاد بگیریم و کلی ستاره جمع کنیم! ⭐</p>
-            <div class="child-avatar">
-                <div class="avatar">👦</div>
-                <div class="avatar">👧</div>
-                <div class="avatar">🧒</div>
+        <section id="home" class="welcome-section" style="background: white; border-radius: 80px; padding: 40px; margin-bottom: 30px; text-align: center; border: 5px dashed var(--primary);">
+            <h1 style="font-size: 3em; color: var(--primary);">✨ سلام کودک قرآنی! ✨</h1>
+            <p style="font-size: 1.8em; margin: 20px 0;">به آکادمی قرآن خوش اومدی</p>
+            <div style="display: flex; gap: 20px; justify-content: center; font-size: 4em;">
+                <span class="floating">👦</span>
+                <span class="floating" style="animation-delay: 0.2s;">👧</span>
+                <span class="floating" style="animation-delay: 0.4s;">🧒</span>
             </div>
         </section>
 
-        <!-- بخش‌های اصلی آموزش -->
+        <!-- دوره‌های آموزشی -->
         <h2 class="section-title">📚 دوره‌های آموزشی</h2>
         <div class="cards-grid">
-            <div class="card" onclick="showQuranLesson('alfabet')">
-                <div class="card-icon">🔤</div>
+            <div class="card" onclick="startLesson('alfabet')">
                 <span class="card-badge">⭐ سطح 1</span>
+                <div class="card-icon">🔤</div>
                 <h3>الفبای عربی</h3>
-                <p>یادگیری حروف قرآن با شعر و بازی</p>
+                <p>یادگیری حروف قرآن با شعر</p>
             </div>
-            <div class="card" onclick="showQuranLesson('tajweed')">
-                <div class="card-icon">🎵</div>
+            <div class="card" onclick="startLesson('tajweed')">
                 <span class="card-badge">⭐⭐ سطح 2</span>
+                <div class="card-icon">🎵</div>
                 <h3>تجوید مقدماتی</h3>
                 <p>قواعد ساده خواندن قرآن</p>
             </div>
-            <div class="card" onclick="showQuranLesson('short-surahs')">
-                <div class="card-icon">📖</div>
+            <div class="card" onclick="startLesson('surahs')">
                 <span class="card-badge">⭐⭐⭐ سطح 3</span>
+                <div class="card-icon">📖</div>
                 <h3>سوره‌های کوتاه</h3>
                 <p>حفظ سوره‌های جزء ۳۰</p>
             </div>
         </div>
 
-        <!-- بخش قرآن اصلی -->
-        <section class="quran-section" id="quran-section">
-            <h2 class="section-title">📖 قرآن زیبا</h2>
+        <!-- بخش قرآن -->
+        <section id="quran" class="quran-section">
+            <h2 class="section-title">📖 قرآن کریم</h2>
             
             <div class="surah-selector">
-                <button class="surah-btn active" onclick="changeSurah(1)">سوره فاتحه</button>
-                <button class="surah-btn" onclick="changeSurah(112)">سوره اخلاص</button>
-                <button class="surah-btn" onclick="changeSurah(113)">سوره فلق</button>
-                <button class="surah-btn" onclick="changeSurah(114)">سوره ناس</button>
-                <button class="surah-btn" onclick="changeSurah(108)">سوره کوثر</button>
+                <button class="surah-btn active" onclick="changeSurah(1, this)">سوره فاتحه</button>
+                <button class="surah-btn" onclick="changeSurah(112, this)">سوره اخلاص</button>
+                <button class="surah-btn" onclick="changeSurah(113, this)">سوره فلق</button>
+                <button class="surah-btn" onclick="changeSurah(114, this)">سوره ناس</button>
+                <button class="surah-btn" onclick="changeSurah(108, this)">سوره کوثر</button>
             </div>
 
             <div class="quran-display">
-                <div class="aya-text" id="aya-text">
+                <div class="aya-text" id="ayaText">
                     بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ<br>
                     الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ
                 </div>
-                <div class="aya-translation" id="aya-translation">
+                <div style="font-size: 1.5em; color: var(--primary); margin-bottom: 20px;" id="translationText">
                     به نام خداوند بخشنده مهربان<br>
-                    ستایش مخصوص خداوندی است که پروردگار جهانیان است
+                    ستایش مخصوص خداوند جهانیان است
                 </div>
                 
                 <div class="audio-controls">
@@ -727,91 +580,85 @@
                 </div>
 
                 <div style="margin-top: 20px;">
-                    <span style="font-size: 2em; color: var(--primary-gold);" onclick="addStar()">⭐</span>
-                    <span style="font-size: 1.5em; margin-right: 15px;">امتیاز تو: <span id="star-count">۱۲۵</span> ستاره</span>
+                    <span class="star-display" onclick="addStar()">⭐</span>
+                    <span style="font-size: 1.5em;">ستاره‌های تو: <span id="starCount">150</span></span>
                 </div>
             </div>
         </section>
 
-        <!-- بخش بازی‌های آموزشی -->
-        <section class="game-section" id="games-section">
+        <!-- بخش بازی‌ها -->
+        <section id="games" class="games-section">
             <h2 class="section-title">🎮 بازی و سرگرمی</h2>
             
             <div class="game-container">
                 <div class="game-item">
-                    <div class="game-emoji">🧩</div>
-                    <h3 class="game-title">پازل حروف</h3>
-                    <p class="game-desc">حروف عربی رو کنار هم بچین</p>
-                    <button class="play-btn" onclick="startGame('puzzle')">شروع بازی</button>
+                    <span style="font-size: 4em;">🧩</span>
+                    <h3>پازل حروف</h3>
+                    <p>حروف عربی رو کنار هم بچین</p>
+                    <button class="play-btn" onclick="playGame('puzzle')">شروع بازی</button>
                 </div>
-                
                 <div class="game-item">
-                    <div class="game-emoji">🔊</div>
-                    <h3 class="game-title">تست گوش دادن</h3>
-                    <p class="game-desc">صدای قرآن رو تشخیص بده</p>
-                    <button class="play-btn" onclick="startGame('listening')">شروع بازی</button>
+                    <span style="font-size: 4em;">🔊</span>
+                    <h3>تست گوش دادن</h3>
+                    <p>صدای قرآن رو تشخیص بده</p>
+                    <button class="play-btn" onclick="playGame('listening')">شروع بازی</button>
                 </div>
-                
                 <div class="game-item">
-                    <div class="game-emoji">🎨</div>
-                    <h3 class="game-title">نقاشی قرآنی</h3>
-                    <p class="game-desc">به آیات رنگ بزن</p>
-                    <button class="play-btn" onclick="startGame('coloring')">شروع بازی</button>
+                    <span style="font-size: 4em;">🎨</span>
+                    <h3>نقاشی قرآنی</h3>
+                    <p>به آیات رنگ بزن</p>
+                    <button class="play-btn" onclick="playGame('coloring')">شروع بازی</button>
                 </div>
-                
                 <div class="game-item">
-                    <div class="game-emoji">🏆</div>
-                    <h3 class="game-title">مسابقه</h3>
-                    <p class="game-desc">با دوستات مسابقه بده</p>
-                    <button class="play-btn" onclick="startGame('competition')">شروع بازی</button>
+                    <span style="font-size: 4em;">🏆</span>
+                    <h3>مسابقه</h3>
+                    <p>با دوستات رقابت کن</p>
+                    <button class="play-btn" onclick="playGame('competition')">شروع بازی</button>
                 </div>
             </div>
         </section>
 
         <!-- بخش پیشرفت -->
-        <section class="progress-section" id="progress-section">
+        <section id="progress" class="progress-section">
             <h2 class="section-title">⭐ پیشرفت من</h2>
             
             <div class="progress-stats">
-                <div class="stat-circle">
-                    <div class="circle">۷۵%</div>
-                    <h3>الفبای عربی</h3>
+                <div>
+                    <div class="circle-progress">۷۵%</div>
+                    <h3>الفبا</h3>
                 </div>
-                <div class="stat-circle">
-                    <div class="circle">۴۰%</div>
+                <div>
+                    <div class="circle-progress">۴۰%</div>
                     <h3>تجوید</h3>
                 </div>
-                <div class="stat-circle">
-                    <div class="circle">۶۰%</div>
-                    <h3>حفظ سوره‌ها</h3>
+                <div>
+                    <div class="circle-progress">۶۰%</div>
+                    <h3>حفظ</h3>
                 </div>
             </div>
 
-            <div style="text-align: center;">
-                <div class="stars-earned">
-                    ⭐⭐⭐⭐☆ (۴ از ۵ ستاره)
-                </div>
-                <p style="font-size: 1.3em; margin-top: 20px;">عالی پیش رفتی! فقط کمی دیگه مونده</p>
+            <div style="text-align: center; margin-top: 30px;">
+                <div style="font-size: 3em; color: var(--gold);">⭐⭐⭐⭐☆</div>
+                <p style="font-size: 1.5em;">عالی پیش رفتی! ادامه بده</p>
             </div>
         </section>
 
-        <!-- بخش جوایز و هدایا -->
-        <div style="background: linear-gradient(145deg, #fce4ec, #f3e5f5); border-radius: 80px; padding: 40px; margin-bottom: 50px; text-align: center;">
-            <h2 style="font-size: 2.5em; color: var(--primary-purple);">🎁 جایزه‌های ویژه</h2>
-            <p style="font-size: 1.5em; margin: 30px 0;">با جمع کردن ستاره‌ها جایزه بگیر!</p>
-            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px;">
-                    <span style="font-size: 3em;">🏅</span>
+        <!-- بخش جوایز -->
+        <div style="background: linear-gradient(145deg, #fce4ec, #f3e5f5); border-radius: 80px; padding: 40px; margin: 40px 0;">
+            <h2 style="font-size: 2.5em; color: var(--primary); text-align: center;">🎁 جایزه‌های ویژه</h2>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px; text-align: center;">
+                    <span style="font-size: 4em;">🏅</span>
                     <h3>مدال برنز</h3>
                     <p>۵۰ ستاره</p>
                 </div>
-                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px;">
-                    <span style="font-size: 3em;">🥈</span>
+                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px; text-align: center;">
+                    <span style="font-size: 4em;">🥈</span>
                     <h3>مدال نقره</h3>
                     <p>۱۰۰ ستاره</p>
                 </div>
-                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px;">
-                    <span style="font-size: 3em;">🥇</span>
+                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px; text-align: center;">
+                    <span style="font-size: 4em;">🥇</span>
                     <h3>مدال طلا</h3>
                     <p>۲۰۰ ستاره</p>
                 </div>
@@ -821,25 +668,24 @@
         <!-- فوتر -->
         <footer class="footer">
             <div class="footer-content">
-                <div class="footer-section">
-                    <h4>🌙 آکادمی قرآن کودک</h4>
-                    <p>آموزش قرآن برای کودکان با روشی شاد و جذاب</p>
+                <div>
+                    <h4 style="color: var(--gold); font-size: 2em;">🌙 آکادمی قرآن</h4>
+                    <p style="font-size: 1.2em;">آموزش قرآن برای کودکان ایران</p>
                 </div>
-                <div class="footer-section">
-                    <h4>دسترسی سریع</h4>
-                    <ul>
-                        <li><a href="#" onclick="showSection('home')">خانه</a></li>
-                        <li><a href="#" onclick="showSection('quran')">قرآن</a></li>
-                        <li><a href="#" onclick="showSection('games')">بازی‌ها</a></li>
-                        <li><a href="#" onclick="showSection('progress')">پیشرفت</a></li>
+                <div>
+                    <h4 style="color: var(--gold);">دسترسی سریع</h4>
+                    <ul style="list-style: none; font-size: 1.2em;">
+                        <li style="margin: 10px 0;"><a href="#" onclick="scrollToSection('home')" style="color: white; text-decoration: none;">خانه</a></li>
+                        <li style="margin: 10px 0;"><a href="#" onclick="scrollToSection('quran')" style="color: white; text-decoration: none;">قرآن</a></li>
+                        <li style="margin: 10px 0;"><a href="#" onclick="scrollToSection('games')" style="color: white; text-decoration: none;">بازی‌ها</a></li>
                     </ul>
                 </div>
-                <div class="footer-section">
-                    <h4>ارتباط با ما</h4>
-                    <ul>
-                        <li>📞 ۰۲۱-۱۲۳۴۵۶۷۸</li>
-                        <li>📧 info@quran-kids.ir</li>
-                        <li>🏠 تهران، ایران</li>
+                <div>
+                    <h4 style="color: var(--gold);">ارتباط با ما</h4>
+                    <ul style="list-style: none; font-size: 1.2em;">
+                        <li style="margin: 10px 0;">📞 ۰۲۱-۱۲۳۴۵۶۷۸</li>
+                        <li style="margin: 10px 0;">📧 info@quran-kids.ir</li>
+                        <li style="margin: 10px 0;">🏠 تهران، ایران</li>
                     </ul>
                 </div>
             </div>
@@ -849,74 +695,62 @@
         </footer>
     </div>
 
-    <!-- مدال کمک -->
-    <div class="modal" id="help-modal">
+    <!-- مدال‌ها -->
+    <div class="modal" id="helpModal">
         <div class="modal-content">
-            <div class="modal-icon">❓</div>
-            <h2>راهنما</h2>
-            <p>برای شروع روی هر بخش کلیک کن!<br>با جمع کردن ستاره‌ها می‌تونی جایزه بگیری.</p>
-            <button class="modal-btn" onclick="closeModal()">باشه فهمیدم!</button>
+            <span style="font-size: 5em;">❓</span>
+            <h2 style="color: var(--primary);">راهنما</h2>
+            <p style="font-size: 1.3em; margin: 20px 0;">برای شروع روی هر بخش کلیک کن!<br>با جمع کردن ستاره جایزه بگیر</p>
+            <button class="play-btn" onclick="closeModal()">متوجه شدم</button>
         </div>
     </div>
 
-    <!-- مدال تبریک -->
-    <div class="modal" id="congrats-modal">
+    <div class="modal" id="congratsModal">
         <div class="modal-content">
-            <div class="modal-icon">🎉</div>
-            <h2>آفرین!</h2>
-            <p>تو ۱۰ ستاره جدید گرفتی! به راهت ادامه بده ⭐</p>
-            <button class="modal-btn" onclick="closeModal()">هوراا!</button>
+            <span style="font-size: 5em;">🎉</span>
+            <h2 style="color: var(--success);">آفرین!</h2>
+            <p style="font-size: 1.3em;" id="congratsMessage">تو ستاره جدید گرفتی!</p>
+            <button class="play-btn" onclick="closeModal()">هوراا!</button>
         </div>
     </div>
 
     <script>
-        // قفل زوم صفحه برای تجربه بهتر
-        document.addEventListener('gesturestart', (e) => e.preventDefault());
-        
-        // متغیرها
+        // ===== متغیرهای اصلی =====
+        let currentView = 'mobile';
         let currentSurah = 1;
-        let starCount = 125;
+        let starCount = 150;
         let audioEnabled = true;
 
-        // نمایش بخش‌های مختلف
-        function showSection(section) {
-            if(section === 'home') {
-                document.getElementById('home-section').scrollIntoView({ behavior: 'smooth' });
-            } else if(section === 'quran') {
-                document.getElementById('quran-section').scrollIntoView({ behavior: 'smooth' });
-            } else if(section === 'games') {
-                document.getElementById('games-section').scrollIntoView({ behavior: 'smooth' });
-            } else if(section === 'progress') {
-                document.getElementById('progress-section').scrollIntoView({ behavior: 'smooth' });
-            }
+        // ===== تغییر رابط کاربری =====
+        function changeView(view) {
+            currentView = view;
+            const container = document.getElementById('siteContainer');
+            container.className = 'site-container ' + view;
+            
+            // به‌روزرسانی دکمه‌ها
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // ذخیره در localStorage
+            localStorage.setItem('preferredView', view);
+            
+            // نمایش پیام
+            showMessage(`✅ حالت ${view === 'mobile' ? 'موبایل' : view === 'tablet' ? 'تبلت' : 'لپ‌تاپ'} فعال شد`);
         }
 
-        // نمایش مدال
-        function showModal(type) {
-            if(type === 'help') {
-                document.getElementById('help-modal').classList.add('active');
-            } else if(type === 'congrats') {
-                document.getElementById('congrats-modal').classList.add('active');
-            }
-        }
-
-        function closeModal() {
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        }
-
-        // تغییر سوره
-        function changeSurah(surahNumber) {
+        // ======== بخش قرآن ========
+        function changeSurah(surahNumber, element) {
             currentSurah = surahNumber;
             
             // به‌روزرسانی کلاس دکمه‌ها
             document.querySelectorAll('.surah-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            element.classList.add('active');
             
-            // متن سوره (اینجا می‌تونید از API واقعی قرآن استفاده کنید)
+            // متن سوره‌ها
             const surahs = {
                 1: {
                     text: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ<br>الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
-                    translation: "به نام خداوند بخشنده مهربان<br>ستایش مخصوص خداوندی است که پروردگار جهانیان است"
+                    translation: "به نام خداوند بخشنده مهربان<br>ستایش مخصوص خداوند جهانیان است"
                 },
                 112: {
                     text: "قُلْ هُوَ اللَّهُ أَحَدٌ<br>اللَّهُ الصَّمَدُ",
@@ -937,82 +771,140 @@
             };
             
             if(surahs[surahNumber]) {
-                document.getElementById('aya-text').innerHTML = surahs[surahNumber].text;
-                document.getElementById('aya-translation').innerHTML = surahs[surahNumber].translation;
+                document.getElementById('ayaText').innerHTML = surahs[surahNumber].text;
+                document.getElementById('translationText').innerHTML = surahs[surahNumber].translation;
             }
         }
 
         // کنترل صدا
         function playAudio() {
             if(audioEnabled) {
-                // اینجا می‌تونید فایل صوتی واقعی پخش کنید
-                console.log('Playing audio for surah ' + currentSurah);
-                // برای نمونه پیام می‌دهیم
-                alert('🎵 در حال پخش تلاوت سوره');
-                
-                // اضافه کردن ستاره هنگام گوش دادن
+                showMessage('🎵 در حال پخش تلاوت قرآن');
                 addStar();
             }
         }
 
         function pauseAudio() {
-            console.log('Audio paused');
+            showMessage('⏸️ تلاوت متوقف شد');
         }
 
         function repeatAudio() {
-            console.log('Repeating audio');
             playAudio();
         }
 
-        // اضافه کردن ستاره
+        // ===== سیستم ستاره =====
         function addStar() {
             starCount += 1;
-            document.getElementById('star-count').textContent = starCount;
+            document.getElementById('starCount').textContent = starCount;
             
-            // هر ۱۰ ستاره یک مدال تبریک
-            if(starCount % 10 === 0) {
-                showModal('congrats');
+            // ذخیره در localStorage
+            localStorage.setItem('stars', starCount);
+            
+            // بررسی جوایز
+            if(starCount % 50 === 0) {
+                showCongrats('🎉 تبریک! تو ' + starCount + ' ستاره گرفتی و مدال برنز گرفتی!');
+            } else if(starCount % 100 === 0) {
+                showCongrats('🎉 تبریک! تو ' + starCount + ' ستاره گرفتی و مدال نقره گرفتی!');
+            } else if(starCount % 200 === 0) {
+                showCongrats('🎉 تبریک! تو ' + starCount + ' ستاره گرفتی و مدال طلا گرفتی!');
+            } else if(starCount % 10 === 0) {
+                showCongrats('🎉 آفرین! تو ۱۰ ستاره جدید گرفتی!');
             }
         }
 
-        // شروع بازی
-        function startGame(gameType) {
-            // اینجا می‌تونید بازی‌های مختلف رو راه‌اندازی کنید
-            alert(`🎮 بازی ${gameType} شروع شد!`);
-            
-            // اضافه کردن ستاره برای بازی
-            addStar();
-        }
-
-        // نمایش درس قرآن
-        function showQuranLesson(lesson) {
-            const lessons = {
-                'alfabet': 'الفبای عربی: الف، ب، ت، ث...',
-                'tajweed': 'تجوید: ادغام، اظهار، اخفا...',
-                'short-surahs': 'سوره‌های کوتاه: فاتحه، اخلاص، فلق، ناس'
+        // ===== بازی‌ها =====
+        function playGame(gameType) {
+            const games = {
+                'puzzle': '🧩 بازی پازل حروف',
+                'listening': '🔊 بازی تست گوش دادن',
+                'coloring': '🎨 بازی نقاشی قرآنی',
+                'competition': '🏆 بازی مسابقه'
             };
             
-            alert(`📚 درس: ${lessons[lesson] || lesson}`);
+            showMessage(`🎮 ${games[gameType]} شروع شد!`);
+            addStar(); // جایزه برای بازی
+        }
+
+        // ===== شروع درس =====
+        function startLesson(lesson) {
+            const lessons = {
+                'alfabet': '🔤 الفبای عربی',
+                'tajweed': '🎵 تجوید مقدماتی',
+                'surahs': '📖 سوره‌های کوتاه'
+            };
+            
+            showMessage(`📚 درس ${lessons[lesson]} شروع شد!`);
             addStar(); // جایزه برای یادگیری
         }
 
-        // اسکرول نرم به بخش‌ها
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
+        // ===== اسکرول به بخش‌ها =====
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if(element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
 
-        // بارگذاری اولیه
-        window.onload = function() {
-            // نمایش راهنما بعد از ۳ ثانیه
+        // ===== مدال‌ها =====
+        function showHelp() {
+            document.getElementById('helpModal').classList.add('active');
+        }
+
+        function showCongrats(message) {
+            document.getElementById('congratsMessage').textContent = message;
+            document.getElementById('congratsModal').classList.add('active');
+            
+            // بستن خودکار بعد از ۳ ثانیه
+            setTimeout(closeModal, 3000);
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        }
+
+        // ===== نمایش پیام =====
+        function showMessage(text) {
+            // ایجاد پیام موقت
+            const msg = document.createElement('div');
+            msg.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success);
+                color: white;
+                padding: 15px 30px;
+                border-radius: 50px;
+                font-size: 1.2em;
+                z-index: 10001;
+                animation: slideIn 0.3s;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            `;
+            msg.textContent = text;
+            document.body.appendChild(msg);
+            
             setTimeout(() => {
-                showModal('help');
-            }, 3000);
+                msg.remove();
+            }, 2000);
+        }
+
+        // ===== بارگذاری اولیه =====
+        window.onload = function() {
+            // بازیابی تنظیمات ذخیره شده
+            const savedView = localStorage.getItem('preferredView') || 'mobile';
+            changeView(savedView);
+            
+            const savedStars = localStorage.getItem('stars');
+            if(savedStars) {
+                starCount = parseInt(savedStars);
+                document.getElementById('starCount').textContent = starCount;
+            }
+            
+            // نمایش راهنما بعد از ۲ ثانیه
+            setTimeout(showHelp, 2000);
         };
+
+        // ===== قفل زوم برای تجربه بهتر =====
+        document.addEventListener('gesturestart', (e) => e.preventDefault());
     </script>
 </body>
 </html>
