@@ -2,855 +2,969 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
-    <title>مسافت‌یاب ایران | محاسبه فاصله شهرها</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هشدار دهنده شارژ باتری | Battery Alert</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Vazir', 'Tahoma', Arial, sans-serif;
         }
 
-        :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #1e272e;
-            --gold: #f1c40f;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .app-container {
-            width: 100%;
-            height: 100vh;
-            max-height: 100vh;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 15px;
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        /* کانتینر اصلی */
-        .main-card {
-            background: rgba(255, 255, 255, 0.97);
-            border-radius: 50px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            width: 100%;
+        .container {
             max-width: 500px;
-            margin: 0 auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            max-height: 95vh;
-            overflow-y: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+            width: 100%;
         }
 
-        .main-card::-webkit-scrollbar {
-            display: none;
+        .battery-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         /* هدر */
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .header h1 {
-            font-size: clamp(1.8em, 6vw, 2.5em);
-            color: var(--primary);
-            font-weight: 800;
-            margin-bottom: 5px;
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header h1 i {
+            color: #f39c12;
+            margin: 0 10px;
         }
 
         .header p {
             color: #7f8c8d;
-            font-size: clamp(0.8em, 3vw, 1em);
+            font-size: 1em;
         }
 
-        /* بخش انتخاب مبدا و مقصد */
-        .location-section {
-            background: linear-gradient(145deg, #f8faff, #ffffff);
-            border-radius: 40px;
-            padding: 20px;
+        /* نمایش باتری */
+        .battery-display {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .battery-icon {
+            font-size: 8em;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .battery-icon i {
+            color: #2c3e50;
+        }
+
+        .battery-level {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.25em;
+            font-weight: bold;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 10px;
+            border-radius: 20px;
+            width: 80px;
+        }
+
+        .battery-percentage {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .battery-status {
+            font-size: 1.2em;
+            color: #27ae60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* تنظیمات هشدار */
+        .alert-settings {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #2c3e50;
             margin-bottom: 20px;
-            border: 2px solid var(--secondary);
-            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.1);
-        }
-
-        .location-header {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 15px;
         }
 
-        .location-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 25px;
-            background: var(--secondary);
+        .section-title i {
+            color: #f39c12;
+        }
+
+        .alert-input-group {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.8em;
-            color: white;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
-        .location-title {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        /* سلکت باکس‌ها */
-        .select-group {
-            margin-bottom: 15px;
-        }
-
-        .select-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 1em;
-        }
-
-        .custom-select {
-            width: 100%;
-            padding: 18px 20px;
-            border: 3px solid #eef2f7;
-            border-radius: 30px;
-            font-size: 1em;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: left 20px center;
-            background-size: 15px;
-        }
-
-        .custom-select:focus {
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 5px rgba(52, 152, 219, 0.1);
-            outline: none;
-        }
-
-        .custom-select option {
-            padding: 15px;
-            font-size: 1em;
-        }
-
-        /* دکمه جابجایی */
-        .swap-button {
-            display: flex;
-            justify-content: center;
-            margin: 15px 0;
-        }
-
-        .swap-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 30px;
-            background: var(--warning);
-            border: none;
-            color: white;
-            font-size: 2em;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 20px rgba(243, 156, 18, 0.3);
-        }
-
-        .swap-btn:hover {
-            transform: rotate(180deg) scale(1.1);
-        }
-
-        .swap-btn:active {
-            transform: rotate(180deg) scale(0.95);
-        }
-
-        /* دکمه محاسبه */
-        .calculate-btn {
-            width: 100%;
-            padding: 20px;
-            border: none;
-            border-radius: 40px;
-            background: linear-gradient(135deg, var(--success), #2ecc71);
-            color: white;
-            font-size: 1.4em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 15px 30px rgba(46, 204, 113, 0.3);
-            margin: 20px 0;
-        }
-
-        .calculate-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 40px rgba(46, 204, 113, 0.4);
-        }
-
-        .calculate-btn:active {
-            transform: translateY(0);
-        }
-
-        /* کارت نتیجه */
-        .result-card {
-            background: linear-gradient(145deg, #ffffff, #f8faff);
-            border-radius: 40px;
-            padding: 25px;
-            border: 3px solid var(--success);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s;
-            margin-top: 10px;
-        }
-
-        .result-card.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .route-info {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .cities {
-            font-size: 1.4em;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .distance-main {
-            font-size: 3.5em;
-            font-weight: 800;
-            color: var(--success);
-            line-height: 1;
-            margin: 15px 0;
-        }
-
-        .distance-unit {
-            font-size: 0.4em;
-            color: #7f8c8d;
-        }
-
-        .distance-details {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 30px;
-        }
-
-        .detail-item {
-            text-align: center;
-        }
-
-        .detail-value {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: var(--secondary);
-        }
-
-        .detail-label {
-            font-size: 0.8em;
-            color: #7f8c8d;
-        }
-
-        /* نقشه ساده */
-        .map-preview {
-            background: linear-gradient(145deg, #e8f4f8, #d4e9f0);
-            border-radius: 30px;
-            padding: 20px;
-            margin: 20px 0;
-            position: relative;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .map-dot {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--danger);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            z-index: 2;
-        }
-
-        .map-dot.end {
-            background: var(--success);
-        }
-
-        .map-line {
+        .alert-input {
             flex: 1;
-            height: 4px;
-            background: linear-gradient(90deg, var(--danger), var(--success));
-            margin: 0 10px;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .alert-input:focus {
+            outline: none;
+            border-color: #f39c12;
+            box-shadow: 0 0 0 3px rgba(243,156,18,0.2);
+        }
+
+        .alert-input:disabled {
+            background: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        .percentage-symbol {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .toggle-switch {
             position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
         }
 
-        .map-distance {
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
             position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 700;
-            color: var(--primary);
-            border: 2px solid var(--secondary);
-        }
-
-        /* سایر مسیرها */
-        .other-routes {
-            margin-top: 20px;
-        }
-
-        .route-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 25px;
-            margin-bottom: 10px;
             cursor: pointer;
-            transition: all 0.3s;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
         }
 
-        .route-item:hover {
-            background: var(--secondary);
-            color: white;
-            transform: translateX(-5px);
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
         }
 
-        .route-item:hover .route-distance {
-            background: white;
-            color: var(--primary);
+        input:checked + .toggle-slider {
+            background-color: #27ae60;
         }
 
-        .route-name {
-            font-weight: 600;
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
         }
 
-        .route-distance {
-            background: var(--secondary);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 30px;
-            font-weight: 700;
-        }
-
-        /* فوتر */
-        .footer {
-            text-align: center;
+        .alert-options {
             margin-top: 20px;
+        }
+
+        .alert-type {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .alert-type label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .alert-type label.active {
+            border-color: #f39c12;
+            background: #fff9e6;
+        }
+
+        .alert-type input[type="radio"] {
+            display: none;
+        }
+
+        .test-btn {
+            width: 100%;
+            padding: 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .test-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .test-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* تاریخچه هشدارها */
+        .history-section {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-right: 4px solid #f39c12;
+        }
+
+        .history-item i {
+            color: #f39c12;
+            font-size: 1.2em;
+        }
+
+        .history-item .time {
             color: #7f8c8d;
             font-size: 0.9em;
         }
 
-        /* حالت بارگذاری */
-        .loading {
-            display: none;
-            text-align: center;
+        .history-item .level {
+            font-weight: bold;
+            color: #27ae60;
+            margin-right: auto;
+        }
+
+        .clear-history {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .clear-history:hover {
+            background: #c0392b;
+        }
+
+        /* وضعیت باتری */
+        .battery-info {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
             padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
         }
 
-        .loading.show {
-            display: block;
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--secondary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .info-label {
+            font-size: 1em;
+            opacity: 0.9;
         }
 
-        /* هشدار */
-        .alert {
+        .info-value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* وضعیت اتصال */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .status-charging {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-discharging {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-full {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        /* نوتیفیکیشن */
+        .permission-request {
             background: #fff3cd;
             color: #856404;
             padding: 15px;
-            border-radius: 30px;
-            margin: 15px 0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
             display: none;
-            border-right: 5px solid var(--warning);
         }
 
-        .alert.show {
+        .permission-request.active {
             display: block;
         }
 
-        /* تنظیمات اضافی */
-        .note {
-            background: #e8f4fd;
-            border-radius: 20px;
-            padding: 15px;
-            font-size: 0.9em;
-            color: var(--primary);
-            margin-top: 15px;
+        .permission-btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
         }
 
-        @media (max-height: 700px) {
-            .main-card {
-                padding: 15px;
+        /* انیمیشن */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
             }
-            
-            .location-section {
-                padding: 15px;
-                margin-bottom: 15px;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-            
-            .calculate-btn {
-                padding: 15px;
-                margin: 15px 0;
-            }
+        }
+
+        .notification-demo {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+            border-right: 4px solid #f39c12;
+        }
+
+        .notification-demo.show {
+            display: flex;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            margin-top: 20px;
+            font-size: 0.9em;
         }
     </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="app-container">
-        <div class="main-card">
+    <div class="container">
+        <div class="battery-card">
             <!-- هدر -->
             <div class="header">
-                <h1>🗺️ مسافت‌یاب ایران</h1>
-                <p>محاسبه دقیق فاصله بین شهرهای ایران</p>
+                <h1>
+                    <i class="fas fa-bolt"></i>
+                    هشدار دهنده باتری
+                    <i class="fas fa-battery-full"></i>
+                </h1>
+                <p>هنگام رسیدن به درصد دلخواه، هشدار دریافت کنید</p>
             </div>
 
-            <!-- مبدا -->
-            <div class="location-section">
-                <div class="location-header">
-                    <div class="location-icon">📍</div>
-                    <div class="location-title">مبدا</div>
-                </div>
-
-                <div class="select-group">
-                    <label class="select-label">استان مبدا</label>
-                    <select class="custom-select" id="originProvince" onchange="updateCities('origin')">
-                        <option value="">انتخاب استان</option>
-                    </select>
-                </div>
-
-                <div class="select-group">
-                    <label class="select-label">شهر مبدا</label>
-                    <select class="custom-select" id="originCity" disabled>
-                        <option value="">ابتدا استان را انتخاب کنید</option>
-                    </select>
-                </div>
+            <!-- درخواست مجوز نوتیفیکیشن -->
+            <div class="permission-request" id="permissionRequest">
+                <i class="fas fa-bell"></i>
+                <p>برای دریافت هشدارها، لطفاً نوتیفیکیشن را فعال کنید</p>
+                <button class="permission-btn" id="requestPermissionBtn">
+                    <i class="fas fa-check"></i>
+                    فعال‌سازی نوتیفیکیشن
+                </button>
             </div>
 
-            <!-- دکمه جابجایی -->
-            <div class="swap-button">
-                <button class="swap-btn" onclick="swapLocations()" title="جابجایی مبدا و مقصد">🔄</button>
+            <!-- نمایش نوتیفیکیشن تست -->
+            <div class="notification-demo" id="notificationDemo">
+                <i class="fas fa-bell" style="color: #f39c12;"></i>
+                <span id="demoMessage">این یک نوتیفیکیشن تست است</span>
             </div>
 
-            <!-- مقصد -->
-            <div class="location-section">
-                <div class="location-header">
-                    <div class="location-icon">🎯</div>
-                    <div class="location-title">مقصد</div>
+            <!-- نمایشگر باتری -->
+            <div class="battery-display">
+                <div class="battery-icon" id="batteryIcon">
+                    <i class="fas fa-battery-full" id="batteryIconMain"></i>
+                    <span class="battery-level" id="batteryLevelIcon">0%</span>
                 </div>
-
-                <div class="select-group">
-                    <label class="select-label">استان مقصد</label>
-                    <select class="custom-select" id="destProvince" onchange="updateCities('dest')">
-                        <option value="">انتخاب استان</option>
-                    </select>
-                </div>
-
-                <div class="select-group">
-                    <label class="select-label">شهر مقصد</label>
-                    <select class="custom-select" id="destCity" disabled>
-                        <option value="">ابتدا استان را انتخاب کنید</option>
-                    </select>
+                <div class="battery-percentage" id="batteryPercentage">--%</div>
+                <div class="battery-status" id="batteryStatus">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    در حال دریافت اطلاعات...
                 </div>
             </div>
 
-            <!-- دکمه محاسبه -->
-            <button class="calculate-btn" onclick="calculateDistance()">
-                <span>🧮 محاسبه مسافت</span>
-            </button>
-
-            <!-- حالت بارگذاری -->
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p style="margin-top: 10px;">در حال محاسبه...</p>
+            <!-- وضعیت اتصال -->
+            <div class="connection-status" id="connectionStatus">
+                <i class="fas fa-plug"></i>
+                <span id="connectionText">بررسی وضعیت شارژ...</span>
             </div>
 
-            <!-- هشدار -->
-            <div class="alert" id="alert">
-                <span id="alertMessage">لطفاً شهر مبدا و مقصد را انتخاب کنید</span>
+            <!-- تنظیمات هشدار -->
+            <div class="alert-settings">
+                <div class="section-title">
+                    <i class="fas fa-sliders-h"></i>
+                    تنظیمات هشدار
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="alertToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span>فعال بودن هشدار</span>
+                </div>
+
+                <div class="alert-input-group">
+                    <input type="number" class="alert-input" id="alertThreshold" min="1" max="100" value="80" step="1">
+                    <span class="percentage-symbol">%</span>
+                </div>
+
+                <div class="alert-options">
+                    <div class="alert-type">
+                        <label class="active">
+                            <input type="radio" name="alertType" value="once" checked>
+                            <i class="fas fa-bell"></i>
+                            یک بار
+                        </label>
+                        <label>
+                            <input type="radio" name="alertType" value="always">
+                            <i class="fas fa-bell-slash"></i>
+                            هر بار
+                        </label>
+                    </div>
+
+                    <button class="test-btn" id="testNotificationBtn">
+                        <i class="fas fa-flask"></i>
+                        تست نوتیفیکیشن
+                    </button>
+                </div>
             </div>
 
-            <!-- کارت نتیجه -->
-            <div class="result-card" id="resultCard">
-                <div class="route-info">
-                    <div class="cities" id="routeCities">تهران → مشهد</div>
-                    <div class="distance-main" id="mainDistance">
-                        ۰
-                        <span class="distance-unit">کیلومتر</span>
+            <!-- اطلاعات باتری -->
+            <div class="battery-info">
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-battery-quarter"></i> سطح باتری:</span>
+                    <span class="info-value" id="batteryLevelInfo">--%</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-plug"></i> وضعیت شارژ:</span>
+                    <span class="info-value" id="chargingStatusInfo">در حال بررسی</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-clock"></i> زمان شارژ:</span>
+                    <span class="info-value" id="chargingTime">--</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-clock"></i> زمان دشارژ:</span>
+                    <span class="info-value" id="dischargingTime">--</span>
+                </div>
+            </div>
+
+            <!-- تاریخچه هشدارها -->
+            <div class="history-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div class="section-title" style="margin-bottom: 0;">
+                        <i class="fas fa-history"></i>
+                        تاریخچه هشدارها
+                    </div>
+                    <span id="historyCount">0</span>
+                </div>
+                <div class="history-list" id="historyList">
+                    <div style="text-align: center; color: #95a5a6; padding: 20px;">
+                        <i class="fas fa-info-circle"></i>
+                        تاکنون هشدار ثبت نشده
                     </div>
                 </div>
-
-                <div class="distance-details">
-                    <div class="detail-item">
-                        <div class="detail-value" id="kmDistance">۰</div>
-                        <div class="detail-label">کیلومتر</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-value" id="meterDistance">۰</div>
-                        <div class="detail-label">متر</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-value" id="mileDistance">۰</div>
-                        <div class="detail-label">مایل</div>
-                    </div>
-                </div>
-
-                <!-- نقشه ساده -->
-                <div class="map-preview">
-                    <div class="map-dot">مبدا</div>
-                    <div class="map-line">
-                        <span class="map-distance" id="mapDistance">۰ km</span>
-                    </div>
-                    <div class="map-dot end">مقصد</div>
-                </div>
-
-                <!-- مسیرهای پیشنهادی -->
-                <div class="other-routes">
-                    <h3 style="margin-bottom: 15px; color: var(--primary);">🛣️ مسیرهای پیشنهادی</h3>
-                    <div id="alternativeRoutes"></div>
-                </div>
-
-                <div class="note">
-                    <span>⏱️ زمان تقریبی سفر با ماشین: <span id="travelTime">--</span></span>
-                </div>
+                <button class="clear-history" id="clearHistoryBtn">
+                    <i class="fas fa-trash-alt"></i>
+                    پاک کردن تاریخچه
+                </button>
             </div>
+        </div>
 
-            <!-- فوتر -->
-            <div class="footer">
-                <p>© ۲۰۲۶ - مسافت‌یاب ایران | داده‌های دقیق جغرافیایی</p>
-            </div>
+        <div class="footer">
+            <i class="fas fa-shield-alt"></i>
+            برای عملکرد صحیح، نوتیفیکیشن را فعال کنید
         </div>
     </div>
 
     <script>
-        // ===== دیتابیس کامل استان‌ها و شهرهای ایران =====
-        const iranData = {
-            "آذربایجان شرقی": ["تبریز", "مراغه", "مرند", "اهر", "میانه", "سراب", "بناب", "کلیبر", "اسکو", "عجب‌شیر", "بستان‌آباد", "هریس", "جلفا", "شبستر", "ملکان", "ورزقان", "چاراویماق", "خداآفرین"],
-            "آذربایجان غربی": ["ارومیه", "خوی", "میاندوآب", "مهاباد", "سلماس", "بوکان", "نقده", "پیرانشهر", "شاهین‌دژ", "تکاب", "اشنویه", "چایپاره", "پلدشت", "چالدران", "ماکو", "سردشت"],
-            "اردبیل": ["اردبیل", "پارس‌آباد", "مشگین‌شهر", "خلخال", "گرمی", "بیله‌سوار", "نمین", "نیر", "کوثر", "سرعین"],
-            "اصفهان": ["اصفهان", "کاشان", "خمینی‌شهر", "نجف‌آباد", "شهرضا", "فلاورجان", "لنجان", "مبارکه", "آران و بیدگل", "گلپایگان", "فریدن", "سمیرم", "تیران و کرون", "چادگان", "خور و بیابانک", "دهاقان", "برخوار", "شاهین‌شهر", "نایین", "نطنز"],
-            "البرز": ["کرج", "فردیس", "اشتهارد", "هشتگرد", "طالقان", "نظرآباد", "ساوجبلاغ", "چهارباغ"],
-            "ایلام": ["ایلام", "دهلران", "مهران", "ایوان", "دره‌شهر", "سرابله", "آبدانان", "بدره", "چرداول", "ملکشاهی", "سیروان", "هلیلان"],
-            "بوشهر": ["بوشهر", "برازجان", "گناوه", "دیلم", "اهرم", "کنگان", "جم", "عسلویه", "دیر", "دشتی", "دشتستان", "تنگستان"],
-            "تهران": ["تهران", "ری", "شهریار", "اسلامشهر", "ورامین", "پاکدشت", "رباط‌کریم", "ملارد", "قدس", "دماوند", "فیروزکوه", "پیشوا", "قرچک", "بهارستان", "شمیرانات"],
-            "چهارمحال و بختیاری": ["شهرکرد", "بروجن", "لردگان", "فارسان", "کوهرنگ", "اردل", "کیار", "سامان", "بن", "خانمیرزا", "فلارد"],
-            "خراسان جنوبی": ["بیرجند", "قائن", "فردوس", "طبس", "نهبندان", "سربیشه", "درمیان", "سرایان", "بشرویه", "خوسف", "زیرکوه"],
-            "خراسان رضوی": ["مشهد", "نیشابور", "سبزوار", "تربت حیدریه", "کاشمر", "قوچان", "تربت جام", "چناران", "خواف", "گناباد", "سرخس", "فریمان", "درگز", "بردسکن", "کلات", "بجستان", "تایباد", "رشتخوار", "مه‌ولات", "زاوه", "جغتای", "خلیل‌آباد", "باخرز", "صالح‌آباد", "داورزن", "ششتمد"],
-            "خراسان شمالی": ["بجنورد", "شیروان", "اسفراین", "فاروج", "گرمه", "جاجرم", "مانه و سملقان", "راز و جرگلان"],
-            "خوزستان": ["اهواز", "آبادان", "خرمشهر", "دزفول", "اندیمشک", "مسجدسلیمان", "بهبهان", "شوشتر", "ماهشهر", "شادگان", "رامهرمز", "ایذه", "هویزه", "هندیجان", "لالی", "گتوند", "شوش", "باغ‌ملک", "اندیکا", "حمیدیه", "باوی", "کارون", "کرخه", "دشت آزادگان", "هفتکل", "آغاجاری", "امیدیه"],
-            "زنجان": ["زنجان", "ابهر", "خرمدره", "قیدار", "ایجرود", "طارم", "ماهنشان", "سلطانیه"],
-            "سمنان": ["سمنان", "شاهرود", "دامغان", "گرمسار", "مهدی‌شهر", "میامی", "آرادان", "سرخه"],
-            "سیستان و بلوچستان": ["زاهدان", "زابل", "ایرانشهر", "چابهار", "خاش", "سراوان", "نیک‌شهر", "کنارک", "زهک", "میرجاوه", "سیب و سوران", "مهرستان", "دلگان", "فنوج", "قصرقند", "نیمروز", "هامون", "هیرمند", "تفتان", "راسک", "بمپور", "لاشار"],
-            "فارس": ["شیراز", "مرودشت", "کازرون", "لارستان", "فسا", "جهرم", "داراب", "اقلید", "آباده", "نی‌ریز", "سپیدان", "ممسنی", "فیروزآباد", "لامرد", "استهبان", "زرین‌دشت", "خرامه", "قیر و کارزین", "فراشبند", "بوانات", "ارسنجان", "پاسارگاد", "خنج", "خرم‌بید", "رستم", "سروستان", "کوار", "گراش", "مهر", "بختگان"],
-            "قزوین": ["قزوین", "تاکستان", "آبیک", "بوئین‌زهرا", "البرز", "آوج"],
-            "قم": ["قم", "کهک", "جعفرآباد", "سلفچگان"],
-            "کردستان": ["سنندج", "سقز", "مریوان", "بانه", "قروه", "بیجار", "دیواندره", "کامیاران", "دهگلان", "سروآباد"],
-            "کرمان": ["کرمان", "رفسنجان", "سیرجان", "جیرفت", "بم", "زرند", "بافت", "کهنوج", "شهربابک", "بردسیر", "عنبرآباد", "منوجان", "راور", "رودبار جنوب", "قلعه‌گنج", "ریگان", "فاریاب", "نرماشیر", "ارزوئیه", "انار", "کوهبنان", "فهرج"],
-            "کرمانشاه": ["کرمانشاه", "اسلام‌آباد غرب", "سرپل ذهاب", "کنگاور", "صحنه", "هرسین", "جوانرود", "پاوه", "قصر شیرین", "گیلانغرب", "سنقر", "روانسر", "ثلاث باباجانی", "دالاهو"],
-            "کهگیلویه و بویراحمد": ["یاسوج", "دوگنبدان", "دهدشت", "لیکک", "چرام", "بهمئی", "لنده", "باشت", "مارگون"],
-            "گلستان": ["گرگان", "گنبد کاووس", "علی‌آباد", "آزادشهر", "کردکوی", "بندر ترکمن", "بندر گز", "رامیان", "آق‌قلا", "مینودشت", "کلاله", "گالیکش", "مراوه‌تپه"],
-            "گیلان": ["رشت", "انزلی", "لاهیجان", "لنگرود", "رودسر", "آستارا", "صومعه‌سرا", "فومن", "تالش", "رضوانشهر", "ماسال", "شفت", "املش", "خمام", "سیاهکل", "آستانه اشرفیه", "رودبار"],
-            "لرستان": ["خرم‌آباد", "بروجرد", "الیگودرز", "دورود", "کوهدشت", "ازنا", "نورآباد", "پلدختر", "سلسله", "چگنی", "رومشکان"],
-            "مازندران": ["ساری", "بابل", "آمل", "قائم‌شهر", "تنکابن", "نور", "بهشهر", "رامسر", "نوشهر", "چالوس", "جویبار", "محمودآباد", "نکا", "فریدونکنار", "سیمرغ", "عباس‌آباد", "گلوگاه", "کلاردشت", "میاندورود", "سوادکوه"],
-            "مرکزی": ["اراک", "ساوه", "خمین", "محلات", "دلیجان", "شازند", "تفرش", "زرندیه", "کمیجان", "فراهان", "خنداب", "آشتیان"],
-            "هرمزگان": ["بندرعباس", "قشم", "کیش", "بندر لنگه", "میناب", "جاسک", "رودان", "حاجی‌آباد", "بستک", "خمیر", "سیریک", "پارسیان", "بشاگرد", "ابوموسی"],
-            "همدان": ["همدان", "ملایر", "نهاوند", "اسدآباد", "تویسرکان", "کبودرآهنگ", "بهار", "رزن", "فامنین"],
-            "یزد": ["یزد", "میبد", "اردکان", "بافق", "مهریز", "تفت", "اشکذر", "ابرکوه", "خاتم", "بهاباد", "زارچ", "مروست"]
-        };
-
-        // ===== مختصات جغرافیایی شهرها (برای محاسبه دقیق) =====
-        const cityCoordinates = {
-            "تهران": { lat: 35.6892, lng: 51.3890 },
-            "مشهد": { lat: 36.2970, lng: 59.6067 },
-            "اصفهان": { lat: 32.6546, lng: 51.6679 },
-            "تبریز": { lat: 38.0962, lng: 46.2738 },
-            "شیراز": { lat: 29.5926, lng: 52.5836 },
-            "کرج": { lat: 35.8400, lng: 51.0107 },
-            "اهواز": { lat: 31.3183, lng: 48.6706 },
-            "قم": { lat: 34.6399, lng: 50.8759 },
-            "کرمانشاه": { lat: 34.3277, lng: 47.0778 },
-            "رشت": { lat: 37.2809, lng: 49.5832 },
-            "ارومیه": { lat: 37.5527, lng: 45.0760 },
-            "زاهدان": { lat: 29.4963, lng: 60.8629 },
-            "کرمان": { lat: 30.2839, lng: 57.0834 },
-            "اراک": { lat: 34.0917, lng: 49.6892 },
-            "همدان": { lat: 34.7992, lng: 48.5146 },
-            "یزد": { lat: 31.8948, lng: 54.3569 },
-            "اردبیل": { lat: 38.2498, lng: 48.2933 },
-            "بندرعباس": { lat: 27.1865, lng: 56.2808 },
-            "ساری": { lat: 36.5633, lng: 53.0601 },
-            "بوشهر": { lat: 28.9234, lng: 50.8203 },
-            "خرم‌آباد": { lat: 33.4878, lng: 48.3558 },
-            "سنندج": { lat: 35.3219, lng: 46.9860 },
-            "زنجان": { lat: 36.6769, lng: 48.4963 },
-            "گرگان": { lat: 36.8454, lng: 54.4393 },
-            "قزوین": { lat: 36.2688, lng: 50.0041 },
-            "شهرکرد": { lat: 32.3256, lng: 50.8644 },
-            "بیرجند": { lat: 32.8649, lng: 59.2268 },
-            "بجنورد": { lat: 37.4750, lng: 57.3294 },
-            "سمنان": { lat: 35.5726, lng: 53.3972 },
-            "یاسوج": { lat: 30.6684, lng: 51.5875 },
-            "ایلام": { lat: 33.6374, lng: 46.4227 }
-        };
-
-        // ===== پر کردن سلکت باکس‌ها =====
-        function populateProvinces() {
-            const provinceSelects = ['originProvince', 'destProvince'];
-            
-            provinceSelects.forEach(selectId => {
-                const select = document.getElementById(selectId);
-                const provinces = Object.keys(iranData).sort();
-                
-                provinces.forEach(province => {
-                    const option = document.createElement('option');
-                    option.value = province;
-                    option.textContent = province;
-                    select.appendChild(option);
-                });
-            });
+        // بررسی پشتیبانی مرورگر
+        if (!navigator.getBattery) {
+            alert('مرورگر شما از Battery API پشتیبانی نمی‌کند. لطفاً از Chrome یا Firefox استفاده کنید.');
         }
 
-        // ===== به‌روزرسانی شهرها بر اساس استان انتخاب شده =====
-        function updateCities(type) {
-            const provinceId = type === 'origin' ? 'originProvince' : 'destProvince';
-            const cityId = type === 'origin' ? 'originCity' : 'destCity';
-            
-            const province = document.getElementById(provinceId).value;
-            const citySelect = document.getElementById(cityId);
-            
-            // پاک کردن گزینه‌های قبلی
-            citySelect.innerHTML = '';
-            citySelect.disabled = !province;
-            
-            if (!province) {
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'ابتدا استان را انتخاب کنید';
-                citySelect.appendChild(option);
-                return;
+        // متغیرهای اصلی
+        let battery = null;
+        let alertEnabled = true;
+        let alertThreshold = 80;
+        let alertType = 'once';
+        let alertTriggered = false;
+        let notificationPermission = false;
+        let history = JSON.parse(localStorage.getItem('batteryAlertHistory')) || [];
+
+        // المان‌های DOM
+        const batteryPercentage = document.getElementById('batteryPercentage');
+        const batteryStatus = document.getElementById('batteryStatus');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const connectionText = document.getElementById('connectionText');
+        const batteryIconMain = document.getElementById('batteryIconMain');
+        const batteryLevelIcon = document.getElementById('batteryLevelIcon');
+        const batteryLevelInfo = document.getElementById('batteryLevelInfo');
+        const chargingStatusInfo = document.getElementById('chargingStatusInfo');
+        const chargingTime = document.getElementById('chargingTime');
+        const dischargingTime = document.getElementById('dischargingTime');
+        const alertToggle = document.getElementById('alertToggle');
+        const alertThresholdInput = document.getElementById('alertThreshold');
+        const alertTypeInputs = document.querySelectorAll('input[name="alertType"]');
+        const testNotificationBtn = document.getElementById('testNotificationBtn');
+        const requestPermissionBtn = document.getElementById('requestPermissionBtn');
+        const permissionRequest = document.getElementById('permissionRequest');
+        const notificationDemo = document.getElementById('notificationDemo');
+        const demoMessage = document.getElementById('demoMessage');
+        const historyList = document.getElementById('historyList');
+        const historyCount = document.getElementById('historyCount');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+        // درخواست مجوز نوتیفیکیشن
+        async function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                alert('مرورگر شما از نوتیفیکیشن پشتیبانی نمی‌کند');
+                return false;
             }
-            
-            // اضافه کردن گزینه پیش‌فرض
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'انتخاب شهر';
-            citySelect.appendChild(defaultOption);
-            
-            // اضافه کردن شهرها
-            const cities = iranData[province] || [];
-            cities.sort().forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                citySelect.appendChild(option);
-            });
+
+            if (Notification.permission === 'granted') {
+                notificationPermission = true;
+                permissionRequest.classList.remove('active');
+                return true;
+            }
+
+            if (Notification.permission !== 'denied') {
+                const permission = await Notification.requestPermission();
+                notificationPermission = permission === 'granted';
+                
+                if (notificationPermission) {
+                    permissionRequest.classList.remove('active');
+                    showNotification('✅ نوتیفیکیشن فعال شد', 'success');
+                }
+                
+                return notificationPermission;
+            }
+
+            return false;
         }
 
-        // ===== جابجایی مبدا و مقصد =====
-        function swapLocations() {
-            const originProvince = document.getElementById('originProvince');
-            const originCity = document.getElementById('originCity');
-            const destProvince = document.getElementById('destProvince');
-            const destCity = document.getElementById('destCity');
-            
-            // ذخیره مقادیر فعلی
-            const tempProvince = originProvince.value;
-            const tempCity = originCity.value;
-            
-            // جابجایی
-            originProvince.value = destProvince.value;
-            originCity.value = destCity.value;
-            destProvince.value = tempProvince;
-            destCity.value = tempCity;
-            
-            // به‌روزرسانی سلکت‌ها
-            updateCities('origin');
-            updateCities('dest');
-        }
-
-        // ===== محاسبه فاصله با فرمول Haversine =====
-        function calculateDistance() {
-            const originCity = document.getElementById('originCity').value;
-            const destCity = document.getElementById('destCity').value;
-            
-            // نمایش بارگذاری
-            document.getElementById('loading').classList.add('show');
+        // نمایش نوتیفیکیشن
+        function showNotification(message, type = 'info') {
+            // نمایش در صفحه
+            demoMessage.textContent = message;
+            notificationDemo.classList.add('show');
             
             setTimeout(() => {
-                document.getElementById('loading').classList.remove('show');
-                
-                // اعتبارسنجی
-                if (!originCity || !destCity) {
-                    document.getElementById('alertMessage').textContent = 'لطفاً شهر مبدا و مقصد را انتخاب کنید';
-                    document.getElementById('alert').classList.add('show');
-                    setTimeout(() => {
-                        document.getElementById('alert').classList.remove('show');
-                    }, 3000);
-                    return;
-                }
-                
-                if (originCity === destCity) {
-                    document.getElementById('alertMessage').textContent = 'شهر مبدا و مقصد نمی‌توانند یکسان باشند';
-                    document.getElementById('alert').classList.add('show');
-                    setTimeout(() => {
-                        document.getElementById('alert').classList.remove('show');
-                    }, 3000);
-                    return;
-                }
-                
-                // دریافت مختصات
-                const originCoord = cityCoordinates[originCity] || getRandomCoordinates();
-                const destCoord = cityCoordinates[destCity] || getRandomCoordinates();
-                
-                // محاسبه فاصله
-                const distance = calculateHaversine(originCoord, destCoord);
-                
-                // نمایش نتیجه
-                displayResult(originCity, destCity, distance);
-            }, 800);
-        }
+                notificationDemo.classList.remove('show');
+            }, 3000);
 
-        // ===== فرمول Haversine برای محاسبه دقیق فاصله =====
-        function calculateHaversine(coord1, coord2) {
-            const R = 6371; // شعاع زمین بر حسب کیلومتر
-            const lat1 = coord1.lat * Math.PI / 180;
-            const lat2 = coord2.lat * Math.PI / 180;
-            const deltaLat = (coord2.lat - coord1.lat) * Math.PI / 180;
-            const deltaLng = (coord2.lng - coord1.lng) * Math.PI / 180;
-            
-            const a = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) +
-                     Math.cos(lat1) * Math.cos(lat2) *
-                     Math.sin(deltaLng/2) * Math.sin(deltaLng/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            
-            return R * c;
-        }
+            // نمایش نوتیفیکیشن سیستمی
+            if (notificationPermission && Notification.permission === 'granted') {
+                const notification = new Notification('هشدار باتری', {
+                    body: message,
+                    icon: 'https://cdn-icons-png.flaticon.com/512/3064/3064154.png',
+                    badge: 'https://cdn-icons-png.flaticon.com/512/3064/3064154.png',
+                    vibrate: [200, 100, 200],
+                    requireInteraction: true
+                });
 
-        // ===== مختصات تصادفی برای شهرهایی که مختصات ندارند =====
-        function getRandomCoordinates() {
-            return {
-                lat: 32 + Math.random() * 5,
-                lng: 51 + Math.random() * 5
-            };
-        }
-
-        // ===== نمایش نتیجه =====
-        function displayResult(origin, dest, distance) {
-            const km = Math.round(distance);
-            const meters = Math.round(distance * 1000);
-            const miles = Math.round(distance * 0.621371);
-            
-            // به‌روزرسانی مقادیر
-            document.getElementById('routeCities').innerHTML = `${origin} → ${dest}`;
-            document.getElementById('mainDistance').innerHTML = `${km.toLocaleString()} <span class="distance-unit">کیلومتر</span>`;
-            document.getElementById('kmDistance').textContent = km.toLocaleString();
-            document.getElementById('meterDistance').textContent = meters.toLocaleString();
-            document.getElementById('mileDistance').textContent = miles.toLocaleString();
-            document.getElementById('mapDistance').textContent = `${km} km`;
-            
-            // زمان تقریبی سفر
-            const travelHours = Math.round(distance / 80); // میانگین سرعت 80 کیلومتر
-            const travelTime = travelHours < 24 ? 
-                `${travelHours} ساعت` : 
-                `${Math.floor(travelHours / 24)} روز و ${travelHours % 24} ساعت`;
-            document.getElementById('travelTime').textContent = travelTime;
-            
-            // مسیرهای پیشنهادی
-            const routes = generateAlternativeRoutes(origin, dest, distance);
-            document.getElementById('alternativeRoutes').innerHTML = routes;
-            
-            // نمایش کارت نتیجه
-            document.getElementById('resultCard').classList.add('show');
-        }
-
-        // ===== تولید مسیرهای پیشنهادی =====
-        function generateAlternativeRoutes(origin, dest, mainDistance) {
-            const routes = [
-                { name: "مسیر اصلی (آزادراه)", factor: 1 },
-                { name: "مسیر کوهستانی (منظره)", factor: 1.3 },
-                { name: "مسیر سریع‌تر (کم‌ترافیک)", factor: 0.95 }
-            ];
-            
-            let html = '';
-            routes.forEach(route => {
-                const dist = Math.round(mainDistance * route.factor);
-                html += `
-                    <div class="route-item">
-                        <span class="route-name">${route.name}</span>
-                        <span class="route-distance">${dist} km</span>
-                    </div>
-                `;
-            });
-            
-            return html;
-        }
-
-        // ===== راه‌اندازی اولیه =====
-        window.onload = function() {
-            populateProvinces();
-            
-            // تنظیم ارتفاع صفحه
-            function setHeight() {
-                const vh = window.innerHeight * 0.01;
-                document.documentElement.style.setProperty('--vh', `${vh}px`);
+                notification.onclick = function() {
+                    window.focus();
+                    this.close();
+                };
             }
+        }
+
+        // افزودن به تاریخچه
+        function addToHistory(level) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fa-IR');
+            const dateString = now.toLocaleDateString('fa-IR');
             
-            setHeight();
-            window.addEventListener('resize', setHeight);
-        };
+            history.push({
+                level: level,
+                time: timeString,
+                date: dateString,
+                timestamp: now.getTime()
+            });
+
+            // محدود کردن تاریخچه به 50 مورد
+            if (history.length > 50) {
+                history = history.slice(-50);
+            }
+
+            localStorage.setItem('batteryAlertHistory', JSON.stringify(history));
+            displayHistory();
+        }
+
+        // نمایش تاریخچه
+        function displayHistory() {
+            if (history.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; color: #95a5a6; padding: 20px;"><i class="fas fa-info-circle"></i> تاکنون هشدار ثبت نشده</div>';
+                historyCount.textContent = '0';
+                return;
+            }
+
+            const historyHtml = history.reverse().map(item => `
+                <div class="history-item">
+                    <i class="fas fa-bell"></i>
+                    <div>
+                        <div style="font-weight: bold;">هشدار ${item.level}%</div>
+                        <div class="time">${item.date} - ${item.time}</div>
+                    </div>
+                    <span class="level">${item.level}%</span>
+                </div>
+            `).join('');
+
+            historyList.innerHTML = historyHtml;
+            historyCount.textContent = history.length;
+        }
+
+        // آپدیت آیکون باتری
+        function updateBatteryIcon(level, charging) {
+            let iconClass = 'fa-battery-empty';
+            
+            if (level >= 90) iconClass = 'fa-battery-full';
+            else if (level >= 70) iconClass = 'fa-battery-three-quarters';
+            else if (level >= 50) iconClass = 'fa-battery-half';
+            else if (level >= 25) iconClass = 'fa-battery-quarter';
+            else iconClass = 'fa-battery-empty';
+
+            batteryIconMain.className = `fas ${iconClass}`;
+            
+            if (charging) {
+                batteryIconMain.style.color = '#27ae60';
+            } else {
+                batteryIconMain.style.color = '#2c3e50';
+            }
+
+            batteryLevelIcon.textContent = level + '%';
+        }
+
+        // بررسی وضعیت هشدار
+        function checkAlert(level, charging) {
+            if (!alertEnabled || !charging) {
+                alertTriggered = false;
+                return;
+            }
+
+            const threshold = alertThreshold;
+            
+            if (alertType === 'once') {
+                if (level >= threshold && !alertTriggered) {
+                    triggerAlert(level);
+                    alertTriggered = true;
+                }
+            } else {
+                if (level >= threshold) {
+                    triggerAlert(level);
+                }
+            }
+        }
+
+        // فعال کردن هشدار
+        function triggerAlert(level) {
+            const message = `⚠️ باتری به ${level}% رسید! زمان قطع شارژ`;
+            showNotification(message);
+            addToHistory(level);
+            
+            // ویبره در موبایل
+            if (navigator.vibrate) {
+                navigator.vibrate([500, 200, 500]);
+            }
+        }
+
+        // آپدیت اطلاعات باتری
+        function updateBatteryInfo() {
+            if (!battery) return;
+
+            const level = Math.round(battery.level * 100);
+            const charging = battery.charging;
+
+            // آپدیت نمایشگرها
+            batteryPercentage.textContent = level + '%';
+            batteryLevelInfo.textContent = level + '%';
+            updateBatteryIcon(level, charging);
+
+            // وضعیت شارژ
+            if (charging) {
+                batteryStatus.innerHTML = '<i class="fas fa-bolt" style="color: #27ae60;"></i> در حال شارژ';
+                connectionStatus.className = 'connection-status status-charging';
+                connectionText.innerHTML = '<i class="fas fa-plug"></i> متصل به شارژر';
+                chargingStatusInfo.textContent = 'در حال شارژ';
+                
+                // بررسی هشدار
+                checkAlert(level, charging);
+            } else {
+                batteryStatus.innerHTML = '<i class="fas fa-power-off" style="color: #e74c3c;"></i> در حال استفاده';
+                connectionStatus.className = 'connection-status status-discharging';
+                connectionText.innerHTML = '<i class="fas fa-plug"></i> قطع از شارژر';
+                chargingStatusInfo.textContent = 'شارژر قطع است';
+                alertTriggered = false;
+            }
+
+            // زمان شارژ/دشارژ
+            if (battery.chargingTime !== Infinity) {
+                const hours = Math.floor(battery.chargingTime / 3600);
+                const minutes = Math.floor((battery.chargingTime % 3600) / 60);
+                chargingTime.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
+            } else {
+                chargingTime.textContent = '--';
+            }
+
+            if (battery.dischargingTime !== Infinity) {
+                const hours = Math.floor(battery.dischargingTime / 3600);
+                const minutes = Math.floor((battery.dischargingTime % 3600) / 60);
+                dischargingTime.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
+            } else {
+                dischargingTime.textContent = '--';
+            }
+        }
+
+        // رویدادهای باتری
+        function setupBatteryListeners() {
+            battery.addEventListener('levelchange', () => {
+                updateBatteryInfo();
+            });
+
+            battery.addEventListener('chargingchange', () => {
+                updateBatteryInfo();
+                const status = battery.charging ? 'وصل شد' : 'قطع شد';
+                showNotification(`شارژر ${status}`);
+            });
+
+            battery.addEventListener('chargingtimechange', () => {
+                updateBatteryInfo();
+            });
+
+            battery.addEventListener('dischargingtimechange', () => {
+                updateBatteryInfo();
+            });
+        }
+
+        // مقداردهی اولیه
+        async function init() {
+            try {
+                battery = await navigator.getBattery();
+                updateBatteryInfo();
+                setupBatteryListeners();
+
+                // بررسی مجوز نوتیفیکیشن
+                if (Notification.permission === 'granted') {
+                    notificationPermission = true;
+                } else if (Notification.permission !== 'denied') {
+                    permissionRequest.classList.add('active');
+                }
+
+                // نمایش تاریخچه
+                displayHistory();
+
+                showNotification('برنامه هشدار باتری فعال شد');
+            } catch (error) {
+                alert('خطا در دسترسی به اطلاعات باتری');
+            }
+        }
+
+        // رویدادهای کاربر
+        alertToggle.addEventListener('change', (e) => {
+            alertEnabled = e.target.checked;
+            alertThresholdInput.disabled = !e.target.checked;
+            showNotification(`هشدار ${e.target.checked ? 'فعال' : 'غیرفعال'} شد`);
+        });
+
+        alertThresholdInput.addEventListener('change', (e) => {
+            let value = parseInt(e.target.value);
+            value = Math.min(100, Math.max(1, value));
+            alertThreshold = value;
+            alertThresholdInput.value = value;
+            alertTriggered = false;
+        });
+
+        alertTypeInputs.forEach(input => {
+            input.addEventListener('change', (e) => {
+                alertType = e.target.value;
+                alertTriggered = false;
+                
+                const labels = document.querySelectorAll('.alert-type label');
+                labels.forEach(label => label.classList.remove('active'));
+                e.target.parentElement.classList.add('active');
+            });
+        });
+
+        testNotificationBtn.addEventListener('click', async () => {
+            const permitted = await requestNotificationPermission();
+            if (permitted) {
+                showNotification('این یک نوتیفیکیشن تست است');
+                
+                if (navigator.vibrate) {
+                    navigator.vibrate(200);
+                }
+            }
+        });
+
+        requestPermissionBtn.addEventListener('click', requestNotificationPermission);
+
+        clearHistoryBtn.addEventListener('click', () => {
+            if (confirm('آیا از پاک کردن تاریخچه اطمینان دارید؟')) {
+                history = [];
+                localStorage.setItem('batteryAlertHistory', JSON.stringify(history));
+                displayHistory();
+                showNotification('تاریخچه پاک شد');
+            }
+        });
+
+        // شبیه‌سازی برای تست (در صورت عدم دسترسی به باتری واقعی)
+        function simulateBatteryForTesting() {
+            if (!battery) {
+                let level = 50;
+                let charging = true;
+                
+                setInterval(() => {
+                    if (charging) {
+                        level += 1;
+                        if (level > 100) level = 0;
+                    }
+                    
+                    // آپدیت نمایش
+                    batteryPercentage.textContent = level + '%';
+                    batteryLevelInfo.textContent = level + '%';
+                    updateBatteryIcon(level, charging);
+                    
+                    if (charging && level >= alertThreshold) {
+                        triggerAlert(level);
+                    }
+                }, 2000);
+            }
+        }
+
+        // شروع برنامه
+        init();
+
+        // اگر Battery API پشتیبانی نمی‌شود، از شبیه‌ساز استفاده کن
+        setTimeout(() => {
+            if (!battery) {
+                simulateBatteryForTesting();
+                connectionStatus.className = 'connection-status status-charging';
+                connectionText.innerHTML = '<i class="fas fa-plug"></i> حالت شبیه‌سازی';
+            }
+        }, 2000);
     </script>
 </body>
 </html>
