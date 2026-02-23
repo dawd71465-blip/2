@@ -3,908 +3,814 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-    <title>آکادمی قرآن کودک | Quran Kids Academy</title>
+    <title>سیستم تشخیص سرعت‌گیر جاده | Speed Bump Alert</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Vazir', 'B Nazanin', 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif;
         }
 
         :root {
-            --primary: #9b59b6;
+            --primary: #2c3e50;
             --secondary: #3498db;
-            --success: #2ecc71;
-            --warning: #f1c40f;
+            --success: #27ae60;
+            --warning: #f39c12;
             --danger: #e74c3c;
-            --dark: #2c3e50;
-            --light: #f5f6fa;
-            --gold: #f39c12;
-            --soft-pink: #f8bbd0;
-            --soft-blue: #bbdefb;
-            --soft-green: #c8e6c9;
-            --soft-yellow: #fff9c4;
+            --dark: #1a2634;
+            --light: #ecf0f1;
+            --speed-color: #e67e22;
+            --bump-color: #c0392b;
         }
 
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            direction: rtl;
         }
 
-        /* ===== دکمه تغییر رابط ===== */
-        .view-controls {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            z-index: 9999;
-            background: white;
-            border-radius: 60px;
-            padding: 15px 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            display: flex;
-            gap: 15px;
-            border: 4px solid var(--gold);
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .view-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 35px;
-            border: 3px solid transparent;
-            background: var(--light);
-            font-size: 2em;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .view-btn.active {
-            background: var(--success);
-            color: white;
-            border-color: var(--gold);
-            transform: scale(1.1);
-        }
-
-        .view-btn:hover {
-            transform: scale(1.2) rotate(5deg);
-        }
-
-        /* ===== کانتینر اصلی ===== */
-        .site-container {
+        .app-container {
             max-width: 1400px;
             margin: 0 auto;
-            transition: all 0.5s;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* ===== استایل‌های مشترک ===== */
+        /* هدر */
         .header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--dark));
             padding: 30px;
-            margin-bottom: 30px;
+            color: white;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            border: 5px solid rgba(255,255,255,0.3);
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .logo-icon {
-            font-size: 4em;
-            background: var(--soft-yellow);
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
+            font-size: 3.5em;
+            background: var(--warning);
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 5px solid white;
+            transform: rotate(-5deg);
         }
 
         .logo-text h1 {
-            font-size: 2.5em;
-            color: white;
+            font-size: 2.2em;
             font-weight: 800;
         }
 
         .logo-text p {
-            color: var(--soft-yellow);
-            font-size: 1.2em;
+            color: var(--warning);
+            font-size: 1.1em;
         }
 
-        .nav-menu {
+        .stats {
             display: flex;
-            gap: 15px;
-        }
-
-        .nav-item {
-            background: rgba(255,255,255,0.2);
-            width: 70px;
-            height: 70px;
-            border-radius: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2em;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 3px solid white;
-        }
-
-        .nav-item:hover {
-            background: var(--gold);
-            transform: scale(1.2) rotate(5deg);
-        }
-
-        /* ===== کارت‌ها ===== */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-            margin: 40px 0;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
         }
 
-        .card {
-            background: white;
-            border-radius: 60px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 4px solid transparent;
+        .stat-item {
             text-align: center;
         }
 
-        .card:hover {
-            transform: translateY(-15px) scale(1.02);
-            border-color: var(--gold);
-        }
-
-        .card-icon {
-            font-size: 4em;
-            background: var(--soft-blue);
-            width: 120px;
-            height: 120px;
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            transform: rotate(-5deg);
-        }
-
-        .card h3 {
+        .stat-value {
             font-size: 2em;
+            font-weight: 800;
+            color: var(--warning);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--light);
+        }
+
+        /* کنترل پنل */
+        .control-panel {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            padding: 20px;
+            background: #f8faff;
+        }
+
+        /* سایدبار */
+        .sidebar {
+            background: white;
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .sidebar-title {
+            font-size: 1.5em;
             color: var(--primary);
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--warning);
         }
 
-        .card p {
-            color: var(--dark);
-            font-size: 1.2em;
+        .info-card {
+            background: linear-gradient(145deg, #f8faff, #ffffff);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-right: 5px solid var(--secondary);
         }
 
-        .card-badge {
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 15px;
+        }
+
+        .bump-alert {
+            background: var(--danger);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 10px 0;
+            animation: pulse 1.5s infinite;
+            display: none;
+        }
+
+        .bump-alert.show {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* نقشه */
+        .map-container {
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            height: 600px;
+            position: relative;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            z-index: 1;
+        }
+
+        /* کنترل‌های نقشه */
+        .map-controls {
             position: absolute;
             top: 20px;
             left: 20px;
-            background: var(--gold);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: 700;
-        }
-
-        /* ===== بخش قرآن ===== */
-        .quran-section {
-            background: white;
-            border-radius: 100px;
-            padding: 40px;
-            margin: 40px 0;
-            border: 5px solid var(--success);
-        }
-
-        .surah-selector {
+            z-index: 1000;
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 30px;
+            gap: 10px;
+            flex-direction: column;
         }
 
-        .surah-btn {
-            padding: 15px 30px;
-            border-radius: 50px;
+        .map-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: white;
             border: none;
-            background: var(--soft-blue);
-            font-size: 1.3em;
-            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 1.5em;
             cursor: pointer;
             transition: all 0.3s;
         }
 
-        .surah-btn.active {
-            background: var(--success);
+        .map-btn:hover {
+            background: var(--warning);
             color: white;
             transform: scale(1.1);
         }
 
-        .quran-display {
-            background: linear-gradient(145deg, #f9f7e8, #fff9e6);
-            border-radius: 80px;
-            padding: 40px;
-            text-align: center;
-            border: 5px solid var(--gold);
-        }
-
-        .aya-text {
-            font-size: 2.5em;
-            line-height: 2;
-            font-family: 'Amiri', 'Traditional Arabic', serif;
-            margin-bottom: 30px;
-        }
-
-        .audio-controls {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin: 30px 0;
-        }
-
-        .audio-btn {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--success);
-            border: none;
-            color: white;
-            font-size: 2em;
-            cursor: pointer;
-        }
-
-        /* ===== بازی‌ها ===== */
-        .games-section {
-            background: linear-gradient(135deg, var(--soft-pink), var(--soft-blue));
-            border-radius: 100px;
-            padding: 40px;
-            margin: 40px 0;
-        }
-
-        .game-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-
-        .game-item {
+        /* هشدار سرعت */
+        .speed-warning {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
             background: white;
-            border-radius: 60px;
-            padding: 30px;
-            text-align: center;
+            border-radius: 50px;
+            padding: 20px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+            border-right: 10px solid var(--danger);
+            min-width: 300px;
+        }
+
+        .speed-warning.show {
+            display: block;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .speed-value {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: var(--danger);
+        }
+
+        /* لیست سرعت‌گیرها */
+        .bumps-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .bump-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-right: 4px solid var(--warning);
+            cursor: pointer;
             transition: all 0.3s;
         }
 
-        .game-item:hover {
-            transform: scale(1.05) rotate(2deg);
+        .bump-item:hover {
+            transform: translateX(-5px);
+            background: var(--light);
         }
 
-        .play-btn {
-            background: var(--success);
+        .bump-distance {
+            background: var(--secondary);
             color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 40px;
-            font-size: 1.3em;
-            margin-top: 20px;
-            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
         }
 
-        /* ===== پیشرفت ===== */
-        .progress-section {
-            background: white;
-            border-radius: 100px;
-            padding: 40px;
-            margin: 40px 0;
-            border: 5px solid var(--secondary);
+        /* حالت شب */
+        .night-mode {
+            background: linear-gradient(135deg, #2c3e50, #1a2634);
         }
 
-        .progress-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            text-align: center;
-        }
-
-        .circle-progress {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: conic-gradient(var(--success) 0deg 270deg, #ecf0f1 270deg 360deg);
-            margin: 0 auto 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            font-weight: 800;
-        }
-
-        /* ===== فوتر ===== */
-        .footer {
-            background: var(--dark);
-            border-radius: 80px 80px 30px 30px;
-            padding: 50px;
+        .night-mode .sidebar {
+            background: #2d3e4f;
             color: white;
-            margin-top: 50px;
         }
 
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-        }
-
-        /* ===== مدال ===== */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 80px;
-            padding: 50px;
-            max-width: 500px;
-            text-align: center;
-            animation: pop 0.5s;
-        }
-
-        @keyframes pop {
-            from { transform: scale(0); }
-            to { transform: scale(1); }
-        }
-
-        /* ===== حالت‌های مختلف دستگاه ===== */
-        .site-container.mobile {
-            max-width: 480px;
-        }
-
-        .site-container.mobile .header {
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .site-container.mobile .logo {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .site-container.mobile .nav-menu {
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .site-container.mobile .surah-selector {
-            flex-direction: column;
-        }
-
-        .site-container.mobile .aya-text {
-            font-size: 1.5em;
-        }
-
-        .site-container.tablet {
-            max-width: 900px;
-        }
-
-        .site-container.tablet .cards-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .site-container.laptop {
-            max-width: 1400px;
-        }
-
-        /* ===== انیمیشن‌ها ===== */
-        .floating {
-            animation: float 3s infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .sparkle {
-            position: relative;
-        }
-
-        .sparkle::after {
-            content: "✨";
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            animation: sparkle 1s infinite;
-        }
-
-        @keyframes sparkle {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.5); }
-        }
-
-        /* ===== استایل‌های اضافی ===== */
-        .star-display {
-            font-size: 2em;
-            color: var(--gold);
-            cursor: pointer;
-        }
-
-        .section-title {
-            font-size: 2.5em;
-            color: var(--primary);
-            margin-bottom: 30px;
-            border-right: 10px solid var(--gold);
-            padding-right: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .view-controls {
-                bottom: 10px;
-                left: 10px;
-                padding: 10px;
+        /* ریسپانسیو */
+        @media (max-width: 968px) {
+            .control-panel {
+                grid-template-columns: 1fr;
             }
             
-            .view-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5em;
+            .header {
+                flex-direction: column;
+                text-align: center;
             }
+            
+            .stats {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* آیکون‌های سرعت‌گیر */
+        .bump-icon {
+            background: var(--danger);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
         }
     </style>
 </head>
 <body>
-    <!-- دکمه‌های تغییر رابط -->
-    <div class="view-controls">
-        <button class="view-btn active" onclick="changeView('mobile')" title="حالت موبایل">📱</button>
-        <button class="view-btn" onclick="changeView('tablet')" title="حالت تبلت">📟</button>
-        <button class="view-btn" onclick="changeView('laptop')" title="حالت لپ‌تاپ">💻</button>
-    </div>
-
-    <!-- کانتینر اصلی سایت -->
-    <div class="site-container mobile" id="siteContainer">
+    <div class="app-container">
         <!-- هدر -->
         <header class="header">
             <div class="logo">
-                <div class="logo-icon floating">📖</div>
+                <div class="logo-icon">🚧</div>
                 <div class="logo-text">
-                    <h1>🌙 آکادمی قرآن</h1>
-                    <p>کودکان ایران زمین</p>
+                    <h1>Speed Bump Alert</h1>
+                    <p>هشدار سرعت‌گیر جاده‌ای | زنده و هوشمند</p>
                 </div>
             </div>
-            <div class="nav-menu">
-                <div class="nav-item" onclick="scrollToSection('home')">🏠</div>
-                <div class="nav-item" onclick="scrollToSection('quran')">📖</div>
-                <div class="nav-item" onclick="scrollToSection('games')">🎮</div>
-                <div class="nav-item" onclick="scrollToSection('progress')">⭐</div>
-                <div class="nav-item" onclick="showHelp()">❓</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalBumps">۰</div>
+                    <div class="stat-label">تعداد سرعت‌گیرها</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="nearbyBumps">۰</div>
+                    <div class="stat-label">سرعت‌گیر نزدیک</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="currentSpeed">۰</div>
+                    <div class="stat-label">سرعت فعلی (km/h)</div>
+                </div>
             </div>
         </header>
 
-        <!-- بخش خوشامدگویی -->
-        <section id="home" class="welcome-section" style="background: white; border-radius: 80px; padding: 40px; margin-bottom: 30px; text-align: center; border: 5px dashed var(--primary);">
-            <h1 style="font-size: 3em; color: var(--primary);">✨ سلام کودک قرآنی! ✨</h1>
-            <p style="font-size: 1.8em; margin: 20px 0;">به آکادمی قرآن خوش اومدی</p>
-            <div style="display: flex; gap: 20px; justify-content: center; font-size: 4em;">
-                <span class="floating">👦</span>
-                <span class="floating" style="animation-delay: 0.2s;">👧</span>
-                <span class="floating" style="animation-delay: 0.4s;">🧒</span>
-            </div>
-        </section>
-
-        <!-- دوره‌های آموزشی -->
-        <h2 class="section-title">📚 دوره‌های آموزشی</h2>
-        <div class="cards-grid">
-            <div class="card" onclick="startLesson('alfabet')">
-                <span class="card-badge">⭐ سطح 1</span>
-                <div class="card-icon">🔤</div>
-                <h3>الفبای عربی</h3>
-                <p>یادگیری حروف قرآن با شعر</p>
-            </div>
-            <div class="card" onclick="startLesson('tajweed')">
-                <span class="card-badge">⭐⭐ سطح 2</span>
-                <div class="card-icon">🎵</div>
-                <h3>تجوید مقدماتی</h3>
-                <p>قواعد ساده خواندن قرآن</p>
-            </div>
-            <div class="card" onclick="startLesson('surahs')">
-                <span class="card-badge">⭐⭐⭐ سطح 3</span>
-                <div class="card-icon">📖</div>
-                <h3>سوره‌های کوتاه</h3>
-                <p>حفظ سوره‌های جزء ۳۰</p>
-            </div>
-        </div>
-
-        <!-- بخش قرآن -->
-        <section id="quran" class="quran-section">
-            <h2 class="section-title">📖 قرآن کریم</h2>
-            
-            <div class="surah-selector">
-                <button class="surah-btn active" onclick="changeSurah(1, this)">سوره فاتحه</button>
-                <button class="surah-btn" onclick="changeSurah(112, this)">سوره اخلاص</button>
-                <button class="surah-btn" onclick="changeSurah(113, this)">سوره فلق</button>
-                <button class="surah-btn" onclick="changeSurah(114, this)">سوره ناس</button>
-                <button class="surah-btn" onclick="changeSurah(108, this)">سوره کوثر</button>
-            </div>
-
-            <div class="quran-display">
-                <div class="aya-text" id="ayaText">
-                    بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ<br>
-                    الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ
-                </div>
-                <div style="font-size: 1.5em; color: var(--primary); margin-bottom: 20px;" id="translationText">
-                    به نام خداوند بخشنده مهربان<br>
-                    ستایش مخصوص خداوند جهانیان است
-                </div>
+        <!-- کنترل پنل اصلی -->
+        <div class="control-panel">
+            <!-- سایدبار اطلاعات -->
+            <div class="sidebar">
+                <h3 class="sidebar-title">📍 اطلاعات سرعت‌گیرها</h3>
                 
-                <div class="audio-controls">
-                    <button class="audio-btn" onclick="playAudio()">▶️</button>
-                    <button class="audio-btn" onclick="pauseAudio()">⏸️</button>
-                    <button class="audio-btn" onclick="repeatAudio()">🔄</button>
+                <div class="info-card">
+                    <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+                        <span style="font-size: 2em;">⚠️</span>
+                        <div>
+                            <h3>هشدار لحظه‌ای</h3>
+                            <p>نزدیک‌ترین سرعت‌گیر را نمایش می‌دهد</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <span>نزدیک‌ترین سرعت‌گیر:</span>
+                        <span id="nearestDistance" style="font-weight: 800; color: var(--danger);">-- متر</span>
+                    </div>
+                    
+                    <div class="info-row">
+                        <span>زمان تقریبی:</span>
+                        <span id="estimatedTime">-- ثانیه</span>
+                    </div>
                 </div>
 
-                <div style="margin-top: 20px;">
-                    <span class="star-display" onclick="addStar()">⭐</span>
-                    <span style="font-size: 1.5em;">ستاره‌های تو: <span id="starCount">150</span></span>
+                <!-- هشدار سرعت -->
+                <div class="bump-alert" id="bumpAlert">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span style="font-size: 3em;">🚨</span>
+                        <div>
+                            <h3>⚠️ هشدار!</h3>
+                            <p id="alertMessage">به سرعت‌گیر نزدیک می‌شوید</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- بخش بازی‌ها -->
-        <section id="games" class="games-section">
-            <h2 class="section-title">🎮 بازی و سرگرمی</h2>
-            
-            <div class="game-container">
-                <div class="game-item">
-                    <span style="font-size: 4em;">🧩</span>
-                    <h3>پازل حروف</h3>
-                    <p>حروف عربی رو کنار هم بچین</p>
-                    <button class="play-btn" onclick="playGame('puzzle')">شروع بازی</button>
+                <!-- لیست سرعت‌گیرها -->
+                <h3 class="sidebar-title" style="margin-top: 20px;">📋 لیست سرعت‌گیرها</h3>
+                <div class="bumps-list" id="bumpsList">
+                    <!-- آیتم‌ها با جاوااسکریپت اضافه می‌شوند -->
                 </div>
-                <div class="game-item">
-                    <span style="font-size: 4em;">🔊</span>
-                    <h3>تست گوش دادن</h3>
-                    <p>صدای قرآن رو تشخیص بده</p>
-                    <button class="play-btn" onclick="playGame('listening')">شروع بازی</button>
-                </div>
-                <div class="game-item">
-                    <span style="font-size: 4em;">🎨</span>
-                    <h3>نقاشی قرآنی</h3>
-                    <p>به آیات رنگ بزن</p>
-                    <button class="play-btn" onclick="playGame('coloring')">شروع بازی</button>
-                </div>
-                <div class="game-item">
-                    <span style="font-size: 4em;">🏆</span>
-                    <h3>مسابقه</h3>
-                    <p>با دوستات رقابت کن</p>
-                    <button class="play-btn" onclick="playGame('competition')">شروع بازی</button>
-                </div>
-            </div>
-        </section>
 
-        <!-- بخش پیشرفت -->
-        <section id="progress" class="progress-section">
-            <h2 class="section-title">⭐ پیشرفت من</h2>
-            
-            <div class="progress-stats">
-                <div>
-                    <div class="circle-progress">۷۵%</div>
-                    <h3>الفبا</h3>
-                </div>
-                <div>
-                    <div class="circle-progress">۴۰%</div>
-                    <h3>تجوید</h3>
-                </div>
-                <div>
-                    <div class="circle-progress">۶۰%</div>
-                    <h3>حفظ</h3>
-                </div>
+                <!-- دکمه اضافه کردن سرعت‌گیر -->
+                <button class="map-btn" style="width: 100%; margin-top: 20px; border-radius: 50px; padding: 15px;" onclick="addNewBump()">
+                    ➕ افزودن سرعت‌گیر جدید
+                </button>
             </div>
 
-            <div style="text-align: center; margin-top: 30px;">
-                <div style="font-size: 3em; color: var(--gold);">⭐⭐⭐⭐☆</div>
-                <p style="font-size: 1.5em;">عالی پیش رفتی! ادامه بده</p>
-            </div>
-        </section>
+            <!-- بخش نقشه -->
+            <div class="map-container">
+                <div id="map"></div>
+                
+                <!-- کنترل‌های نقشه -->
+                <div class="map-controls">
+                    <button class="map-btn" onclick="centerOnUser()" title="موقعیت من">📍</button>
+                    <button class="map-btn" onclick="toggleLayer()" title="تغییر نقشه">🗺️</button>
+                    <button class="map-btn" onclick="zoomIn()" title="بزرگنمایی">➕</button>
+                    <button class="map-btn" onclick="zoomOut()" title="کوکنمایی">➖</button>
+                    <button class="map-btn" onclick="toggleNightMode()" title="حالت شب">🌙</button>
+                </div>
 
-        <!-- بخش جوایز -->
-        <div style="background: linear-gradient(145deg, #fce4ec, #f3e5f5); border-radius: 80px; padding: 40px; margin: 40px 0;">
-            <h2 style="font-size: 2.5em; color: var(--primary); text-align: center;">🎁 جایزه‌های ویژه</h2>
-            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
-                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px; text-align: center;">
-                    <span style="font-size: 4em;">🏅</span>
-                    <h3>مدال برنز</h3>
-                    <p>۵۰ ستاره</p>
-                </div>
-                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px; text-align: center;">
-                    <span style="font-size: 4em;">🥈</span>
-                    <h3>مدال نقره</h3>
-                    <p>۱۰۰ ستاره</p>
-                </div>
-                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px; text-align: center;">
-                    <span style="font-size: 4em;">🥇</span>
-                    <h3>مدال طلا</h3>
-                    <p>۲۰۰ ستاره</p>
+                <!-- هشدار سرعت -->
+                <div class="speed-warning" id="speedWarning">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 3em;">⚠️</span>
+                        <div>
+                            <h3>کاهش سرعت!</h3>
+                            <div class="speed-value" id="warningSpeed">-- km/h</div>
+                            <p id="warningDistance">در فاصله -- متری</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- فوتر -->
-        <footer class="footer">
-            <div class="footer-content">
-                <div>
-                    <h4 style="color: var(--gold); font-size: 2em;">🌙 آکادمی قرآن</h4>
-                    <p style="font-size: 1.2em;">آموزش قرآن برای کودکان ایران</p>
-                </div>
-                <div>
-                    <h4 style="color: var(--gold);">دسترسی سریع</h4>
-                    <ul style="list-style: none; font-size: 1.2em;">
-                        <li style="margin: 10px 0;"><a href="#" onclick="scrollToSection('home')" style="color: white; text-decoration: none;">خانه</a></li>
-                        <li style="margin: 10px 0;"><a href="#" onclick="scrollToSection('quran')" style="color: white; text-decoration: none;">قرآن</a></li>
-                        <li style="margin: 10px 0;"><a href="#" onclick="scrollToSection('games')" style="color: white; text-decoration: none;">بازی‌ها</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 style="color: var(--gold);">ارتباط با ما</h4>
-                    <ul style="list-style: none; font-size: 1.2em;">
-                        <li style="margin: 10px 0;">📞 ۰۲۱-۱۲۳۴۵۶۷۸</li>
-                        <li style="margin: 10px 0;">📧 info@quran-kids.ir</li>
-                        <li style="margin: 10px 0;">🏠 تهران، ایران</li>
-                    </ul>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 40px; font-size: 1.2em;">
-                © ۲۰۲۶ - تمامی حقوق برای آکادمی قرآن کودک محفوظ است
-            </div>
+        <footer style="background: var(--dark); color: white; padding: 20px; text-align: center;">
+            <p>⚠️ این برنامه به صورت زنده موقعیت شما را ردیابی می‌کند و نسبت به سرعت‌گیرها هشدار می‌دهد</p>
+            <p style="margin-top: 10px; color: var(--warning);">© ۲۰۲۶ - سیستم تشخیص هوشمند سرعت‌گیر جاده</p>
         </footer>
-    </div>
-
-    <!-- مدال‌ها -->
-    <div class="modal" id="helpModal">
-        <div class="modal-content">
-            <span style="font-size: 5em;">❓</span>
-            <h2 style="color: var(--primary);">راهنما</h2>
-            <p style="font-size: 1.3em; margin: 20px 0;">برای شروع روی هر بخش کلیک کن!<br>با جمع کردن ستاره جایزه بگیر</p>
-            <button class="play-btn" onclick="closeModal()">متوجه شدم</button>
-        </div>
-    </div>
-
-    <div class="modal" id="congratsModal">
-        <div class="modal-content">
-            <span style="font-size: 5em;">🎉</span>
-            <h2 style="color: var(--success);">آفرین!</h2>
-            <p style="font-size: 1.3em;" id="congratsMessage">تو ستاره جدید گرفتی!</p>
-            <button class="play-btn" onclick="closeModal()">هوراا!</button>
-        </div>
     </div>
 
     <script>
         // ===== متغیرهای اصلی =====
-        let currentView = 'mobile';
-        let currentSurah = 1;
-        let starCount = 150;
-        let audioEnabled = true;
+        let map;
+        let userMarker;
+        let userLocation = { lat: 35.6892, lng: 51.3890 }; // پیش‌فرض: تهران
+        let watchId;
+        let bumps = [];
+        let currentSpeed = 0;
+        let lastPosition = null;
+        let lastTime = null;
+        let nightMode = false;
+        let currentLayer = 'normal';
+        
+        // سرعت‌گیرهای نمونه (واقعی در تهران)
+        const sampleBumps = [
+            { lat: 35.6892, lng: 51.3890, name: "سرعت‌گیر ولیعصر", severity: "high" },
+            { lat: 35.7020, lng: 51.4015, name: "سرعت‌گیر انقلاب", severity: "medium" },
+            { lat: 35.7219, lng: 51.4347, name: "سرعت‌گیر شریعتی", severity: "high" },
+            { lat: 35.7519, lng: 51.4247, name: "سرعت‌گیر پاسداران", severity: "low" },
+            { lat: 35.7692, lng: 51.4593, name: "سرعت‌گیر سهروردی", severity: "medium" },
+            { lat: 35.7382, lng: 51.4793, name: "سرعت‌گیر رسالت", severity: "high" },
+            { lat: 35.7282, lng: 51.3693, name: "سرعت‌گیر آزادی", severity: "medium" },
+            { lat: 35.7182, lng: 51.3293, name: "سرعت‌گیر تهران‌ویلا", severity: "high" }
+        ];
 
-        // ===== تغییر رابط کاربری =====
-        function changeView(view) {
-            currentView = view;
-            const container = document.getElementById('siteContainer');
-            container.className = 'site-container ' + view;
-            
-            // به‌روزرسانی دکمه‌ها
-            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // ذخیره در localStorage
-            localStorage.setItem('preferredView', view);
-            
-            // نمایش پیام
-            showMessage(`✅ حالت ${view === 'mobile' ? 'موبایل' : view === 'tablet' ? 'تبلت' : 'لپ‌تاپ'} فعال شد`);
+        // ===== راه‌اندازی نقشه =====
+        function initMap() {
+            // ایجاد نقشه
+            map = L.map('map').setView([userLocation.lat, userLocation.lng], 15);
+
+            // لایه نقشه
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // اضافه کردن سرعت‌گیرهای نمونه
+            loadSampleBumps();
+
+            // شروع ردیابی موقعیت
+            startTracking();
+
+            // به‌روزرسانی لیست
+            updateBumpsList();
         }
 
-        // ======== بخش قرآن ========
-        function changeSurah(surahNumber, element) {
-            currentSurah = surahNumber;
-            
-            // به‌روزرسانی کلاس دکمه‌ها
-            document.querySelectorAll('.surah-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            
-            // متن سوره‌ها
-            const surahs = {
-                1: {
-                    text: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ<br>الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
-                    translation: "به نام خداوند بخشنده مهربان<br>ستایش مخصوص خداوند جهانیان است"
-                },
-                112: {
-                    text: "قُلْ هُوَ اللَّهُ أَحَدٌ<br>اللَّهُ الصَّمَدُ",
-                    translation: "بگو او خداوند یکتاست<br>خداوند بی‌نیاز"
-                },
-                113: {
-                    text: "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ",
-                    translation: "بگو پناه می‌برم به پروردگار سپیده صبح"
-                },
-                114: {
-                    text: "قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
-                    translation: "بگو پناه می‌برم به پروردگار مردم"
-                },
-                108: {
-                    text: "إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ",
-                    translation: "ما به تو کوثر عطا کردیم"
+        // ===== لود سرعت‌گیرهای نمونه =====
+        function loadSampleBumps() {
+            bumps = sampleBumps.map((bump, index) => {
+                // تعیین رنگ بر اساس شدت
+                let color = '#e74c3c'; // high
+                if(bump.severity === 'medium') color = '#f39c12';
+                if(bump.severity === 'low') color = '#27ae60';
+
+                // ایجاد آیکون
+                const icon = L.divIcon({
+                    className: 'bump-icon',
+                    html: '🚧',
+                    iconSize: [30, 30]
+                });
+
+                // ایجاد marker
+                const marker = L.marker([bump.lat, bump.lng], { icon }).addTo(map);
+                marker.bindPopup(`<b>${bump.name}</b><br>شدت: ${bump.severity}<br>فاصله: محاسبه...`);
+
+                return {
+                    ...bump,
+                    id: index + 1,
+                    marker: marker
+                };
+            });
+
+            document.getElementById('totalBumps').textContent = bumps.length;
+        }
+
+        // ===== ردیابی موقعیت =====
+        function startTracking() {
+            if (navigator.geolocation) {
+                watchId = navigator.geolocation.watchPosition(
+                    position => {
+                        const { latitude, longitude, speed } = position.coords;
+                        
+                        // به‌روزرسانی موقعیت
+                        userLocation = { lat: latitude, lng: longitude };
+                        
+                        // محاسبه سرعت
+                        if(speed !== null) {
+                            currentSpeed = Math.round(speed * 3.6); // تبدیل m/s به km/h
+                        } else {
+                            // محاسبه سرعت از روی فاصله و زمان
+                            if(lastPosition && lastTime) {
+                                const distance = getDistance(lastPosition, userLocation);
+                                const timeDiff = (Date.now() - lastTime) / 1000; // ثانیه
+                                if(timeDiff > 0) {
+                                    currentSpeed = Math.round((distance / timeDiff) * 3.6);
+                                }
+                            }
+                            
+                            lastPosition = userLocation;
+                            lastTime = Date.now();
+                        }
+
+                        // به‌روزرسانی نمایش سرعت
+                        document.getElementById('currentSpeed').textContent = currentSpeed;
+
+                        // به‌روزرسانی یا ایجاد مارکر کاربر
+                        if(userMarker) {
+                            userMarker.setLatLng([latitude, longitude]);
+                        } else {
+                            const userIcon = L.divIcon({
+                                className: 'user-marker',
+                                html: '🚗',
+                                iconSize: [30, 30]
+                            });
+                            userMarker = L.marker([latitude, longitude], { icon: userIcon }).addTo(map);
+                            userMarker.bindPopup('موقعیت شما');
+                        }
+
+                        // مرکز کردن نقشه روی کاربر (اختیاری)
+                        // map.panTo([latitude, longitude]);
+
+                        // بررسی سرعت‌گیرهای نزدیک
+                        checkNearbyBumps();
+                    },
+                    error => {
+                        console.error('خطا در دریافت موقعیت:', error);
+                        alert('لطفاً دسترسی به موقعیت مکانی را فعال کنید');
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        maximumAge: 0,
+                        timeout: 5000
+                    }
+                );
+            } else {
+                alert('مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند');
+            }
+        }
+
+        // ===== محاسبه فاصله بین دو نقطه =====
+        function getDistance(pos1, pos2) {
+            const R = 6371000; // شعاع زمین بر حسب متر
+            const lat1 = pos1.lat * Math.PI/180;
+            const lat2 = pos2.lat * Math.PI/180;
+            const deltaLat = (pos2.lat - pos1.lat) * Math.PI/180;
+            const deltaLng = (pos2.lng - pos1.lng) * Math.PI/180;
+
+            const a = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) +
+                    Math.cos(lat1) * Math.cos(lat2) *
+                    Math.sin(deltaLng/2) * Math.sin(deltaLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c;
+        }
+
+        // ===== بررسی سرعت‌گیرهای نزدیک =====
+        function checkNearbyBumps() {
+            let nearestBump = null;
+            let minDistance = Infinity;
+
+            bumps.forEach(bump => {
+                const distance = getDistance(userLocation, { lat: bump.lat, lng: bump.lng });
+                
+                if(distance < minDistance) {
+                    minDistance = distance;
+                    nearestBump = bump;
                 }
+
+                // به‌روزرسانی popup
+                if(bump.marker) {
+                    bump.marker.setPopupContent(`<b>${bump.name}</b><br>فاصله: ${Math.round(distance)} متر`);
+                }
+            });
+
+            // به‌روزرسانی نمایش
+            if(nearestBump) {
+                document.getElementById('nearestDistance').textContent = Math.round(minDistance) + ' متر';
+                
+                // زمان تقریبی با سرعت فعلی
+                if(currentSpeed > 0) {
+                    const timeSec = (minDistance / 1000) / (currentSpeed / 3600);
+                    document.getElementById('estimatedTime').textContent = Math.round(timeSec) + ' ثانیه';
+                }
+
+                // هشدار اگر فاصله کمتر از 100 متر است
+                const alertBox = document.getElementById('bumpAlert');
+                const speedWarning = document.getElementById('speedWarning');
+                
+                if(minDistance < 100) {
+                    alertBox.classList.add('show');
+                    document.getElementById('alertMessage').text = `به ${nearestBump.name} نزدیک می‌شوید!`;
+                    
+                    // هشدار سرعت
+                    if(currentSpeed > 30) {
+                        speedWarning.classList.add('show');
+                        document.getElementById('warningSpeed').textContent = currentSpeed + ' km/h';
+                        document.getElementById('warningDistance').textContent = `در فاصله ${Math.round(minDistance)} متری`;
+                    } else {
+                        speedWarning.classList.remove('show');
+                    }
+                } else {
+                    alertBox.classList.remove('show');
+                    speedWarning.classList.remove('show');
+                }
+            }
+
+            // به‌روزرسانی تعداد سرعت‌گیرهای نزدیک (کمتر از 500 متر)
+            const nearbyCount = bumps.filter(bump => {
+                const distance = getDistance(userLocation, { lat: bump.lat, lng: bump.lng });
+                return distance < 500;
+            }).length;
+            
+            document.getElementById('nearbyBumps').textContent = nearbyCount;
+
+            // به‌روزرسانی لیست
+            updateBumpsList();
+        }
+
+        // ===== به‌روزرسانی لیست سرعت‌گیرها =====
+        function updateBumpsList() {
+            const listContainer = document.getElementById('bumpsList');
+            
+            // مرتب‌سازی بر اساس فاصله
+            const sortedBumps = [...bumps].map(bump => {
+                const distance = getDistance(userLocation, { lat: bump.lat, lng: bump.lng });
+                return { ...bump, distance };
+            }).sort((a, b) => a.distance - b.distance);
+
+            let html = '';
+            sortedBumps.slice(0, 10).forEach(bump => {
+                const distance = Math.round(bump.distance);
+                const severityColor = bump.severity === 'high' ? 'var(--danger)' : 
+                                     bump.severity === 'medium' ? 'var(--warning)' : 'var(--success)';
+                
+                html += `
+                    <div class="bump-item" onclick="focusOnBump(${bump.lat}, ${bump.lng})">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="color: ${severityColor}; font-size: 1.5em;">🚧</span>
+                            <div>
+                                <div style="font-weight: 700;">${bump.name}</div>
+                                <div style="font-size: 0.8em; color: #666;">${bump.severity === 'high' ? 'شدید' : bump.severity === 'medium' ? 'متوسط' : 'ملایم'}</div>
+                            </div>
+                        </div>
+                        <div class="bump-distance">${distance} متر</div>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+        }
+
+        // ===== فوکوس روی سرعت‌گیر =====
+        function focusOnBump(lat, lng) {
+            map.flyTo([lat, lng], 18);
+        }
+
+        // ===== مرکز کردن روی کاربر =====
+        function centerOnUser() {
+            map.flyTo([userLocation.lat, userLocation.lng], 17);
+        }
+
+        // ===== اضافه کردن سرعت‌گیر جدید =====
+        function addNewBump() {
+            const name = prompt('نام سرعت‌گیر را وارد کنید:', 'سرعت‌گیر جدید');
+            if(!name) return;
+
+            const severity = prompt('شدت را وارد کنید (high/medium/low):', 'medium');
+            
+            // استفاده از موقعیت فعلی کاربر
+            const newBump = {
+                lat: userLocation.lat + 0.001, // کمی جابجا شده
+                lng: userLocation.lng + 0.001,
+                name: name,
+                severity: severity || 'medium'
             };
-            
-            if(surahs[surahNumber]) {
-                document.getElementById('ayaText').innerHTML = surahs[surahNumber].text;
-                document.getElementById('translationText').innerHTML = surahs[surahNumber].translation;
+
+            // ایجاد آیکون
+            const icon = L.divIcon({
+                className: 'bump-icon',
+                html: '🚧',
+                iconSize: [30, 30]
+            });
+
+            // ایجاد marker
+            const marker = L.marker([newBump.lat, newBump.lng], { icon }).addTo(map);
+            marker.bindPopup(`<b>${newBump.name}</b><br>شدت: ${newBump.severity}`);
+
+            // اضافه به آرایه
+            bumps.push({
+                ...newBump,
+                id: bumps.length + 1,
+                marker: marker
+            });
+
+            // به‌روزرسانی آمار
+            document.getElementById('totalBumps').textContent = bumps.length;
+            updateBumpsList();
+
+            alert('✅ سرعت‌گیر با موفقیت اضافه شد');
+        }
+
+        // ===== تغییر لایه نقشه =====
+        function toggleLayer() {
+            // پاک کردن لایه‌های قبلی
+            map.eachLayer(layer => {
+                if(layer instanceof L.TileLayer) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            if(currentLayer === 'normal') {
+                // لایه ماهواره‌ای
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: '© Esri'
+                }).addTo(map);
+                currentLayer = 'satellite';
+            } else {
+                // لایه عادی
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+                currentLayer = 'normal';
             }
         }
 
-        // کنترل صدا
-        function playAudio() {
-            if(audioEnabled) {
-                showMessage('🎵 در حال پخش تلاوت قرآن');
-                addStar();
+        // ===== بزرگنمایی =====
+        function zoomIn() {
+            map.zoomIn();
+        }
+
+        // ===== کوچکنمایی =====
+        function zoomOut() {
+            map.zoomOut();
+        }
+
+        // ===== حالت شب =====
+        function toggleNightMode() {
+            nightMode = !nightMode;
+            document.body.classList.toggle('night-mode');
+            
+            // تغییر opacity نقشه
+            if(nightMode) {
+                document.querySelector('.leaflet-container').style.filter = 'brightness(0.7)';
+            } else {
+                document.querySelector('.leaflet-container').style.filter = 'brightness(1)';
             }
         }
 
-        function pauseAudio() {
-            showMessage('⏸️ تلاوت متوقف شد');
+        // ===== شبیه‌سازی حرکت (برای تست) =====
+        function simulateMovement() {
+            setInterval(() => {
+                // تغییر جزئی موقعیت برای شبیه‌سازی حرکت
+                userLocation.lat += 0.0001;
+                userLocation.lng += 0.0001;
+                
+                if(userMarker) {
+                    userMarker.setLatLng([userLocation.lat, userLocation.lng]);
+                }
+                
+                currentSpeed = Math.floor(Math.random() * 60) + 20; // سرعت تصادفی بین 20-80
+                document.getElementById('currentSpeed').textContent = currentSpeed;
+                
+                checkNearbyBumps();
+            }, 3000);
         }
 
-        function repeatAudio() {
-            playAudio();
-        }
-
-        // ===== سیستم ستاره =====
-        function addStar() {
-            starCount += 1;
-            document.getElementById('starCount').textContent = starCount;
-            
-            // ذخیره در localStorage
-            localStorage.setItem('stars', starCount);
-            
-            // بررسی جوایز
-            if(starCount % 50 === 0) {
-                showCongrats('🎉 تبریک! تو ' + starCount + ' ستاره گرفتی و مدال برنز گرفتی!');
-            } else if(starCount % 100 === 0) {
-                showCongrats('🎉 تبریک! تو ' + starCount + ' ستاره گرفتی و مدال نقره گرفتی!');
-            } else if(starCount % 200 === 0) {
-                showCongrats('🎉 تبریک! تو ' + starCount + ' ستاره گرفتی و مدال طلا گرفتی!');
-            } else if(starCount % 10 === 0) {
-                showCongrats('🎉 آفرین! تو ۱۰ ستاره جدید گرفتی!');
-            }
-        }
-
-        // ===== بازی‌ها =====
-        function playGame(gameType) {
-            const games = {
-                'puzzle': '🧩 بازی پازل حروف',
-                'listening': '🔊 بازی تست گوش دادن',
-                'coloring': '🎨 بازی نقاشی قرآنی',
-                'competition': '🏆 بازی مسابقه'
-            };
-            
-            showMessage(`🎮 ${games[gameType]} شروع شد!`);
-            addStar(); // جایزه برای بازی
-        }
-
-        // ===== شروع درس =====
-        function startLesson(lesson) {
-            const lessons = {
-                'alfabet': '🔤 الفبای عربی',
-                'tajweed': '🎵 تجوید مقدماتی',
-                'surahs': '📖 سوره‌های کوتاه'
-            };
-            
-            showMessage(`📚 درس ${lessons[lesson]} شروع شد!`);
-            addStar(); // جایزه برای یادگیری
-        }
-
-        // ===== اسکرول به بخش‌ها =====
-        function scrollToSection(sectionId) {
-            const element = document.getElementById(sectionId);
-            if(element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        // ===== مدال‌ها =====
-        function showHelp() {
-            document.getElementById('helpModal').classList.add('active');
-        }
-
-        function showCongrats(message) {
-            document.getElementById('congratsMessage').textContent = message;
-            document.getElementById('congratsModal').classList.add('active');
-            
-            // بستن خودکار بعد از ۳ ثانیه
-            setTimeout(closeModal, 3000);
-        }
-
-        function closeModal() {
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        }
-
-        // ===== نمایش پیام =====
-        function showMessage(text) {
-            // ایجاد پیام موقت
-            const msg = document.createElement('div');
-            msg.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: var(--success);
-                color: white;
-                padding: 15px 30px;
-                border-radius: 50px;
-                font-size: 1.2em;
-                z-index: 10001;
-                animation: slideIn 0.3s;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            `;
-            msg.textContent = text;
-            document.body.appendChild(msg);
-            
-            setTimeout(() => {
-                msg.remove();
-            }, 2000);
-        }
-
-        // ===== بارگذاری اولیه =====
+        // ===== راه‌اندازی =====
         window.onload = function() {
-            // بازیابی تنظیمات ذخیره شده
-            const savedView = localStorage.getItem('preferredView') || 'mobile';
-            changeView(savedView);
+            initMap();
             
-            const savedStars = localStorage.getItem('stars');
-            if(savedStars) {
-                starCount = parseInt(savedStars);
-                document.getElementById('starCount').textContent = starCount;
-            }
-            
-            // نمایش راهنما بعد از ۲ ثانیه
-            setTimeout(showHelp, 2000);
+            // برای تست در محیط بدون GPS (فعال کردن در صورت نیاز)
+            // simulateMovement();
         };
 
-        // ===== قفل زوم برای تجربه بهتر =====
-        document.addEventListener('gesturestart', (e) => e.preventDefault());
+        // ===== توقف ردیابی هنگام بسته شدن صفحه =====
+        window.onunload = function() {
+            if(watchId) {
+                navigator.geolocation.clearWatch(watchId);
+            }
+        };
     </script>
 </body>
 </html>
