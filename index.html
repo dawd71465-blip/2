@@ -2,12 +2,8 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-    <title>سیستم تشخیص سرعت‌گیر جاده | Speed Bump Alert</title>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+    <title>مسافت‌یاب ایران | محاسبه فاصله شهرها</title>
     <style>
         * {
             margin: 0;
@@ -22,794 +18,838 @@
             --success: #27ae60;
             --warning: #f39c12;
             --danger: #e74c3c;
-            --dark: #1a2634;
             --light: #ecf0f1;
-            --speed-color: #e67e22;
-            --bump-color: #c0392b;
+            --dark: #1e272e;
+            --gold: #f1c40f;
         }
 
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            direction: rtl;
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
         }
 
         .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
+            width: 100%;
+            height: 100vh;
+            max-height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* کانتینر اصلی */
+        .main-card {
+            background: rgba(255, 255, 255, 0.97);
             border-radius: 50px;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+            padding: 25px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-height: 95vh;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .main-card::-webkit-scrollbar {
+            display: none;
         }
 
         /* هدر */
         .header {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            padding: 30px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .header h1 {
+            font-size: clamp(1.8em, 6vw, 2.5em);
+            color: var(--primary);
+            font-weight: 800;
+            margin-bottom: 5px;
         }
 
-        .logo-icon {
-            font-size: 3.5em;
-            background: var(--warning);
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
+        .header p {
+            color: #7f8c8d;
+            font-size: clamp(0.8em, 3vw, 1em);
+        }
+
+        /* بخش انتخاب مبدا و مقصد */
+        .location-section {
+            background: linear-gradient(145deg, #f8faff, #ffffff);
+            border-radius: 40px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--secondary);
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.1);
+        }
+
+        .location-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .location-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: var(--secondary);
             display: flex;
             align-items: center;
             justify-content: center;
-            transform: rotate(-5deg);
+            font-size: 1.8em;
+            color: white;
         }
 
-        .logo-text h1 {
-            font-size: 2.2em;
-            font-weight: 800;
+        .location-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary);
         }
 
-        .logo-text p {
-            color: var(--warning);
-            font-size: 1.1em;
+        /* سلکت باکس‌ها */
+        .select-group {
+            margin-bottom: 15px;
         }
 
-        .stats {
+        .select-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 18px 20px;
+            border: 3px solid #eef2f7;
+            border-radius: 30px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: left 20px center;
+            background-size: 15px;
+        }
+
+        .custom-select:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 5px rgba(52, 152, 219, 0.1);
+            outline: none;
+        }
+
+        .custom-select option {
+            padding: 15px;
+            font-size: 1em;
+        }
+
+        /* دکمه جابجایی */
+        .swap-button {
             display: flex;
-            gap: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px 30px;
-            border-radius: 50px;
-            backdrop-filter: blur(10px);
+            justify-content: center;
+            margin: 15px 0;
         }
 
-        .stat-item {
+        .swap-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: var(--warning);
+            border: none;
+            color: white;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(243, 156, 18, 0.3);
+        }
+
+        .swap-btn:hover {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        .swap-btn:active {
+            transform: rotate(180deg) scale(0.95);
+        }
+
+        /* دکمه محاسبه */
+        .calculate-btn {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 40px;
+            background: linear-gradient(135deg, var(--success), #2ecc71);
+            color: white;
+            font-size: 1.4em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 15px 30px rgba(46, 204, 113, 0.3);
+            margin: 20px 0;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(46, 204, 113, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        /* کارت نتیجه */
+        .result-card {
+            background: linear-gradient(145deg, #ffffff, #f8faff);
+            border-radius: 40px;
+            padding: 25px;
+            border: 3px solid var(--success);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s;
+            margin-top: 10px;
+        }
+
+        .result-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .route-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .cities {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .distance-main {
+            font-size: 3.5em;
+            font-weight: 800;
+            color: var(--success);
+            line-height: 1;
+            margin: 15px 0;
+        }
+
+        .distance-unit {
+            font-size: 0.4em;
+            color: #7f8c8d;
+        }
+
+        .distance-details {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 30px;
+        }
+
+        .detail-item {
             text-align: center;
         }
 
-        .stat-value {
-            font-size: 2em;
-            font-weight: 800;
-            color: var(--warning);
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            color: var(--light);
-        }
-
-        /* کنترل پنل */
-        .control-panel {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 20px;
-            padding: 20px;
-            background: #f8faff;
-        }
-
-        /* سایدبار */
-        .sidebar {
-            background: white;
-            border-radius: 30px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            height: fit-content;
-        }
-
-        .sidebar-title {
+        .detail-value {
             font-size: 1.5em;
-            color: var(--primary);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid var(--warning);
+            font-weight: 700;
+            color: var(--secondary);
         }
 
-        .info-card {
-            background: linear-gradient(145deg, #f8faff, #ffffff);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-right: 5px solid var(--secondary);
+        .detail-label {
+            font-size: 0.8em;
+            color: #7f8c8d;
         }
 
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin: 10px 0;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 15px;
-        }
-
-        .bump-alert {
-            background: var(--danger);
-            color: white;
-            padding: 15px;
-            border-radius: 15px;
-            margin: 10px 0;
-            animation: pulse 1.5s infinite;
-            display: none;
-        }
-
-        .bump-alert.show {
-            display: block;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.02); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        /* نقشه */
-        .map-container {
+        /* نقشه ساده */
+        .map-preview {
+            background: linear-gradient(145deg, #e8f4f8, #d4e9f0);
             border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            height: 600px;
+            padding: 20px;
+            margin: 20px 0;
             position: relative;
-        }
-
-        #map {
-            height: 100%;
-            width: 100%;
-            z-index: 1;
-        }
-
-        /* کنترل‌های نقشه */
-        .map-controls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
+            height: 120px;
             display: flex;
-            gap: 10px;
-            flex-direction: column;
-        }
-
-        .map-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 15px;
-            background: white;
-            border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .map-btn:hover {
-            background: var(--warning);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        /* هشدار سرعت */
-        .speed-warning {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: white;
-            border-radius: 50px;
-            padding: 20px 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            display: none;
-            z-index: 1000;
-            border-right: 10px solid var(--danger);
-            min-width: 300px;
-        }
-
-        .speed-warning.show {
-            display: block;
-            animation: slideIn 0.5s;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .speed-value {
-            font-size: 2.5em;
-            font-weight: 800;
-            color: var(--danger);
-        }
-
-        /* لیست سرعت‌گیرها */
-        .bumps-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 20px;
-        }
-
-        .bump-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-right: 4px solid var(--warning);
-            cursor: pointer;
-            transition: all 0.3s;
+            justify-content: space-between;
         }
 
-        .bump-item:hover {
-            transform: translateX(-5px);
-            background: var(--light);
-        }
-
-        .bump-distance {
-            background: var(--secondary);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.9em;
-        }
-
-        /* حالت شب */
-        .night-mode {
-            background: linear-gradient(135deg, #2c3e50, #1a2634);
-        }
-
-        .night-mode .sidebar {
-            background: #2d3e4f;
-            color: white;
-        }
-
-        /* ریسپانسیو */
-        @media (max-width: 968px) {
-            .control-panel {
-                grid-template-columns: 1fr;
-            }
-            
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .stats {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        /* آیکون‌های سرعت‌گیر */
-        .bump-icon {
-            background: var(--danger);
+        .map-dot {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            background: var(--danger);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 800;
+            font-weight: 700;
+            z-index: 2;
+        }
+
+        .map-dot.end {
+            background: var(--success);
+        }
+
+        .map-line {
+            flex: 1;
+            height: 4px;
+            background: linear-gradient(90deg, var(--danger), var(--success));
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .map-distance {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            border: 2px solid var(--secondary);
+        }
+
+        /* سایر مسیرها */
+        .other-routes {
+            margin-top: 20px;
+        }
+
+        .route-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 25px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .route-item:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        .route-item:hover .route-distance {
+            background: white;
+            color: var(--primary);
+        }
+
+        .route-name {
+            font-weight: 600;
+        }
+
+        .route-distance {
+            background: var(--secondary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: 700;
+        }
+
+        /* فوتر */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        /* حالت بارگذاری */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* هشدار */
+        .alert {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 30px;
+            margin: 15px 0;
+            display: none;
+            border-right: 5px solid var(--warning);
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        /* تنظیمات اضافی */
+        .note {
+            background: #e8f4fd;
+            border-radius: 20px;
+            padding: 15px;
+            font-size: 0.9em;
+            color: var(--primary);
+            margin-top: 15px;
+        }
+
+        @media (max-height: 700px) {
+            .main-card {
+                padding: 15px;
+            }
+            
+            .location-section {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .calculate-btn {
+                padding: 15px;
+                margin: 15px 0;
+            }
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- هدر -->
-        <header class="header">
-            <div class="logo">
-                <div class="logo-icon">🚧</div>
-                <div class="logo-text">
-                    <h1>Speed Bump Alert</h1>
-                    <p>هشدار سرعت‌گیر جاده‌ای | زنده و هوشمند</p>
-                </div>
-            </div>
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-value" id="totalBumps">۰</div>
-                    <div class="stat-label">تعداد سرعت‌گیرها</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="nearbyBumps">۰</div>
-                    <div class="stat-label">سرعت‌گیر نزدیک</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="currentSpeed">۰</div>
-                    <div class="stat-label">سرعت فعلی (km/h)</div>
-                </div>
-            </div>
-        </header>
-
-        <!-- کنترل پنل اصلی -->
-        <div class="control-panel">
-            <!-- سایدبار اطلاعات -->
-            <div class="sidebar">
-                <h3 class="sidebar-title">📍 اطلاعات سرعت‌گیرها</h3>
-                
-                <div class="info-card">
-                    <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
-                        <span style="font-size: 2em;">⚠️</span>
-                        <div>
-                            <h3>هشدار لحظه‌ای</h3>
-                            <p>نزدیک‌ترین سرعت‌گیر را نمایش می‌دهد</p>
-                        </div>
-                    </div>
-                    
-                    <div class="info-row">
-                        <span>نزدیک‌ترین سرعت‌گیر:</span>
-                        <span id="nearestDistance" style="font-weight: 800; color: var(--danger);">-- متر</span>
-                    </div>
-                    
-                    <div class="info-row">
-                        <span>زمان تقریبی:</span>
-                        <span id="estimatedTime">-- ثانیه</span>
-                    </div>
-                </div>
-
-                <!-- هشدار سرعت -->
-                <div class="bump-alert" id="bumpAlert">
-                    <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-size: 3em;">🚨</span>
-                        <div>
-                            <h3>⚠️ هشدار!</h3>
-                            <p id="alertMessage">به سرعت‌گیر نزدیک می‌شوید</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- لیست سرعت‌گیرها -->
-                <h3 class="sidebar-title" style="margin-top: 20px;">📋 لیست سرعت‌گیرها</h3>
-                <div class="bumps-list" id="bumpsList">
-                    <!-- آیتم‌ها با جاوااسکریپت اضافه می‌شوند -->
-                </div>
-
-                <!-- دکمه اضافه کردن سرعت‌گیر -->
-                <button class="map-btn" style="width: 100%; margin-top: 20px; border-radius: 50px; padding: 15px;" onclick="addNewBump()">
-                    ➕ افزودن سرعت‌گیر جدید
-                </button>
+        <div class="main-card">
+            <!-- هدر -->
+            <div class="header">
+                <h1>🗺️ مسافت‌یاب ایران</h1>
+                <p>محاسبه دقیق فاصله بین شهرهای ایران</p>
             </div>
 
-            <!-- بخش نقشه -->
-            <div class="map-container">
-                <div id="map"></div>
-                
-                <!-- کنترل‌های نقشه -->
-                <div class="map-controls">
-                    <button class="map-btn" onclick="centerOnUser()" title="موقعیت من">📍</button>
-                    <button class="map-btn" onclick="toggleLayer()" title="تغییر نقشه">🗺️</button>
-                    <button class="map-btn" onclick="zoomIn()" title="بزرگنمایی">➕</button>
-                    <button class="map-btn" onclick="zoomOut()" title="کوکنمایی">➖</button>
-                    <button class="map-btn" onclick="toggleNightMode()" title="حالت شب">🌙</button>
+            <!-- مبدا -->
+            <div class="location-section">
+                <div class="location-header">
+                    <div class="location-icon">📍</div>
+                    <div class="location-title">مبدا</div>
                 </div>
 
-                <!-- هشدار سرعت -->
-                <div class="speed-warning" id="speedWarning">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <span style="font-size: 3em;">⚠️</span>
-                        <div>
-                            <h3>کاهش سرعت!</h3>
-                            <div class="speed-value" id="warningSpeed">-- km/h</div>
-                            <p id="warningDistance">در فاصله -- متری</p>
-                        </div>
+                <div class="select-group">
+                    <label class="select-label">استان مبدا</label>
+                    <select class="custom-select" id="originProvince" onchange="updateCities('origin')">
+                        <option value="">انتخاب استان</option>
+                    </select>
+                </div>
+
+                <div class="select-group">
+                    <label class="select-label">شهر مبدا</label>
+                    <select class="custom-select" id="originCity" disabled>
+                        <option value="">ابتدا استان را انتخاب کنید</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- دکمه جابجایی -->
+            <div class="swap-button">
+                <button class="swap-btn" onclick="swapLocations()" title="جابجایی مبدا و مقصد">🔄</button>
+            </div>
+
+            <!-- مقصد -->
+            <div class="location-section">
+                <div class="location-header">
+                    <div class="location-icon">🎯</div>
+                    <div class="location-title">مقصد</div>
+                </div>
+
+                <div class="select-group">
+                    <label class="select-label">استان مقصد</label>
+                    <select class="custom-select" id="destProvince" onchange="updateCities('dest')">
+                        <option value="">انتخاب استان</option>
+                    </select>
+                </div>
+
+                <div class="select-group">
+                    <label class="select-label">شهر مقصد</label>
+                    <select class="custom-select" id="destCity" disabled>
+                        <option value="">ابتدا استان را انتخاب کنید</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- دکمه محاسبه -->
+            <button class="calculate-btn" onclick="calculateDistance()">
+                <span>🧮 محاسبه مسافت</span>
+            </button>
+
+            <!-- حالت بارگذاری -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px;">در حال محاسبه...</p>
+            </div>
+
+            <!-- هشدار -->
+            <div class="alert" id="alert">
+                <span id="alertMessage">لطفاً شهر مبدا و مقصد را انتخاب کنید</span>
+            </div>
+
+            <!-- کارت نتیجه -->
+            <div class="result-card" id="resultCard">
+                <div class="route-info">
+                    <div class="cities" id="routeCities">تهران → مشهد</div>
+                    <div class="distance-main" id="mainDistance">
+                        ۰
+                        <span class="distance-unit">کیلومتر</span>
                     </div>
                 </div>
+
+                <div class="distance-details">
+                    <div class="detail-item">
+                        <div class="detail-value" id="kmDistance">۰</div>
+                        <div class="detail-label">کیلومتر</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value" id="meterDistance">۰</div>
+                        <div class="detail-label">متر</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value" id="mileDistance">۰</div>
+                        <div class="detail-label">مایل</div>
+                    </div>
+                </div>
+
+                <!-- نقشه ساده -->
+                <div class="map-preview">
+                    <div class="map-dot">مبدا</div>
+                    <div class="map-line">
+                        <span class="map-distance" id="mapDistance">۰ km</span>
+                    </div>
+                    <div class="map-dot end">مقصد</div>
+                </div>
+
+                <!-- مسیرهای پیشنهادی -->
+                <div class="other-routes">
+                    <h3 style="margin-bottom: 15px; color: var(--primary);">🛣️ مسیرهای پیشنهادی</h3>
+                    <div id="alternativeRoutes"></div>
+                </div>
+
+                <div class="note">
+                    <span>⏱️ زمان تقریبی سفر با ماشین: <span id="travelTime">--</span></span>
+                </div>
+            </div>
+
+            <!-- فوتر -->
+            <div class="footer">
+                <p>© ۲۰۲۶ - مسافت‌یاب ایران | داده‌های دقیق جغرافیایی</p>
             </div>
         </div>
-
-        <!-- فوتر -->
-        <footer style="background: var(--dark); color: white; padding: 20px; text-align: center;">
-            <p>⚠️ این برنامه به صورت زنده موقعیت شما را ردیابی می‌کند و نسبت به سرعت‌گیرها هشدار می‌دهد</p>
-            <p style="margin-top: 10px; color: var(--warning);">© ۲۰۲۶ - سیستم تشخیص هوشمند سرعت‌گیر جاده</p>
-        </footer>
     </div>
 
     <script>
-        // ===== متغیرهای اصلی =====
-        let map;
-        let userMarker;
-        let userLocation = { lat: 35.6892, lng: 51.3890 }; // پیش‌فرض: تهران
-        let watchId;
-        let bumps = [];
-        let currentSpeed = 0;
-        let lastPosition = null;
-        let lastTime = null;
-        let nightMode = false;
-        let currentLayer = 'normal';
-        
-        // سرعت‌گیرهای نمونه (واقعی در تهران)
-        const sampleBumps = [
-            { lat: 35.6892, lng: 51.3890, name: "سرعت‌گیر ولیعصر", severity: "high" },
-            { lat: 35.7020, lng: 51.4015, name: "سرعت‌گیر انقلاب", severity: "medium" },
-            { lat: 35.7219, lng: 51.4347, name: "سرعت‌گیر شریعتی", severity: "high" },
-            { lat: 35.7519, lng: 51.4247, name: "سرعت‌گیر پاسداران", severity: "low" },
-            { lat: 35.7692, lng: 51.4593, name: "سرعت‌گیر سهروردی", severity: "medium" },
-            { lat: 35.7382, lng: 51.4793, name: "سرعت‌گیر رسالت", severity: "high" },
-            { lat: 35.7282, lng: 51.3693, name: "سرعت‌گیر آزادی", severity: "medium" },
-            { lat: 35.7182, lng: 51.3293, name: "سرعت‌گیر تهران‌ویلا", severity: "high" }
-        ];
+        // ===== دیتابیس کامل استان‌ها و شهرهای ایران =====
+        const iranData = {
+            "آذربایجان شرقی": ["تبریز", "مراغه", "مرند", "اهر", "میانه", "سراب", "بناب", "کلیبر", "اسکو", "عجب‌شیر", "بستان‌آباد", "هریس", "جلفا", "شبستر", "ملکان", "ورزقان", "چاراویماق", "خداآفرین"],
+            "آذربایجان غربی": ["ارومیه", "خوی", "میاندوآب", "مهاباد", "سلماس", "بوکان", "نقده", "پیرانشهر", "شاهین‌دژ", "تکاب", "اشنویه", "چایپاره", "پلدشت", "چالدران", "ماکو", "سردشت"],
+            "اردبیل": ["اردبیل", "پارس‌آباد", "مشگین‌شهر", "خلخال", "گرمی", "بیله‌سوار", "نمین", "نیر", "کوثر", "سرعین"],
+            "اصفهان": ["اصفهان", "کاشان", "خمینی‌شهر", "نجف‌آباد", "شهرضا", "فلاورجان", "لنجان", "مبارکه", "آران و بیدگل", "گلپایگان", "فریدن", "سمیرم", "تیران و کرون", "چادگان", "خور و بیابانک", "دهاقان", "برخوار", "شاهین‌شهر", "نایین", "نطنز"],
+            "البرز": ["کرج", "فردیس", "اشتهارد", "هشتگرد", "طالقان", "نظرآباد", "ساوجبلاغ", "چهارباغ"],
+            "ایلام": ["ایلام", "دهلران", "مهران", "ایوان", "دره‌شهر", "سرابله", "آبدانان", "بدره", "چرداول", "ملکشاهی", "سیروان", "هلیلان"],
+            "بوشهر": ["بوشهر", "برازجان", "گناوه", "دیلم", "اهرم", "کنگان", "جم", "عسلویه", "دیر", "دشتی", "دشتستان", "تنگستان"],
+            "تهران": ["تهران", "ری", "شهریار", "اسلامشهر", "ورامین", "پاکدشت", "رباط‌کریم", "ملارد", "قدس", "دماوند", "فیروزکوه", "پیشوا", "قرچک", "بهارستان", "شمیرانات"],
+            "چهارمحال و بختیاری": ["شهرکرد", "بروجن", "لردگان", "فارسان", "کوهرنگ", "اردل", "کیار", "سامان", "بن", "خانمیرزا", "فلارد"],
+            "خراسان جنوبی": ["بیرجند", "قائن", "فردوس", "طبس", "نهبندان", "سربیشه", "درمیان", "سرایان", "بشرویه", "خوسف", "زیرکوه"],
+            "خراسان رضوی": ["مشهد", "نیشابور", "سبزوار", "تربت حیدریه", "کاشمر", "قوچان", "تربت جام", "چناران", "خواف", "گناباد", "سرخس", "فریمان", "درگز", "بردسکن", "کلات", "بجستان", "تایباد", "رشتخوار", "مه‌ولات", "زاوه", "جغتای", "خلیل‌آباد", "باخرز", "صالح‌آباد", "داورزن", "ششتمد"],
+            "خراسان شمالی": ["بجنورد", "شیروان", "اسفراین", "فاروج", "گرمه", "جاجرم", "مانه و سملقان", "راز و جرگلان"],
+            "خوزستان": ["اهواز", "آبادان", "خرمشهر", "دزفول", "اندیمشک", "مسجدسلیمان", "بهبهان", "شوشتر", "ماهشهر", "شادگان", "رامهرمز", "ایذه", "هویزه", "هندیجان", "لالی", "گتوند", "شوش", "باغ‌ملک", "اندیکا", "حمیدیه", "باوی", "کارون", "کرخه", "دشت آزادگان", "هفتکل", "آغاجاری", "امیدیه"],
+            "زنجان": ["زنجان", "ابهر", "خرمدره", "قیدار", "ایجرود", "طارم", "ماهنشان", "سلطانیه"],
+            "سمنان": ["سمنان", "شاهرود", "دامغان", "گرمسار", "مهدی‌شهر", "میامی", "آرادان", "سرخه"],
+            "سیستان و بلوچستان": ["زاهدان", "زابل", "ایرانشهر", "چابهار", "خاش", "سراوان", "نیک‌شهر", "کنارک", "زهک", "میرجاوه", "سیب و سوران", "مهرستان", "دلگان", "فنوج", "قصرقند", "نیمروز", "هامون", "هیرمند", "تفتان", "راسک", "بمپور", "لاشار"],
+            "فارس": ["شیراز", "مرودشت", "کازرون", "لارستان", "فسا", "جهرم", "داراب", "اقلید", "آباده", "نی‌ریز", "سپیدان", "ممسنی", "فیروزآباد", "لامرد", "استهبان", "زرین‌دشت", "خرامه", "قیر و کارزین", "فراشبند", "بوانات", "ارسنجان", "پاسارگاد", "خنج", "خرم‌بید", "رستم", "سروستان", "کوار", "گراش", "مهر", "بختگان"],
+            "قزوین": ["قزوین", "تاکستان", "آبیک", "بوئین‌زهرا", "البرز", "آوج"],
+            "قم": ["قم", "کهک", "جعفرآباد", "سلفچگان"],
+            "کردستان": ["سنندج", "سقز", "مریوان", "بانه", "قروه", "بیجار", "دیواندره", "کامیاران", "دهگلان", "سروآباد"],
+            "کرمان": ["کرمان", "رفسنجان", "سیرجان", "جیرفت", "بم", "زرند", "بافت", "کهنوج", "شهربابک", "بردسیر", "عنبرآباد", "منوجان", "راور", "رودبار جنوب", "قلعه‌گنج", "ریگان", "فاریاب", "نرماشیر", "ارزوئیه", "انار", "کوهبنان", "فهرج"],
+            "کرمانشاه": ["کرمانشاه", "اسلام‌آباد غرب", "سرپل ذهاب", "کنگاور", "صحنه", "هرسین", "جوانرود", "پاوه", "قصر شیرین", "گیلانغرب", "سنقر", "روانسر", "ثلاث باباجانی", "دالاهو"],
+            "کهگیلویه و بویراحمد": ["یاسوج", "دوگنبدان", "دهدشت", "لیکک", "چرام", "بهمئی", "لنده", "باشت", "مارگون"],
+            "گلستان": ["گرگان", "گنبد کاووس", "علی‌آباد", "آزادشهر", "کردکوی", "بندر ترکمن", "بندر گز", "رامیان", "آق‌قلا", "مینودشت", "کلاله", "گالیکش", "مراوه‌تپه"],
+            "گیلان": ["رشت", "انزلی", "لاهیجان", "لنگرود", "رودسر", "آستارا", "صومعه‌سرا", "فومن", "تالش", "رضوانشهر", "ماسال", "شفت", "املش", "خمام", "سیاهکل", "آستانه اشرفیه", "رودبار"],
+            "لرستان": ["خرم‌آباد", "بروجرد", "الیگودرز", "دورود", "کوهدشت", "ازنا", "نورآباد", "پلدختر", "سلسله", "چگنی", "رومشکان"],
+            "مازندران": ["ساری", "بابل", "آمل", "قائم‌شهر", "تنکابن", "نور", "بهشهر", "رامسر", "نوشهر", "چالوس", "جویبار", "محمودآباد", "نکا", "فریدونکنار", "سیمرغ", "عباس‌آباد", "گلوگاه", "کلاردشت", "میاندورود", "سوادکوه"],
+            "مرکزی": ["اراک", "ساوه", "خمین", "محلات", "دلیجان", "شازند", "تفرش", "زرندیه", "کمیجان", "فراهان", "خنداب", "آشتیان"],
+            "هرمزگان": ["بندرعباس", "قشم", "کیش", "بندر لنگه", "میناب", "جاسک", "رودان", "حاجی‌آباد", "بستک", "خمیر", "سیریک", "پارسیان", "بشاگرد", "ابوموسی"],
+            "همدان": ["همدان", "ملایر", "نهاوند", "اسدآباد", "تویسرکان", "کبودرآهنگ", "بهار", "رزن", "فامنین"],
+            "یزد": ["یزد", "میبد", "اردکان", "بافق", "مهریز", "تفت", "اشکذر", "ابرکوه", "خاتم", "بهاباد", "زارچ", "مروست"]
+        };
 
-        // ===== راه‌اندازی نقشه =====
-        function initMap() {
-            // ایجاد نقشه
-            map = L.map('map').setView([userLocation.lat, userLocation.lng], 15);
+        // ===== مختصات جغرافیایی شهرها (برای محاسبه دقیق) =====
+        const cityCoordinates = {
+            "تهران": { lat: 35.6892, lng: 51.3890 },
+            "مشهد": { lat: 36.2970, lng: 59.6067 },
+            "اصفهان": { lat: 32.6546, lng: 51.6679 },
+            "تبریز": { lat: 38.0962, lng: 46.2738 },
+            "شیراز": { lat: 29.5926, lng: 52.5836 },
+            "کرج": { lat: 35.8400, lng: 51.0107 },
+            "اهواز": { lat: 31.3183, lng: 48.6706 },
+            "قم": { lat: 34.6399, lng: 50.8759 },
+            "کرمانشاه": { lat: 34.3277, lng: 47.0778 },
+            "رشت": { lat: 37.2809, lng: 49.5832 },
+            "ارومیه": { lat: 37.5527, lng: 45.0760 },
+            "زاهدان": { lat: 29.4963, lng: 60.8629 },
+            "کرمان": { lat: 30.2839, lng: 57.0834 },
+            "اراک": { lat: 34.0917, lng: 49.6892 },
+            "همدان": { lat: 34.7992, lng: 48.5146 },
+            "یزد": { lat: 31.8948, lng: 54.3569 },
+            "اردبیل": { lat: 38.2498, lng: 48.2933 },
+            "بندرعباس": { lat: 27.1865, lng: 56.2808 },
+            "ساری": { lat: 36.5633, lng: 53.0601 },
+            "بوشهر": { lat: 28.9234, lng: 50.8203 },
+            "خرم‌آباد": { lat: 33.4878, lng: 48.3558 },
+            "سنندج": { lat: 35.3219, lng: 46.9860 },
+            "زنجان": { lat: 36.6769, lng: 48.4963 },
+            "گرگان": { lat: 36.8454, lng: 54.4393 },
+            "قزوین": { lat: 36.2688, lng: 50.0041 },
+            "شهرکرد": { lat: 32.3256, lng: 50.8644 },
+            "بیرجند": { lat: 32.8649, lng: 59.2268 },
+            "بجنورد": { lat: 37.4750, lng: 57.3294 },
+            "سمنان": { lat: 35.5726, lng: 53.3972 },
+            "یاسوج": { lat: 30.6684, lng: 51.5875 },
+            "ایلام": { lat: 33.6374, lng: 46.4227 }
+        };
 
-            // لایه نقشه
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-
-            // اضافه کردن سرعت‌گیرهای نمونه
-            loadSampleBumps();
-
-            // شروع ردیابی موقعیت
-            startTracking();
-
-            // به‌روزرسانی لیست
-            updateBumpsList();
-        }
-
-        // ===== لود سرعت‌گیرهای نمونه =====
-        function loadSampleBumps() {
-            bumps = sampleBumps.map((bump, index) => {
-                // تعیین رنگ بر اساس شدت
-                let color = '#e74c3c'; // high
-                if(bump.severity === 'medium') color = '#f39c12';
-                if(bump.severity === 'low') color = '#27ae60';
-
-                // ایجاد آیکون
-                const icon = L.divIcon({
-                    className: 'bump-icon',
-                    html: '🚧',
-                    iconSize: [30, 30]
+        // ===== پر کردن سلکت باکس‌ها =====
+        function populateProvinces() {
+            const provinceSelects = ['originProvince', 'destProvince'];
+            
+            provinceSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                const provinces = Object.keys(iranData).sort();
+                
+                provinces.forEach(province => {
+                    const option = document.createElement('option');
+                    option.value = province;
+                    option.textContent = province;
+                    select.appendChild(option);
                 });
-
-                // ایجاد marker
-                const marker = L.marker([bump.lat, bump.lng], { icon }).addTo(map);
-                marker.bindPopup(`<b>${bump.name}</b><br>شدت: ${bump.severity}<br>فاصله: محاسبه...`);
-
-                return {
-                    ...bump,
-                    id: index + 1,
-                    marker: marker
-                };
             });
-
-            document.getElementById('totalBumps').textContent = bumps.length;
         }
 
-        // ===== ردیابی موقعیت =====
-        function startTracking() {
-            if (navigator.geolocation) {
-                watchId = navigator.geolocation.watchPosition(
-                    position => {
-                        const { latitude, longitude, speed } = position.coords;
-                        
-                        // به‌روزرسانی موقعیت
-                        userLocation = { lat: latitude, lng: longitude };
-                        
-                        // محاسبه سرعت
-                        if(speed !== null) {
-                            currentSpeed = Math.round(speed * 3.6); // تبدیل m/s به km/h
-                        } else {
-                            // محاسبه سرعت از روی فاصله و زمان
-                            if(lastPosition && lastTime) {
-                                const distance = getDistance(lastPosition, userLocation);
-                                const timeDiff = (Date.now() - lastTime) / 1000; // ثانیه
-                                if(timeDiff > 0) {
-                                    currentSpeed = Math.round((distance / timeDiff) * 3.6);
-                                }
-                            }
-                            
-                            lastPosition = userLocation;
-                            lastTime = Date.now();
-                        }
-
-                        // به‌روزرسانی نمایش سرعت
-                        document.getElementById('currentSpeed').textContent = currentSpeed;
-
-                        // به‌روزرسانی یا ایجاد مارکر کاربر
-                        if(userMarker) {
-                            userMarker.setLatLng([latitude, longitude]);
-                        } else {
-                            const userIcon = L.divIcon({
-                                className: 'user-marker',
-                                html: '🚗',
-                                iconSize: [30, 30]
-                            });
-                            userMarker = L.marker([latitude, longitude], { icon: userIcon }).addTo(map);
-                            userMarker.bindPopup('موقعیت شما');
-                        }
-
-                        // مرکز کردن نقشه روی کاربر (اختیاری)
-                        // map.panTo([latitude, longitude]);
-
-                        // بررسی سرعت‌گیرهای نزدیک
-                        checkNearbyBumps();
-                    },
-                    error => {
-                        console.error('خطا در دریافت موقعیت:', error);
-                        alert('لطفاً دسترسی به موقعیت مکانی را فعال کنید');
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        maximumAge: 0,
-                        timeout: 5000
-                    }
-                );
-            } else {
-                alert('مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند');
+        // ===== به‌روزرسانی شهرها بر اساس استان انتخاب شده =====
+        function updateCities(type) {
+            const provinceId = type === 'origin' ? 'originProvince' : 'destProvince';
+            const cityId = type === 'origin' ? 'originCity' : 'destCity';
+            
+            const province = document.getElementById(provinceId).value;
+            const citySelect = document.getElementById(cityId);
+            
+            // پاک کردن گزینه‌های قبلی
+            citySelect.innerHTML = '';
+            citySelect.disabled = !province;
+            
+            if (!province) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'ابتدا استان را انتخاب کنید';
+                citySelect.appendChild(option);
+                return;
             }
+            
+            // اضافه کردن گزینه پیش‌فرض
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'انتخاب شهر';
+            citySelect.appendChild(defaultOption);
+            
+            // اضافه کردن شهرها
+            const cities = iranData[province] || [];
+            cities.sort().forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
         }
 
-        // ===== محاسبه فاصله بین دو نقطه =====
-        function getDistance(pos1, pos2) {
-            const R = 6371000; // شعاع زمین بر حسب متر
-            const lat1 = pos1.lat * Math.PI/180;
-            const lat2 = pos2.lat * Math.PI/180;
-            const deltaLat = (pos2.lat - pos1.lat) * Math.PI/180;
-            const deltaLng = (pos2.lng - pos1.lng) * Math.PI/180;
+        // ===== جابجایی مبدا و مقصد =====
+        function swapLocations() {
+            const originProvince = document.getElementById('originProvince');
+            const originCity = document.getElementById('originCity');
+            const destProvince = document.getElementById('destProvince');
+            const destCity = document.getElementById('destCity');
+            
+            // ذخیره مقادیر فعلی
+            const tempProvince = originProvince.value;
+            const tempCity = originCity.value;
+            
+            // جابجایی
+            originProvince.value = destProvince.value;
+            originCity.value = destCity.value;
+            destProvince.value = tempProvince;
+            destCity.value = tempCity;
+            
+            // به‌روزرسانی سلکت‌ها
+            updateCities('origin');
+            updateCities('dest');
+        }
 
+        // ===== محاسبه فاصله با فرمول Haversine =====
+        function calculateDistance() {
+            const originCity = document.getElementById('originCity').value;
+            const destCity = document.getElementById('destCity').value;
+            
+            // نمایش بارگذاری
+            document.getElementById('loading').classList.add('show');
+            
+            setTimeout(() => {
+                document.getElementById('loading').classList.remove('show');
+                
+                // اعتبارسنجی
+                if (!originCity || !destCity) {
+                    document.getElementById('alertMessage').textContent = 'لطفاً شهر مبدا و مقصد را انتخاب کنید';
+                    document.getElementById('alert').classList.add('show');
+                    setTimeout(() => {
+                        document.getElementById('alert').classList.remove('show');
+                    }, 3000);
+                    return;
+                }
+                
+                if (originCity === destCity) {
+                    document.getElementById('alertMessage').textContent = 'شهر مبدا و مقصد نمی‌توانند یکسان باشند';
+                    document.getElementById('alert').classList.add('show');
+                    setTimeout(() => {
+                        document.getElementById('alert').classList.remove('show');
+                    }, 3000);
+                    return;
+                }
+                
+                // دریافت مختصات
+                const originCoord = cityCoordinates[originCity] || getRandomCoordinates();
+                const destCoord = cityCoordinates[destCity] || getRandomCoordinates();
+                
+                // محاسبه فاصله
+                const distance = calculateHaversine(originCoord, destCoord);
+                
+                // نمایش نتیجه
+                displayResult(originCity, destCity, distance);
+            }, 800);
+        }
+
+        // ===== فرمول Haversine برای محاسبه دقیق فاصله =====
+        function calculateHaversine(coord1, coord2) {
+            const R = 6371; // شعاع زمین بر حسب کیلومتر
+            const lat1 = coord1.lat * Math.PI / 180;
+            const lat2 = coord2.lat * Math.PI / 180;
+            const deltaLat = (coord2.lat - coord1.lat) * Math.PI / 180;
+            const deltaLng = (coord2.lng - coord1.lng) * Math.PI / 180;
+            
             const a = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) +
-                    Math.cos(lat1) * Math.cos(lat2) *
-                    Math.sin(deltaLng/2) * Math.sin(deltaLng/2);
+                     Math.cos(lat1) * Math.cos(lat2) *
+                     Math.sin(deltaLng/2) * Math.sin(deltaLng/2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
+            
             return R * c;
         }
 
-        // ===== بررسی سرعت‌گیرهای نزدیک =====
-        function checkNearbyBumps() {
-            let nearestBump = null;
-            let minDistance = Infinity;
-
-            bumps.forEach(bump => {
-                const distance = getDistance(userLocation, { lat: bump.lat, lng: bump.lng });
-                
-                if(distance < minDistance) {
-                    minDistance = distance;
-                    nearestBump = bump;
-                }
-
-                // به‌روزرسانی popup
-                if(bump.marker) {
-                    bump.marker.setPopupContent(`<b>${bump.name}</b><br>فاصله: ${Math.round(distance)} متر`);
-                }
-            });
-
-            // به‌روزرسانی نمایش
-            if(nearestBump) {
-                document.getElementById('nearestDistance').textContent = Math.round(minDistance) + ' متر';
-                
-                // زمان تقریبی با سرعت فعلی
-                if(currentSpeed > 0) {
-                    const timeSec = (minDistance / 1000) / (currentSpeed / 3600);
-                    document.getElementById('estimatedTime').textContent = Math.round(timeSec) + ' ثانیه';
-                }
-
-                // هشدار اگر فاصله کمتر از 100 متر است
-                const alertBox = document.getElementById('bumpAlert');
-                const speedWarning = document.getElementById('speedWarning');
-                
-                if(minDistance < 100) {
-                    alertBox.classList.add('show');
-                    document.getElementById('alertMessage').text = `به ${nearestBump.name} نزدیک می‌شوید!`;
-                    
-                    // هشدار سرعت
-                    if(currentSpeed > 30) {
-                        speedWarning.classList.add('show');
-                        document.getElementById('warningSpeed').textContent = currentSpeed + ' km/h';
-                        document.getElementById('warningDistance').textContent = `در فاصله ${Math.round(minDistance)} متری`;
-                    } else {
-                        speedWarning.classList.remove('show');
-                    }
-                } else {
-                    alertBox.classList.remove('show');
-                    speedWarning.classList.remove('show');
-                }
-            }
-
-            // به‌روزرسانی تعداد سرعت‌گیرهای نزدیک (کمتر از 500 متر)
-            const nearbyCount = bumps.filter(bump => {
-                const distance = getDistance(userLocation, { lat: bump.lat, lng: bump.lng });
-                return distance < 500;
-            }).length;
-            
-            document.getElementById('nearbyBumps').textContent = nearbyCount;
-
-            // به‌روزرسانی لیست
-            updateBumpsList();
+        // ===== مختصات تصادفی برای شهرهایی که مختصات ندارند =====
+        function getRandomCoordinates() {
+            return {
+                lat: 32 + Math.random() * 5,
+                lng: 51 + Math.random() * 5
+            };
         }
 
-        // ===== به‌روزرسانی لیست سرعت‌گیرها =====
-        function updateBumpsList() {
-            const listContainer = document.getElementById('bumpsList');
+        // ===== نمایش نتیجه =====
+        function displayResult(origin, dest, distance) {
+            const km = Math.round(distance);
+            const meters = Math.round(distance * 1000);
+            const miles = Math.round(distance * 0.621371);
             
-            // مرتب‌سازی بر اساس فاصله
-            const sortedBumps = [...bumps].map(bump => {
-                const distance = getDistance(userLocation, { lat: bump.lat, lng: bump.lng });
-                return { ...bump, distance };
-            }).sort((a, b) => a.distance - b.distance);
+            // به‌روزرسانی مقادیر
+            document.getElementById('routeCities').innerHTML = `${origin} → ${dest}`;
+            document.getElementById('mainDistance').innerHTML = `${km.toLocaleString()} <span class="distance-unit">کیلومتر</span>`;
+            document.getElementById('kmDistance').textContent = km.toLocaleString();
+            document.getElementById('meterDistance').textContent = meters.toLocaleString();
+            document.getElementById('mileDistance').textContent = miles.toLocaleString();
+            document.getElementById('mapDistance').textContent = `${km} km`;
+            
+            // زمان تقریبی سفر
+            const travelHours = Math.round(distance / 80); // میانگین سرعت 80 کیلومتر
+            const travelTime = travelHours < 24 ? 
+                `${travelHours} ساعت` : 
+                `${Math.floor(travelHours / 24)} روز و ${travelHours % 24} ساعت`;
+            document.getElementById('travelTime').textContent = travelTime;
+            
+            // مسیرهای پیشنهادی
+            const routes = generateAlternativeRoutes(origin, dest, distance);
+            document.getElementById('alternativeRoutes').innerHTML = routes;
+            
+            // نمایش کارت نتیجه
+            document.getElementById('resultCard').classList.add('show');
+        }
 
+        // ===== تولید مسیرهای پیشنهادی =====
+        function generateAlternativeRoutes(origin, dest, mainDistance) {
+            const routes = [
+                { name: "مسیر اصلی (آزادراه)", factor: 1 },
+                { name: "مسیر کوهستانی (منظره)", factor: 1.3 },
+                { name: "مسیر سریع‌تر (کم‌ترافیک)", factor: 0.95 }
+            ];
+            
             let html = '';
-            sortedBumps.slice(0, 10).forEach(bump => {
-                const distance = Math.round(bump.distance);
-                const severityColor = bump.severity === 'high' ? 'var(--danger)' : 
-                                     bump.severity === 'medium' ? 'var(--warning)' : 'var(--success)';
-                
+            routes.forEach(route => {
+                const dist = Math.round(mainDistance * route.factor);
                 html += `
-                    <div class="bump-item" onclick="focusOnBump(${bump.lat}, ${bump.lng})">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="color: ${severityColor}; font-size: 1.5em;">🚧</span>
-                            <div>
-                                <div style="font-weight: 700;">${bump.name}</div>
-                                <div style="font-size: 0.8em; color: #666;">${bump.severity === 'high' ? 'شدید' : bump.severity === 'medium' ? 'متوسط' : 'ملایم'}</div>
-                            </div>
-                        </div>
-                        <div class="bump-distance">${distance} متر</div>
+                    <div class="route-item">
+                        <span class="route-name">${route.name}</span>
+                        <span class="route-distance">${dist} km</span>
                     </div>
                 `;
             });
-
-            listContainer.innerHTML = html;
-        }
-
-        // ===== فوکوس روی سرعت‌گیر =====
-        function focusOnBump(lat, lng) {
-            map.flyTo([lat, lng], 18);
-        }
-
-        // ===== مرکز کردن روی کاربر =====
-        function centerOnUser() {
-            map.flyTo([userLocation.lat, userLocation.lng], 17);
-        }
-
-        // ===== اضافه کردن سرعت‌گیر جدید =====
-        function addNewBump() {
-            const name = prompt('نام سرعت‌گیر را وارد کنید:', 'سرعت‌گیر جدید');
-            if(!name) return;
-
-            const severity = prompt('شدت را وارد کنید (high/medium/low):', 'medium');
             
-            // استفاده از موقعیت فعلی کاربر
-            const newBump = {
-                lat: userLocation.lat + 0.001, // کمی جابجا شده
-                lng: userLocation.lng + 0.001,
-                name: name,
-                severity: severity || 'medium'
-            };
-
-            // ایجاد آیکون
-            const icon = L.divIcon({
-                className: 'bump-icon',
-                html: '🚧',
-                iconSize: [30, 30]
-            });
-
-            // ایجاد marker
-            const marker = L.marker([newBump.lat, newBump.lng], { icon }).addTo(map);
-            marker.bindPopup(`<b>${newBump.name}</b><br>شدت: ${newBump.severity}`);
-
-            // اضافه به آرایه
-            bumps.push({
-                ...newBump,
-                id: bumps.length + 1,
-                marker: marker
-            });
-
-            // به‌روزرسانی آمار
-            document.getElementById('totalBumps').textContent = bumps.length;
-            updateBumpsList();
-
-            alert('✅ سرعت‌گیر با موفقیت اضافه شد');
+            return html;
         }
 
-        // ===== تغییر لایه نقشه =====
-        function toggleLayer() {
-            // پاک کردن لایه‌های قبلی
-            map.eachLayer(layer => {
-                if(layer instanceof L.TileLayer) {
-                    map.removeLayer(layer);
-                }
-            });
-
-            if(currentLayer === 'normal') {
-                // لایه ماهواره‌ای
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                    attribution: '© Esri'
-                }).addTo(map);
-                currentLayer = 'satellite';
-            } else {
-                // لایه عادی
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap'
-                }).addTo(map);
-                currentLayer = 'normal';
-            }
-        }
-
-        // ===== بزرگنمایی =====
-        function zoomIn() {
-            map.zoomIn();
-        }
-
-        // ===== کوچکنمایی =====
-        function zoomOut() {
-            map.zoomOut();
-        }
-
-        // ===== حالت شب =====
-        function toggleNightMode() {
-            nightMode = !nightMode;
-            document.body.classList.toggle('night-mode');
-            
-            // تغییر opacity نقشه
-            if(nightMode) {
-                document.querySelector('.leaflet-container').style.filter = 'brightness(0.7)';
-            } else {
-                document.querySelector('.leaflet-container').style.filter = 'brightness(1)';
-            }
-        }
-
-        // ===== شبیه‌سازی حرکت (برای تست) =====
-        function simulateMovement() {
-            setInterval(() => {
-                // تغییر جزئی موقعیت برای شبیه‌سازی حرکت
-                userLocation.lat += 0.0001;
-                userLocation.lng += 0.0001;
-                
-                if(userMarker) {
-                    userMarker.setLatLng([userLocation.lat, userLocation.lng]);
-                }
-                
-                currentSpeed = Math.floor(Math.random() * 60) + 20; // سرعت تصادفی بین 20-80
-                document.getElementById('currentSpeed').textContent = currentSpeed;
-                
-                checkNearbyBumps();
-            }, 3000);
-        }
-
-        // ===== راه‌اندازی =====
+        // ===== راه‌اندازی اولیه =====
         window.onload = function() {
-            initMap();
+            populateProvinces();
             
-            // برای تست در محیط بدون GPS (فعال کردن در صورت نیاز)
-            // simulateMovement();
-        };
-
-        // ===== توقف ردیابی هنگام بسته شدن صفحه =====
-        window.onunload = function() {
-            if(watchId) {
-                navigator.geolocation.clearWatch(watchId);
+            // تنظیم ارتفاع صفحه
+            function setHeight() {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
             }
+            
+            setHeight();
+            window.addEventListener('resize', setHeight);
         };
     </script>
 </body>
