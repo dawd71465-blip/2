@@ -2,827 +2,1017 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
-    <title>پلتفرم جامع سلامت | HealthAI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>آکادمی قرآن کودک | آموزش قرآن برای کودکان</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Vazir', 'Segoe UI', 'B Nazanin', Tahoma, sans-serif;
         }
 
         :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
+            --primary-green: #2ecc71;
+            --primary-blue: #3498db;
+            --primary-gold: #f1c40f;
+            --primary-purple: #9b59b6;
+            --soft-pink: #f8bbd0;
+            --soft-green: #c8e6c9;
+            --soft-blue: #bbdefb;
+            --soft-yellow: #fff9c4;
+            --text-dark: #2c3e50;
+            --text-soft: #5d6d7e;
+            --white: #ffffff;
+            --light-bg: #f5f8ff;
         }
 
         html, body {
             width: 100%;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
+            background: linear-gradient(145deg, #f3e9ff 0%, #e0f2fe 100%);
+            direction: rtl;
         }
 
-        .platform-container {
-            max-width: 1200px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 50px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            animation: slideUp 0.6s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* هدر و ناوبری */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            font-size: 2.8em;
-            color: var(--primary);
-            margin-bottom: 10px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .subtitle {
-            color: #7f8c8d;
-            font-size: 1.2em;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .menu-item {
-            background: white;
-            border-radius: 30px;
-            padding: 30px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 2px solid transparent;
-        }
-
-        .menu-item:hover {
-            transform: translateY(-10px);
-            border-color: var(--secondary);
-            box-shadow: 0 20px 40px rgba(52, 152, 219, 0.2);
-        }
-
-        .menu-item.active {
-            border-color: var(--secondary);
-            background: linear-gradient(145deg, #ffffff, #f8faff);
-        }
-
-        .menu-icon {
-            font-size: 4em;
-            margin-bottom: 15px;
-        }
-
-        .menu-title {
-            font-size: 1.4em;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .menu-desc {
-            color: #7f8c8d;
-            font-size: 0.9em;
-        }
-
-        .content-area {
-            background: linear-gradient(145deg, #ffffff, #f8faff);
-            border-radius: 40px;
-            padding: 30px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
-            min-height: 500px;
-            transition: all 0.5s;
-        }
-
-        /* ماژول‌ها */
-        .module {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        .module.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ماژول BMI */
-        .input-card {
-            background: white;
-            border-radius: 30px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1em;
-            border: 2px solid #eef2f7;
-            border-radius: 20px;
-            outline: none;
-            transition: all 0.3s;
-            background: white;
-        }
-
-        input:focus, select:focus {
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 5px rgba(52, 152, 219, 0.1);
-        }
-
-        .unit {
-            position: absolute;
-            left: 20px;
-            color: #95a5a6;
-            font-weight: 700;
-        }
-
-        .btn {
-            padding: 15px 30px;
-            font-size: 1.1em;
-            font-weight: 700;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin: 5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .result-card {
-            margin-top: 20px;
+        /* کانتینر اصلی */
+        .site-container {
+            max-width: 1300px;
+            margin: 0 auto;
             padding: 20px;
-            border-radius: 20px;
-            background: #f8faff;
-            display: none;
         }
 
-        .result-card.show {
-            display: block;
+        /* ===== هدر و ناوبری کودکانه ===== */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 60px 60px 60px 60px;
+            padding: 25px 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            animation: float 3s ease-in-out infinite;
         }
 
-        /* ماژول بینایی */
-        .vision-test {
-            text-align: center;
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
         }
 
-        .snellen-chart {
-            background: white;
-            padding: 30px;
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        .snellen-line {
-            margin: 15px 0;
-            cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
-        }
-
-        .snellen-line:hover {
-            transform: scale(1.02);
-            background: #f0f0f0;
-            border-radius: 10px;
-        }
-
-        .line-20-200 { font-size: 4em; }
-        .line-20-100 { font-size: 3.2em; }
-        .line-20-70 { font-size: 2.6em; }
-        .line-20-50 { font-size: 2.2em; }
-        .line-20-40 { font-size: 1.8em; }
-        .line-20-30 { font-size: 1.4em; }
-        .line-20-25 { font-size: 1.1em; }
-        .line-20-20 { font-size: 0.9em; }
-
-        /* ماژول شنوایی */
-        .hearing-test {
-            text-align: center;
-        }
-
-        .frequency-test {
-            background: linear-gradient(145deg, #ffffff, #f0f0f0);
-            border-radius: 30px;
-            padding: 30px;
-        }
-
-        .freq-btn {
+        .logo-icon {
+            font-size: 4em;
+            background: var(--soft-yellow);
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            margin: 10px;
-            border: none;
-            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border: 4px solid white;
+        }
+
+        .logo-text h1 {
+            font-size: 2.2em;
             color: white;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            font-weight: 800;
+        }
+
+        .logo-text p {
+            color: var(--soft-yellow);
+            font-size: 1.1em;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-icon {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+            border: 3px solid white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.2) rotate(5deg);
+            background: var(--soft-yellow);
+            color: var(--primary-purple);
+        }
+
+        /* ===== بخش خوشامدگویی کودکانه ===== */
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 80px 80px 80px 80px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 4px dashed var(--primary-purple);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: "⭐🌟🌟🌟🌟🌟🌟🌟🌟";
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            font-size: 2em;
+            color: var(--primary-gold);
+            opacity: 0.3;
+            white-space: nowrap;
+            animation: stars 20s linear infinite;
+        }
+
+        @keyframes stars {
+            from { transform: translateX(100%); }
+            to { transform: translateX(-100%); }
+        }
+
+        .welcome-title {
+            font-size: 3em;
+            color: var(--primary-purple);
+            margin-bottom: 15px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-text {
+            font-size: 1.4em;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .child-avatar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .avatar {
+            background: var(--soft-blue);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em;
+            border: 5px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            animation: bounce 2s ease infinite;
+        }
+
+        .avatar:nth-child(2) { animation-delay: 0.3s; background: var(--soft-pink); }
+        .avatar:nth-child(3) { animation-delay: 0.6s; background: var(--soft-green); }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* ===== بخش‌های اصلی ===== */
+        .section-title {
+            font-size: 2.5em;
+            color: var(--primary-purple);
+            margin-bottom: 30px;
+            padding-right: 20px;
+            border-right: 15px solid var(--primary-gold);
+            font-weight: 700;
+            text-shadow: 2px 2px 0 var(--soft-yellow);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 60px 60px 60px 60px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 4px solid transparent;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: cardAppear 0.5s ease;
+        }
+
+        @keyframes cardAppear {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--primary-gold);
+            box-shadow: 0 30px 60px rgba(155, 89, 182, 0.3);
+        }
+
+        .card-icon {
+            font-size: 4.5em;
+            text-align: center;
+            margin-bottom: 15px;
+            background: var(--soft-blue);
+            width: 100px;
+            height: 100px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            transform: rotate(-5deg);
+            transition: all 0.3s;
+        }
+
+        .card:hover .card-icon {
+            transform: rotate(0deg) scale(1.1);
+            background: var(--primary-gold);
+        }
+
+        .card h3 {
+            font-size: 2em;
+            color: var(--primary-purple);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .card p {
+            color: var(--text-soft);
+            font-size: 1.1em;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--primary-gold);
+            color: var(--text-dark);
+            padding: 10px 15px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1em;
+            transform: rotate(5deg);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+
+        /* ===== بخش آموزش قرآن ===== */
+        .quran-section {
+            background: white;
+            border-radius: 100px 100px 100px 100px;
+            padding: 40px;
+            margin-bottom: 50px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 5px solid var(--primary-green);
+        }
+
+        .surah-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .surah-btn {
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: none;
+            background: var(--soft-blue);
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .surah-btn:hover {
+            background: var(--primary-gold);
+            transform: scale(1.1);
+        }
+
+        .surah-btn.active {
+            background: var(--primary-green);
+            color: white;
+            border-color: var(--primary-purple);
+        }
+
+        .quran-display {
+            background: linear-gradient(145deg, #f9f7e8, #fff9e6);
+            border-radius: 80px;
+            padding: 40px;
+            text-align: center;
+            border: 5px solid var(--primary-gold);
+            box-shadow: inset 0 0 30px rgba(241, 196, 15, 0.2);
+        }
+
+        .aya-text {
+            font-size: 2.5em;
+            line-height: 2.2;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-family: 'Amiri', 'Traditional Arabic', 'B Nazanin', serif;
+            background: rgba(255,255,255,0.7);
+            padding: 30px;
+            border-radius: 60px;
+        }
+
+        .aya-translation {
+            font-size: 1.5em;
+            color: var(--primary-purple);
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 40px;
+        }
+
+        .audio-controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .audio-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            border: none;
+            color: white;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.2);
+            background: var(--primary-gold);
+        }
+
+        /* ===== بخش بازی و یادگیری ===== */
+        .game-section {
+            background: linear-gradient(135deg, var(--soft-pink), var(--soft-blue));
+            border-radius: 100px;
+            padding: 40px;
+            margin-bottom: 50px;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .game-item {
+            background: white;
+            border-radius: 60px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 4px solid var(--primary-purple);
+        }
+
+        .game-item:hover {
+            transform: rotate(2deg) scale(1.05);
+        }
+
+        .game-emoji {
+            font-size: 5em;
+            margin-bottom: 15px;
+        }
+
+        .game-title {
+            font-size: 1.8em;
+            color: var(--primary-purple);
+            margin-bottom: 10px;
+        }
+
+        .game-desc {
+            color: var(--text-soft);
+            margin-bottom: 20px;
+        }
+
+        .play-btn {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 40px;
+            font-size: 1.3em;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .freq-btn:hover {
+        .play-btn:hover {
+            background: var(--primary-gold);
             transform: scale(1.1);
         }
 
-        .freq-btn.playing {
-            background: var(--success);
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* ماژول هوش مصنوعی */
-        .ai-chat {
+        /* ===== بخش پیشرفت کودک ===== */
+        .progress-section {
             background: white;
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 100px;
+            padding: 40px;
+            margin-bottom: 50px;
+            border: 5px solid var(--primary-blue);
         }
 
-        .chat-messages {
-            height: 350px;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f8f9fa;
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
         }
 
-        .message {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
+        .stat-circle {
+            text-align: center;
         }
 
-        .message.ai {
-            align-items: flex-start;
-        }
-
-        .message.user {
-            align-items: flex-end;
-        }
-
-        .message-content {
-            max-width: 80%;
-            padding: 12px 18px;
-            border-radius: 20px;
-            font-size: 0.95em;
-            line-height: 1.5;
-        }
-
-        .ai .message-content {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-bottom-right-radius: 5px;
-        }
-
-        .user .message-content {
-            background: var(--secondary);
-            color: white;
-            border-bottom-left-radius: 5px;
-        }
-
-        .chat-input {
-            display: flex;
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #eee;
-        }
-
-        .chat-input input {
-            flex: 1;
-            margin-left: 10px;
-            border-radius: 25px;
-            padding: 12px 20px;
-        }
-
-        .chat-input button {
-            width: 50px;
-            height: 50px;
+        .circle {
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
-            background: var(--secondary);
+            background: conic-gradient(var(--primary-green) 0deg 270deg, #ecf0f1 270deg 360deg);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: 800;
+            color: var(--primary-purple);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .stars-earned {
+            font-size: 2em;
+            color: var(--primary-gold);
+        }
+
+        /* ===== فوتر ===== */
+        .footer {
+            background: linear-gradient(135deg, #2c3e50, #1a2634);
+            border-radius: 80px 80px 30px 30px;
+            padding: 50px;
+            color: white;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: var(--primary-gold);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .footer-section ul li a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--primary-gold);
+            padding-right: 10px;
+        }
+
+        /* ===== مدال‌ها و نشان‌ها ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 80px;
+            padding: 50px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            animation: modalPop 0.5s;
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .modal h2 {
+            font-size: 2.5em;
+            color: var(--primary-purple);
+            margin-bottom: 20px;
+        }
+
+        .modal p {
+            font-size: 1.3em;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+        }
+
+        .modal-btn {
+            background: var(--primary-green);
             color: white;
             border: none;
+            padding: 15px 40px;
+            border-radius: 40px;
+            font-size: 1.3em;
             cursor: pointer;
             transition: all 0.3s;
         }
 
-        .chat-input button:hover {
+        .modal-btn:hover {
+            background: var(--primary-gold);
             transform: scale(1.1);
         }
 
-        .symptom-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
+        /* ===== انیمیشن‌های اضافی ===== */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
         }
 
-        .symptom-btn {
-            padding: 10px 20px;
-            border-radius: 25px;
-            border: 2px solid var(--secondary);
-            background: transparent;
-            color: var(--secondary);
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
+        @keyframes floating {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
         }
 
-        .symptom-btn:hover {
-            background: var(--secondary);
-            color: white;
+        .sparkle {
+            position: relative;
         }
 
-        /* استایل‌های اضافی */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px 0;
+        .sparkle::after {
+            content: "✨";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 2em;
+            animation: sparkle 1s ease infinite;
         }
 
-        .stat-item {
-            background: white;
-            padding: 15px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
         }
 
-        .warning-box {
-            background: #fff3cd;
-            color: #856404;
-            padding: 15px;
-            border-radius: 15px;
-            margin: 15px 0;
-            border-right: 4px solid #ffc107;
-        }
-
+        /* ===== ریسپانسیو ===== */
         @media (max-width: 768px) {
-            .platform-container {
-                padding: 15px;
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
             }
             
-            h1 {
+            .welcome-title {
                 font-size: 2em;
             }
             
-            .menu-grid {
-                grid-template-columns: 1fr;
+            .aya-text {
+                font-size: 1.5em;
+            }
+            
+            .card {
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="platform-container">
-        <div class="header">
-            <h1>🏥 HealthAI</h1>
-            <p class="subtitle">پلتفرم هوشمند بررسی سلامت | با تشخیص هوش مصنوعی</p>
+    <div class="site-container">
+        <!-- هدر کودکانه -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">📖</div>
+                <div class="logo-text">
+                    <h1>🌙 آکادمی قرآن کودک</h1>
+                    <p>Quran Kids Academy</p>
+                </div>
+            </div>
+            <div class="nav-icons">
+                <div class="nav-icon" onclick="showSection('home')">🏠</div>
+                <div class="nav-icon" onclick="showSection('quran')">📖</div>
+                <div class="nav-icon" onclick="showSection('games')">🎮</div>
+                <div class="nav-icon" onclick="showSection('progress')">⭐</div>
+                <div class="nav-icon" onclick="showModal('help')">❓</div>
+            </div>
+        </header>
+
+        <!-- بخش خوشامدگویی -->
+        <section class="welcome-section" id="home-section">
+            <h2 class="welcome-title">✨ به آکادمی قرآن خوش آمدی! ✨</h2>
+            <p class="welcome-text">بیا با هم قرآن یاد بگیریم و کلی ستاره جمع کنیم! ⭐</p>
+            <div class="child-avatar">
+                <div class="avatar">👦</div>
+                <div class="avatar">👧</div>
+                <div class="avatar">🧒</div>
+            </div>
+        </section>
+
+        <!-- بخش‌های اصلی آموزش -->
+        <h2 class="section-title">📚 دوره‌های آموزشی</h2>
+        <div class="cards-grid">
+            <div class="card" onclick="showQuranLesson('alfabet')">
+                <div class="card-icon">🔤</div>
+                <span class="card-badge">⭐ سطح 1</span>
+                <h3>الفبای عربی</h3>
+                <p>یادگیری حروف قرآن با شعر و بازی</p>
+            </div>
+            <div class="card" onclick="showQuranLesson('tajweed')">
+                <div class="card-icon">🎵</div>
+                <span class="card-badge">⭐⭐ سطح 2</span>
+                <h3>تجوید مقدماتی</h3>
+                <p>قواعد ساده خواندن قرآن</p>
+            </div>
+            <div class="card" onclick="showQuranLesson('short-surahs')">
+                <div class="card-icon">📖</div>
+                <span class="card-badge">⭐⭐⭐ سطح 3</span>
+                <h3>سوره‌های کوتاه</h3>
+                <p>حفظ سوره‌های جزء ۳۰</p>
+            </div>
         </div>
 
-        <!-- منوی اصلی -->
-        <div class="menu-grid">
-            <div class="menu-item active" onclick="showModule('bmi')">
-                <div class="menu-icon">⚖️</div>
-                <div class="menu-title">محاسبه BMI</div>
-                <div class="menu-desc">شاخص توده بدنی + تحلیل وزن ایده‌آل</div>
+        <!-- بخش قرآن اصلی -->
+        <section class="quran-section" id="quran-section">
+            <h2 class="section-title">📖 قرآن زیبا</h2>
+            
+            <div class="surah-selector">
+                <button class="surah-btn active" onclick="changeSurah(1)">سوره فاتحه</button>
+                <button class="surah-btn" onclick="changeSurah(112)">سوره اخلاص</button>
+                <button class="surah-btn" onclick="changeSurah(113)">سوره فلق</button>
+                <button class="surah-btn" onclick="changeSurah(114)">سوره ناس</button>
+                <button class="surah-btn" onclick="changeSurah(108)">سوره کوثر</button>
             </div>
-            <div class="menu-item" onclick="showModule('vision')">
-                <div class="menu-icon">👁️</div>
-                <div class="menu-title">تست بینایی</div>
-                <div class="menu-desc">بررسی قدرت بینایی با چارت اسنلن</div>
+
+            <div class="quran-display">
+                <div class="aya-text" id="aya-text">
+                    بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ<br>
+                    الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ
+                </div>
+                <div class="aya-translation" id="aya-translation">
+                    به نام خداوند بخشنده مهربان<br>
+                    ستایش مخصوص خداوندی است که پروردگار جهانیان است
+                </div>
+                
+                <div class="audio-controls">
+                    <button class="audio-btn" onclick="playAudio()">▶️</button>
+                    <button class="audio-btn" onclick="pauseAudio()">⏸️</button>
+                    <button class="audio-btn" onclick="repeatAudio()">🔄</button>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <span style="font-size: 2em; color: var(--primary-gold);" onclick="addStar()">⭐</span>
+                    <span style="font-size: 1.5em; margin-right: 15px;">امتیاز تو: <span id="star-count">۱۲۵</span> ستاره</span>
+                </div>
             </div>
-            <div class="menu-item" onclick="showModule('hearing')">
-                <div class="menu-icon">👂</div>
-                <div class="menu-title">تست شنوایی</div>
-                <div class="menu-desc">آزمایش فرکانس‌های مختلف صدا</div>
+        </section>
+
+        <!-- بخش بازی‌های آموزشی -->
+        <section class="game-section" id="games-section">
+            <h2 class="section-title">🎮 بازی و سرگرمی</h2>
+            
+            <div class="game-container">
+                <div class="game-item">
+                    <div class="game-emoji">🧩</div>
+                    <h3 class="game-title">پازل حروف</h3>
+                    <p class="game-desc">حروف عربی رو کنار هم بچین</p>
+                    <button class="play-btn" onclick="startGame('puzzle')">شروع بازی</button>
+                </div>
+                
+                <div class="game-item">
+                    <div class="game-emoji">🔊</div>
+                    <h3 class="game-title">تست گوش دادن</h3>
+                    <p class="game-desc">صدای قرآن رو تشخیص بده</p>
+                    <button class="play-btn" onclick="startGame('listening')">شروع بازی</button>
+                </div>
+                
+                <div class="game-item">
+                    <div class="game-emoji">🎨</div>
+                    <h3 class="game-title">نقاشی قرآنی</h3>
+                    <p class="game-desc">به آیات رنگ بزن</p>
+                    <button class="play-btn" onclick="startGame('coloring')">شروع بازی</button>
+                </div>
+                
+                <div class="game-item">
+                    <div class="game-emoji">🏆</div>
+                    <h3 class="game-title">مسابقه</h3>
+                    <p class="game-desc">با دوستات مسابقه بده</p>
+                    <button class="play-btn" onclick="startGame('competition')">شروع بازی</button>
+                </div>
             </div>
-            <div class="menu-item" onclick="showModule('ai')">
-                <div class="menu-icon">🤖</div>
-                <div class="menu-title">تشخیص با هوش مصنوعی</div>
-                <div class="menu-desc">گفتگو و بررسی علائم بیماری</div>
+        </section>
+
+        <!-- بخش پیشرفت -->
+        <section class="progress-section" id="progress-section">
+            <h2 class="section-title">⭐ پیشرفت من</h2>
+            
+            <div class="progress-stats">
+                <div class="stat-circle">
+                    <div class="circle">۷۵%</div>
+                    <h3>الفبای عربی</h3>
+                </div>
+                <div class="stat-circle">
+                    <div class="circle">۴۰%</div>
+                    <h3>تجوید</h3>
+                </div>
+                <div class="stat-circle">
+                    <div class="circle">۶۰%</div>
+                    <h3>حفظ سوره‌ها</h3>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div class="stars-earned">
+                    ⭐⭐⭐⭐☆ (۴ از ۵ ستاره)
+                </div>
+                <p style="font-size: 1.3em; margin-top: 20px;">عالی پیش رفتی! فقط کمی دیگه مونده</p>
+            </div>
+        </section>
+
+        <!-- بخش جوایز و هدایا -->
+        <div style="background: linear-gradient(145deg, #fce4ec, #f3e5f5); border-radius: 80px; padding: 40px; margin-bottom: 50px; text-align: center;">
+            <h2 style="font-size: 2.5em; color: var(--primary-purple);">🎁 جایزه‌های ویژه</h2>
+            <p style="font-size: 1.5em; margin: 30px 0;">با جمع کردن ستاره‌ها جایزه بگیر!</p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px;">
+                    <span style="font-size: 3em;">🏅</span>
+                    <h3>مدال برنز</h3>
+                    <p>۵۰ ستاره</p>
+                </div>
+                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px;">
+                    <span style="font-size: 3em;">🥈</span>
+                    <h3>مدال نقره</h3>
+                    <p>۱۰۰ ستاره</p>
+                </div>
+                <div style="background: white; border-radius: 50px; padding: 20px; width: 200px;">
+                    <span style="font-size: 3em;">🥇</span>
+                    <h3>مدال طلا</h3>
+                    <p>۲۰۰ ستاره</p>
+                </div>
             </div>
         </div>
 
-        <!-- محتوای اصلی -->
-        <div class="content-area">
-            <!-- ماژول BMI -->
-            <div id="bmi-module" class="module active">
-                <h2 style="margin-bottom: 20px; color: var(--primary);">⚖️ محاسبه شاخص توده بدنی</h2>
-                
-                <div class="input-card">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                        <div class="input-group">
-                            <label>👤 سن</label>
-                            <input type="number" id="bmi-age" placeholder="مثال: 30" min="2" max="120">
-                        </div>
-                        <div class="input-group">
-                            <label>⚥ جنسیت</label>
-                            <select id="bmi-gender">
-                                <option value="male">مرد</option>
-                                <option value="female">زن</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>📊 وزن (کیلوگرم)</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="bmi-weight" placeholder="مثال: 85" step="0.1">
-                            <span class="unit">kg</span>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>📏 قد (سانتی‌متر)</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="bmi-height" placeholder="مثال: 175" step="0.1">
-                            <span class="unit">cm</span>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-primary" onclick="calculateBMI()" style="width: 100%;">محاسبه BMI</button>
-
-                    <div id="bmi-result" class="result-card">
-                        <div style="text-align: center;">
-                            <div style="font-size: 3em; font-weight: 800; color: var(--secondary);" id="bmi-value">--</div>
-                            <div style="font-size: 1.5em; margin: 10px 0;" id="bmi-category">---</div>
-                            <div id="bmi-recommendation" class="warning-box"></div>
-                            
-                            <div class="stats-grid">
-                                <div class="stat-item">
-                                    <div>BMI پایه</div>
-                                    <div style="font-weight: 700;" id="bmi-base">--</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div>BMI تعدیل‌شده</div>
-                                    <div style="font-weight: 700;" id="bmi-adjusted">--</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div>وزن ایده‌آل</div>
-                                    <div style="font-weight: 700;" id="ideal-weight">--</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- فوتر -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>🌙 آکادمی قرآن کودک</h4>
+                    <p>آموزش قرآن برای کودکان با روشی شاد و جذاب</p>
+                </div>
+                <div class="footer-section">
+                    <h4>دسترسی سریع</h4>
+                    <ul>
+                        <li><a href="#" onclick="showSection('home')">خانه</a></li>
+                        <li><a href="#" onclick="showSection('quran')">قرآن</a></li>
+                        <li><a href="#" onclick="showSection('games')">بازی‌ها</a></li>
+                        <li><a href="#" onclick="showSection('progress')">پیشرفت</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>ارتباط با ما</h4>
+                    <ul>
+                        <li>📞 ۰۲۱-۱۲۳۴۵۶۷۸</li>
+                        <li>📧 info@quran-kids.ir</li>
+                        <li>🏠 تهران، ایران</li>
+                    </ul>
                 </div>
             </div>
-
-            <!-- ماژول تست بینایی -->
-            <div id="vision-module" class="module">
-                <h2 style="margin-bottom: 20px; color: var(--primary);">👁️ تست بینایی (چارت اسنلن)</h2>
-                
-                <div class="vision-test">
-                    <div class="snellen-chart">
-                        <p style="margin-bottom: 20px; color: #7f8c8d;">از فاصله 3 متری به صفحه نگاه کنید و کوچکترین خطی که می‌توانید بخوانید را انتخاب کنید</p>
-                        
-                        <div class="snellen-line line-20-200" onclick="checkVision('20/200')">🔷 ک س م ل ب ن</div>
-                        <div class="snellen-line line-20-100" onclick="checkVision('20/100')">🔶 س م ل ب ن</div>
-                        <div class="snellen-line line-20-70" onclick="checkVision('20/70')">🔷 م ل ب ن</div>
-                        <div class="snellen-line line-20-50" onclick="checkVision('20/50')">🔶 ل ب ن</div>
-                        <div class="snellen-line line-20-40" onclick="checkVision('20/40')">🔷 ب ن</div>
-                        <div class="snellen-line line-20-30" onclick="checkVision('20/30')">🔶 ک س</div>
-                        <div class="snellen-line line-20-25" onclick="checkVision('20/25')">🔷 م ل</div>
-                        <div class="snellen-line line-20-20" onclick="checkVision('20/20')">🔶 ب ن</div>
-                    </div>
-
-                    <div id="vision-result" class="result-card" style="margin-top: 20px;">
-                        <h3 id="vision-text" style="text-align: center;">خط انتخاب شده: --</h3>
-                        <div id="vision-analysis" class="warning-box" style="text-align: center;"></div>
-                    </div>
-                </div>
+            <div style="text-align: center; margin-top: 40px; font-size: 1.2em;">
+                © ۲۰۲۶ - تمامی حقوق برای آکادمی قرآن کودک محفوظ است
             </div>
+        </footer>
+    </div>
 
-            <!-- ماژول تست شنوایی -->
-            <div id="hearing-module" class="module">
-                <h2 style="margin-bottom: 20px; color: var(--primary);">👂 تست شنوایی فرکانسی</h2>
-                
-                <div class="hearing-test">
-                    <div class="frequency-test">
-                        <p style="margin-bottom: 20px;">هر دکمه را فشار دهید و صدای مربوط به آن فرکانس را گوش دهید</p>
-                        
-                        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-                            <button class="freq-btn" onclick="playFrequency(250)">250 Hz</button>
-                            <button class="freq-btn" onclick="playFrequency(500)">500 Hz</button>
-                            <button class="freq-btn" onclick="playFrequency(1000)">1000 Hz</button>
-                            <button class="freq-btn" onclick="playFrequency(2000)">2000 Hz</button>
-                            <button class="freq-btn" onclick="playFrequency(4000)">4000 Hz</button>
-                            <button class="freq-btn" onclick="playFrequency(8000)">8000 Hz</button>
-                        </div>
+    <!-- مدال کمک -->
+    <div class="modal" id="help-modal">
+        <div class="modal-content">
+            <div class="modal-icon">❓</div>
+            <h2>راهنما</h2>
+            <p>برای شروع روی هر بخش کلیک کن!<br>با جمع کردن ستاره‌ها می‌تونی جایزه بگیری.</p>
+            <button class="modal-btn" onclick="closeModal()">باشه فهمیدم!</button>
+        </div>
+    </div>
 
-                        <div style="margin-top: 30px;">
-                            <p>آیا صداها را به وضوح می‌شنوید؟</p>
-                            <button class="btn btn-success" onclick="checkHearing()">بررسی شنوایی</button>
-                        </div>
-                    </div>
-
-                    <div id="hearing-result" class="result-card" style="margin-top: 20px;">
-                        <div id="hearing-analysis" style="text-align: center;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ماژول هوش مصنوعی -->
-            <div id="ai-module" class="module">
-                <h2 style="margin-bottom: 20px; color: var(--primary);">🤖 تشخیص با هوش مصنوعی</h2>
-                
-                <div class="ai-chat">
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="message ai">
-                            <div class="message-content">
-                                👋 سلام! من دستیار هوشمند سلامت هستم. لطفاً علائم خود را توضیح دهید یا از دکمه‌های زیر استفاده کنید.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="symptom-buttons">
-                        <button class="symptom-btn" onclick="addSymptom('سردرد')">سردرد</button>
-                        <button class="symptom-btn" onclick="addSymptom('تب')">تب</button>
-                        <button class="symptom-btn" onclick="addSymptom('سرفه')">سرفه</button>
-                        <button class="symptom-btn" onclick="addSymptom('خستگی')">خستگی</button>
-                        <button class="symptom-btn" onclick="addSymptom('درد قفسه سینه')">درد قفسه سینه</button>
-                        <button class="symptom-btn" onclick="addSymptom('تنگی نفس')">تنگی نفس</button>
-                    </div>
-
-                    <div class="chat-input">
-                        <input type="text" id="user-input" placeholder="علائم خود را بنویسید..." onkeypress="if(event.key==='Enter') sendMessage()">
-                        <button onclick="sendMessage()">📤</button>
-                    </div>
-                </div>
-            </div>
+    <!-- مدال تبریک -->
+    <div class="modal" id="congrats-modal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <h2>آفرین!</h2>
+            <p>تو ۱۰ ستاره جدید گرفتی! به راهت ادامه بده ⭐</p>
+            <button class="modal-btn" onclick="closeModal()">هوراا!</button>
         </div>
     </div>
 
     <script>
-        // قفل زوم
+        // قفل زوم صفحه برای تجربه بهتر
         document.addEventListener('gesturestart', (e) => e.preventDefault());
-        document.addEventListener('touchmove', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
-
-        // نمایش ماژول‌ها
-        function showModule(moduleName) {
-            // مخفی کردن همه ماژول‌ها
-            document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            
-            // نمایش ماژول انتخاب شده
-            document.getElementById(moduleName + '-module').classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        // ========== ماژول BMI ==========
-        function calculateBMI() {
-            const age = parseInt(document.getElementById('bmi-age').value);
-            const gender = document.getElementById('bmi-gender').value;
-            const weight = parseFloat(document.getElementById('bmi-weight').value);
-            const height = parseFloat(document.getElementById('bmi-height').value);
-
-            if (!age || !weight || !height) {
-                alert('لطفاً تمام فیلدها را پر کنید');
-                return;
-            }
-
-            const heightInM = height / 100;
-            const bmi = weight / (heightInM * heightInM);
-            const roundedBMI = Math.round(bmi * 10) / 10;
-
-            // تعدیل بر اساس سن
-            let adjustedBMI = bmi;
-            if (age > 65) {
-                adjustedBMI = bmi - 1;
-            } else if (age < 18) {
-                adjustedBMI = bmi + 0.5;
-            }
-
-            // تعدیل بر اساس جنسیت
-            if (gender === 'male' && age < 40) {
-                adjustedBMI = bmi - 0.5;
-            }
-
-            const idealWeight = Math.round(22 * heightInM * heightInM * 10) / 10;
-            const weightDiff = Math.abs(Math.round((weight - idealWeight) * 10) / 10);
-
-            let category = '';
-            let recommendation = '';
-
-            if (adjustedBMI < 18.5) {
-                category = 'کمبود وزن';
-                recommendation = `✅ باید ${weightDiff} کیلوگرم اضافه کنید`;
-            } else if (adjustedBMI < 25) {
-                category = 'وزن نرمال';
-                recommendation = '🎉 وزن شما در محدوده نرمال است';
-            } else if (adjustedBMI < 30) {
-                category = 'اضافه وزن';
-                recommendation = `⚠️ باید ${weightDiff} کیلوگرم کم کنید`;
-            } else {
-                category = 'چاقی';
-                recommendation = `🔴 باید ${weightDiff} کیلوگرم کم کنید`;
-            }
-
-            document.getElementById('bmi-value').textContent = roundedBMI;
-            document.getElementById('bmi-base').textContent = roundedBMI;
-            document.getElementById('bmi-adjusted').textContent = Math.round(adjustedBMI * 10) / 10;
-            document.getElementById('bmi-category').textContent = category;
-            document.getElementById('ideal-weight').textContent = idealWeight + ' kg';
-            document.getElementById('bmi-recommendation').textContent = recommendation;
-            document.getElementById('bmi-result').classList.add('show');
-        }
-
-        // ========== ماژول بینایی ==========
-        function checkVision(line) {
-            document.getElementById('vision-result').classList.add('show');
-            document.getElementById('vision-text').textContent = `خط انتخاب شده: ${line}`;
-            
-            let analysis = '';
-            if (line === '20/20') {
-                analysis = '✅ بینایی شما عالی است';
-            } else if (line === '20/25' || line === '20/30') {
-                analysis = '🟡 بینایی شما کمی ضعیف است، بهتر است به چشم پزشک مراجعه کنید';
-            } else if (line === '20/40' || line === '20/50') {
-                analysis = '🟠 بینایی شما ضعیف است، حتماً به پزشک مراجعه کنید';
-            } else {
-                analysis = '🔴 بینایی شما بسیار ضعیف است، نیاز فوری به معاینه تخصصی دارید';
-            }
-            
-            document.getElementById('vision-analysis').textContent = analysis;
-        }
-
-        // ========== ماژول شنوایی ==========
-        let audioContext = null;
         
-        function playFrequency(freq) {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // متغیرها
+        let currentSurah = 1;
+        let starCount = 125;
+        let audioEnabled = true;
+
+        // نمایش بخش‌های مختلف
+        function showSection(section) {
+            if(section === 'home') {
+                document.getElementById('home-section').scrollIntoView({ behavior: 'smooth' });
+            } else if(section === 'quran') {
+                document.getElementById('quran-section').scrollIntoView({ behavior: 'smooth' });
+            } else if(section === 'games') {
+                document.getElementById('games-section').scrollIntoView({ behavior: 'smooth' });
+            } else if(section === 'progress') {
+                document.getElementById('progress-section').scrollIntoView({ behavior: 'smooth' });
             }
-            
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.type = 'sine';
-            oscillator.frequency.value = freq;
-            
-            gainNode.gain.value = 0.1;
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + 1);
-            
-            // انیمیشن دکمه
-            const btn = event.currentTarget;
-            btn.classList.add('playing');
-            setTimeout(() => btn.classList.remove('playing'), 1000);
         }
 
-        function checkHearing() {
-            document.getElementById('hearing-result').classList.add('show');
-            document.getElementById('hearing-analysis').innerHTML = `
-                <div class="warning-box" style="background: #d4edda; color: #155724;">
-                    👂 تست شنوایی با موفقیت انجام شد.<br>
-                    اگر تمام فرکانس‌ها را به وضوح شنیدید، شنوایی شما نرمال است.<br>
-                    در غیر این صورت برای تست دقیق‌تر به متخصص مراجعه کنید.
-                </div>
-            `;
+        // نمایش مدال
+        function showModal(type) {
+            if(type === 'help') {
+                document.getElementById('help-modal').classList.add('active');
+            } else if(type === 'congrats') {
+                document.getElementById('congrats-modal').classList.add('active');
+            }
         }
 
-        // ========== ماژول هوش مصنوعی ==========
-        const symptomDatabase = {
-            'سردرد': 'سردرد می‌تواند دلایل مختلفی داشته باشد: استرس، کم‌خوابی، میگرن، یا مشکلات سینوزیت. چند وقت است این سردرد را دارید؟',
-            'تب': 'تب نشانه‌ای از مبارزه بدن با عفونت است. آیا علائم دیگری مانند لرز، بدن درد یا سرفه دارید؟',
-            'سرفه': 'سرفه می‌تواند خشک یا خلط‌دار باشد. آیا خلط دارید؟ رنگ آن چگونه است؟',
-            'خستگی': 'خستگی مزمن می‌تواند دلایل مختلفی داشته باشد: کم‌خونی، کم‌کاری تیروئید، استرس یا مشکلات خواب.',
-            'درد قفسه سینه': '⚠️ این علامت می‌تواند خطرناک باشد. اگر درد شدید است یا به دست چپ می‌زند، فوراً به اورژانس مراجعه کنید!',
-            'تنگی نفس': 'تنگی نفس می‌تواند ناشی از مشکلات قلبی، ریوی یا اضطراب باشد. اگر ناگهانی و شدید است، به پزشک مراجعه کنید.'
-        };
-
-        function addSymptom(symptom) {
-            document.getElementById('user-input').value = symptom;
-            sendMessage();
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
         }
 
-        function sendMessage() {
-            const input = document.getElementById('user-input');
-            const message = input.value.trim();
+        // تغییر سوره
+        function changeSurah(surahNumber) {
+            currentSurah = surahNumber;
             
-            if (!message) return;
+            // به‌روزرسانی کلاس دکمه‌ها
+            document.querySelectorAll('.surah-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
             
-            // اضافه کردن پیام کاربر
-            addMessage(message, 'user');
-            input.value = '';
-            
-            // پاسخ هوش مصنوعی
-            setTimeout(() => {
-                let response = generateAIResponse(message);
-                addMessage(response, 'ai');
-            }, 500);
-        }
-
-        function addMessage(text, sender) {
-            const messagesDiv = document.getElementById('chat-messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-            
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
-            contentDiv.textContent = text;
-            
-            messageDiv.appendChild(contentDiv);
-            messagesDiv.appendChild(messageDiv);
-            
-            // اسکرول به پایین
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        function generateAIResponse(input) {
-            input = input.toLowerCase();
-            
-            // بررسی علائم در دیتابیس
-            for (let [symptom, response] of Object.entries(symptomDatabase)) {
-                if (input.includes(symptom)) {
-                    return response;
+            // متن سوره (اینجا می‌تونید از API واقعی قرآن استفاده کنید)
+            const surahs = {
+                1: {
+                    text: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ<br>الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+                    translation: "به نام خداوند بخشنده مهربان<br>ستایش مخصوص خداوندی است که پروردگار جهانیان است"
+                },
+                112: {
+                    text: "قُلْ هُوَ اللَّهُ أَحَدٌ<br>اللَّهُ الصَّمَدُ",
+                    translation: "بگو او خداوند یکتاست<br>خداوند بی‌نیاز"
+                },
+                113: {
+                    text: "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ",
+                    translation: "بگو پناه می‌برم به پروردگار سپیده صبح"
+                },
+                114: {
+                    text: "قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
+                    translation: "بگو پناه می‌برم به پروردگار مردم"
+                },
+                108: {
+                    text: "إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ",
+                    translation: "ما به تو کوثر عطا کردیم"
                 }
-            }
+            };
             
-            // پاسخ‌های عمومی
-            if (input.includes('سلام') || input.includes('خوبی')) {
-                return 'سلام! چطور می‌توانم به شما کمک کنم؟';
-            } else if (input.includes('عکس') || input.includes('دارو')) {
-                return 'برای تجویز دارو حتماً باید به پزشک مراجعه کنید. من فقط می‌توانم راهنمایی کنم.';
-            } else if (input.includes('تشکر') || input.includes('ممنون')) {
-                return 'خواهش می‌کنم. سلامتی شما مهمترین چیز است!';
-            } else {
-                return 'متوجه نشدم. لطفاً علائم خود را دقیق‌تر توضیح دهید یا از دکمه‌های علائم استفاده کنید.';
+            if(surahs[surahNumber]) {
+                document.getElementById('aya-text').innerHTML = surahs[surahNumber].text;
+                document.getElementById('aya-translation').innerHTML = surahs[surahNumber].translation;
             }
         }
+
+        // کنترل صدا
+        function playAudio() {
+            if(audioEnabled) {
+                // اینجا می‌تونید فایل صوتی واقعی پخش کنید
+                console.log('Playing audio for surah ' + currentSurah);
+                // برای نمونه پیام می‌دهیم
+                alert('🎵 در حال پخش تلاوت سوره');
+                
+                // اضافه کردن ستاره هنگام گوش دادن
+                addStar();
+            }
+        }
+
+        function pauseAudio() {
+            console.log('Audio paused');
+        }
+
+        function repeatAudio() {
+            console.log('Repeating audio');
+            playAudio();
+        }
+
+        // اضافه کردن ستاره
+        function addStar() {
+            starCount += 1;
+            document.getElementById('star-count').textContent = starCount;
+            
+            // هر ۱۰ ستاره یک مدال تبریک
+            if(starCount % 10 === 0) {
+                showModal('congrats');
+            }
+        }
+
+        // شروع بازی
+        function startGame(gameType) {
+            // اینجا می‌تونید بازی‌های مختلف رو راه‌اندازی کنید
+            alert(`🎮 بازی ${gameType} شروع شد!`);
+            
+            // اضافه کردن ستاره برای بازی
+            addStar();
+        }
+
+        // نمایش درس قرآن
+        function showQuranLesson(lesson) {
+            const lessons = {
+                'alfabet': 'الفبای عربی: الف، ب، ت، ث...',
+                'tajweed': 'تجوید: ادغام، اظهار، اخفا...',
+                'short-surahs': 'سوره‌های کوتاه: فاتحه، اخلاص، فلق، ناس'
+            };
+            
+            alert(`📚 درس: ${lessons[lesson] || lesson}`);
+            addStar(); // جایزه برای یادگیری
+        }
+
+        // اسکرول نرم به بخش‌ها
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // بارگذاری اولیه
+        window.onload = function() {
+            // نمایش راهنما بعد از ۳ ثانیه
+            setTimeout(() => {
+                showModal('help');
+            }, 3000);
+        };
     </script>
 </body>
 </html>
