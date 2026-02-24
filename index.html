@@ -2,969 +2,1391 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>هشدار دهنده شارژ باتری | Battery Alert</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, shrink-to-fit=no, viewport-fit=cover">
+    <title>آمادگی مصاحبه دانشگاه فرهنگیان | محمد مهدی مرادیان</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Vazir', 'Tahoma', Arial, sans-serif;
+            font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
         }
 
-        body {
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            min-height: 100vh;
+        :root {
+            --primary: #1e3c72;
+            --secondary: #2a5298;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --gold: #f1c40f;
+            --light-blue: #e3f2fd;
+            --dark-blue: #0d47a1;
+            --purple: #8e44ad;
+            --teal: #16a085;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            background: linear-gradient(145deg, var(--primary), var(--secondary));
+        }
+
+        .app-container {
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px;
+            position: relative;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
+        }
+
+        .app-container.mobile .main-card {
+            max-width: 100%;
+            padding: 15px;
+        }
+
+        .app-container.mobile .menu-btn {
+            padding: 15px;
+        }
+
+        .app-container.mobile .menu-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.8em;
+        }
+
+        .app-container.mobile .menu-text h2 {
+            font-size: 1.3em;
+        }
+
+        .app-container.tablet .main-card {
+            max-width: 800px;
+            padding: 25px;
+        }
+
+        .app-container.tablet .menu-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .app-container.tablet .menu-btn {
             padding: 20px;
         }
 
-        .container {
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .battery-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
+        .app-container.laptop .main-card {
+            max-width: 1200px;
             padding: 30px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* هدر */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 2em;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        .header h1 i {
-            color: #f39c12;
-            margin: 0 10px;
-        }
-
-        .header p {
-            color: #7f8c8d;
-            font-size: 1em;
-        }
-
-        /* نمایش باتری */
-        .battery-display {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .battery-icon {
-            font-size: 8em;
-            margin-bottom: 15px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .battery-icon i {
-            color: #2c3e50;
-        }
-
-        .battery-level {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 0.25em;
-            font-weight: bold;
-            color: white;
-            background: rgba(0,0,0,0.5);
-            padding: 5px 10px;
-            border-radius: 20px;
-            width: 80px;
-        }
-
-        .battery-percentage {
-            font-size: 3.5em;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        .battery-status {
-            font-size: 1.2em;
-            color: #27ae60;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        /* تنظیمات هشدار */
-        .alert-settings {
-            background: #f8f9fa;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-size: 1.3em;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title i {
-            color: #f39c12;
-        }
-
-        .alert-input-group {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .alert-input {
-            flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-            min-width: 150px;
-        }
-
-        .alert-input:focus {
-            outline: none;
-            border-color: #f39c12;
-            box-shadow: 0 0 0 3px rgba(243,156,18,0.2);
-        }
-
-        .alert-input:disabled {
-            background: #e9ecef;
-            cursor: not-allowed;
-        }
-
-        .percentage-symbol {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .toggle-slider {
-            background-color: #27ae60;
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(26px);
-        }
-
-        .alert-options {
-            margin-top: 20px;
-        }
-
-        .alert-type {
-            display: flex;
+        .app-container.laptop .menu-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-            margin: 15px 0;
-            flex-wrap: wrap;
         }
 
-        .alert-type label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            padding: 10px 20px;
-            background: white;
-            border-radius: 10px;
-            border: 2px solid #e0e0e0;
-            transition: all 0.3s ease;
+        .app-container.laptop .category-header {
+            padding: 15px;
+        }
+
+        .app-container.laptop .questions-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .app-container.laptop .question-card {
+            margin-bottom: 0;
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+            height: 100%;
+            animation: fadeIn 0.3s ease;
             flex: 1;
-            justify-content: center;
         }
 
-        .alert-type label.active {
-            border-color: #f39c12;
-            background: #fff9e6;
+        .page.active {
+            display: flex;
+            flex-direction: column;
         }
 
-        .alert-type input[type="radio"] {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            width: 100%;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-height: 98vh;
+            overflow-y: auto;
+            scrollbar-width: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .main-card::-webkit-scrollbar {
             display: none;
         }
 
-        .test-btn {
-            width: 100%;
-            padding: 15px;
-            background: #3498db;
-            color: white;
+        .app-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--gold);
+        }
+
+        .app-title {
+            font-size: clamp(1.8em, 6vw, 2.2em);
+            color: var(--dark-blue);
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .app-subtitle {
+            color: var(--primary);
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 45px;
+            height: 45px;
+            border-radius: 25px;
+            background: linear-gradient(145deg, var(--danger), #c0392b);
             border: none;
-            border-radius: 10px;
-            font-size: 1.1em;
+            color: white;
+            font-size: 1.5em;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(192, 57, 43, 0.3);
         }
 
-        .test-btn:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
+        .back-button:active {
+            transform: scale(0.95);
+            opacity: 0.8;
         }
 
-        .test-btn:disabled {
-            background: #95a5a6;
-            cursor: not-allowed;
-            transform: none;
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 10px 0;
+            flex: 1;
         }
 
-        /* تاریخچه هشدارها */
-        .history-section {
-            background: #f8f9fa;
-            border-radius: 20px;
+        .menu-btn {
             padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .history-list {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .history-item {
+            border: none;
+            border-radius: 30px;
             background: white;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 15px;
-            border-right: 4px solid #f39c12;
+            border: 2px solid transparent;
+            transition: all 0.2s;
         }
 
-        .history-item i {
-            color: #f39c12;
-            font-size: 1.2em;
+        .menu-btn:active {
+            transform: scale(0.98);
+            opacity: 0.7;
+            background: #f0f0f0;
         }
 
-        .history-item .time {
-            color: #7f8c8d;
+        .menu-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: linear-gradient(145deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+        }
+
+        .menu-text {
+            flex: 1;
+            text-align: right;
+        }
+
+        .menu-text h2 {
+            font-size: 1.5em;
+            color: var(--dark-blue);
+            margin-bottom: 3px;
+        }
+
+        .menu-text p {
+            color: #666;
             font-size: 0.9em;
         }
 
-        .history-item .level {
-            font-weight: bold;
-            color: #27ae60;
-            margin-right: auto;
+        .count-badge {
+            background: var(--gold);
+            color: var(--dark-blue);
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1em;
         }
 
-        .clear-history {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin-top: 10px;
-            width: 100%;
-        }
-
-        .clear-history:hover {
-            background: #c0392b;
-        }
-
-        /* وضعیت باتری */
-        .battery-info {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-        }
-
-        .info-row {
+        .category-header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 15px;
+            background: linear-gradient(145deg, var(--light-blue), white);
+            border-radius: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
-        .info-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
+        .category-title {
+            font-size: 1.5em;
+            color: var(--dark-blue);
+            font-weight: 700;
         }
 
-        .info-label {
-            font-size: 1em;
-            opacity: 0.9;
-        }
-
-        .info-value {
-            font-weight: bold;
+        .question-counter {
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
             font-size: 1.1em;
         }
 
-        /* وضعیت اتصال */
-        .connection-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: bold;
+        .questions-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 5px;
         }
 
-        .status-charging {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-discharging {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .status-full {
-            background: #cce5ff;
-            color: #004085;
-        }
-
-        /* نوتیفیکیشن */
-        .permission-request {
-            background: #fff3cd;
-            color: #856404;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            display: none;
-        }
-
-        .permission-request.active {
-            display: block;
-        }
-
-        .permission-btn {
-            background: #f39c12;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        /* انیمیشن */
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .pulse {
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .notification-demo {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+        .question-card {
             background: white;
-            padding: 15px 25px;
-            border-radius: 50px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: none;
-            align-items: center;
-            gap: 15px;
-            z-index: 1000;
-            animation: slideDown 0.3s ease;
-            border-right: 4px solid #f39c12;
+            border-radius: 30px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-right: 5px solid var(--primary);
         }
 
-        .notification-demo.show {
+        .question-number {
+            background: var(--gold);
+            color: var(--dark-blue);
+            padding: 5px 15px;
+            border-radius: 30px;
+            display: inline-block;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        .answer-box {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 20px;
+            border-right: 3px solid var(--success);
+        }
+
+        .answer-title {
+            color: var(--success);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .answer-text {
+            color: #2c3e50;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .device-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            padding: 8px 15px;
+            border-radius: 30px;
+            color: white;
+            font-size: 0.9em;
             display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            z-index: 1000;
+        }
+
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 40px;
+            font-size: 1em;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            display: none;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        .toast-message.show {
+            display: block;
         }
 
         .footer {
             text-align: center;
-            color: rgba(255,255,255,0.8);
-            margin-top: 20px;
+            margin-top: 15px;
+            color: #666;
             font-size: 0.9em;
         }
+
+        .about-section {
+            background: linear-gradient(145deg, #ffffff, #f8faff);
+            border-radius: 30px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 3px solid var(--gold);
+        }
+
+        .creator-box {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: linear-gradient(145deg, var(--light-blue), white);
+            border-radius: 30px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid var(--purple);
+        }
+
+        .creator-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+            background: linear-gradient(145deg, var(--purple), var(--teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em;
+            color: white;
+            border: 4px solid var(--gold);
+        }
+
+        .creator-info h3 {
+            font-size: 2em;
+            color: var(--dark-blue);
+            margin-bottom: 5px;
+        }
+
+        .creator-info p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .feature-title {
+            font-size: 1.3em;
+            color: var(--dark-blue);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .stats-box {
+            background: linear-gradient(145deg, var(--primary), var(--secondary));
+            border-radius: 30px;
+            padding: 25px;
+            color: white;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .stats-number {
+            font-size: 3em;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .stats-label {
+            font-size: 1.2em;
+            margin-top: 5px;
+        }
+
+        .version-badge {
+            background: var(--purple);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            display: inline-block;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        .year-badge {
+            background: linear-gradient(145deg, var(--gold), #d4ac0d);
+            color: var(--dark-blue);
+            padding: 15px;
+            border-radius: 40px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 800;
+            margin: 15px 0;
+        }
+
+        .about-menu-btn {
+            background: linear-gradient(145deg, var(--purple), var(--teal));
+            color: white;
+        }
+
+        .about-menu-btn .menu-icon {
+            background: white;
+            color: var(--purple);
+        }
     </style>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <div class="battery-card">
-            <!-- هدر -->
-            <div class="header">
-                <h1>
-                    <i class="fas fa-bolt"></i>
-                    هشدار دهنده باتری
-                    <i class="fas fa-battery-full"></i>
-                </h1>
-                <p>هنگام رسیدن به درصد دلخواه، هشدار دریافت کنید</p>
-            </div>
+    <div class="app-container" id="appContainer">
+        <div class="device-badge" id="deviceBadge">
+            <span id="deviceIcon">📱</span>
+            <span id="deviceName">موبایل</span>
+        </div>
 
-            <!-- درخواست مجوز نوتیفیکیشن -->
-            <div class="permission-request" id="permissionRequest">
-                <i class="fas fa-bell"></i>
-                <p>برای دریافت هشدارها، لطفاً نوتیفیکیشن را فعال کنید</p>
-                <button class="permission-btn" id="requestPermissionBtn">
-                    <i class="fas fa-check"></i>
-                    فعال‌سازی نوتیفیکیشن
-                </button>
-            </div>
+        <div class="toast-message" id="toast">✅ عملیات موفق</div>
 
-            <!-- نمایش نوتیفیکیشن تست -->
-            <div class="notification-demo" id="notificationDemo">
-                <i class="fas fa-bell" style="color: #f39c12;"></i>
-                <span id="demoMessage">این یک نوتیفیکیشن تست است</span>
-            </div>
-
-            <!-- نمایشگر باتری -->
-            <div class="battery-display">
-                <div class="battery-icon" id="batteryIcon">
-                    <i class="fas fa-battery-full" id="batteryIconMain"></i>
-                    <span class="battery-level" id="batteryLevelIcon">0%</span>
-                </div>
-                <div class="battery-percentage" id="batteryPercentage">--%</div>
-                <div class="battery-status" id="batteryStatus">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    در حال دریافت اطلاعات...
-                </div>
-            </div>
-
-            <!-- وضعیت اتصال -->
-            <div class="connection-status" id="connectionStatus">
-                <i class="fas fa-plug"></i>
-                <span id="connectionText">بررسی وضعیت شارژ...</span>
-            </div>
-
-            <!-- تنظیمات هشدار -->
-            <div class="alert-settings">
-                <div class="section-title">
-                    <i class="fas fa-sliders-h"></i>
-                    تنظیمات هشدار
+        <!-- صفحه اصلی (منو) -->
+        <div class="page active" id="menu-page">
+            <div class="main-card">
+                <div class="app-header">
+                    <div class="app-title">🎓 دانشگاه فرهنگیان</div>
+                    <div class="app-subtitle">آمادگی کامل برای مصاحبه و گزینش</div>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="alertToggle" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span>فعال بودن هشدار</span>
-                </div>
+                <div class="menu-buttons">
+                    <button class="menu-btn" onclick="showPage('religious-page')">
+                        <div class="menu-icon">🕌</div>
+                        <div class="menu-text">
+                            <h2>سوالات دینی و مذهبی</h2>
+                            <p>۱۲۵ سوال با جواب کامل</p>
+                        </div>
+                        <span class="count-badge">۱۲۵</span>
+                    </button>
 
-                <div class="alert-input-group">
-                    <input type="number" class="alert-input" id="alertThreshold" min="1" max="100" value="80" step="1">
-                    <span class="percentage-symbol">%</span>
-                </div>
+                    <button class="menu-btn" onclick="showPage('political-page')">
+                        <div class="menu-icon">⚖️</div>
+                        <div class="menu-text">
+                            <h2>سوالات عقیدتی سیاسی</h2>
+                            <p>۱۲۵ سوال با جواب کامل</p>
+                        </div>
+                        <span class="count-badge">۱۲۵</span>
+                    </button>
 
-                <div class="alert-options">
-                    <div class="alert-type">
-                        <label class="active">
-                            <input type="radio" name="alertType" value="once" checked>
-                            <i class="fas fa-bell"></i>
-                            یک بار
-                        </label>
-                        <label>
-                            <input type="radio" name="alertType" value="always">
-                            <i class="fas fa-bell-slash"></i>
-                            هر بار
-                        </label>
-                    </div>
+                    <button class="menu-btn" onclick="showPage('general-page')">
+                        <div class="menu-icon">📚</div>
+                        <div class="menu-text">
+                            <h2>سوالات عمومی روزمره</h2>
+                            <p>۱۲۵ سوال با جواب کامل</p>
+                        </div>
+                        <span class="count-badge">۱۲۵</span>
+                    </button>
 
-                    <button class="test-btn" id="testNotificationBtn">
-                        <i class="fas fa-flask"></i>
-                        تست نوتیفیکیشن
+                    <button class="menu-btn" onclick="showPage('teaching-page')">
+                        <div class="menu-icon">🍎</div>
+                        <div class="menu-text">
+                            <h2>سوالات تربیتی و آموزشی</h2>
+                            <p>۱۲۵ سوال با جواب کامل</p>
+                        </div>
+                        <span class="count-badge">۱۲۵</span>
+                    </button>
+
+                    <button class="menu-btn about-menu-btn" onclick="showPage('about-page')">
+                        <div class="menu-icon">ℹ️</div>
+                        <div class="menu-text">
+                            <h2>درباره برنامه</h2>
+                            <p>اطلاعات سازنده و هدف برنامه</p>
+                        </div>
                     </button>
                 </div>
-            </div>
 
-            <!-- اطلاعات باتری -->
-            <div class="battery-info">
-                <div class="info-row">
-                    <span class="info-label"><i class="fas fa-battery-quarter"></i> سطح باتری:</span>
-                    <span class="info-value" id="batteryLevelInfo">--%</span>
+                <div class="footer">
+                    <p>📚 مجموع سوالات: ۵۰۰ سوال با جواب تشریحی</p>
+                    <p>🕌 به روز رسانی: بهمن ۱۴۰۴</p>
                 </div>
-                <div class="info-row">
-                    <span class="info-label"><i class="fas fa-plug"></i> وضعیت شارژ:</span>
-                    <span class="info-value" id="chargingStatusInfo">در حال بررسی</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label"><i class="fas fa-clock"></i> زمان شارژ:</span>
-                    <span class="info-value" id="chargingTime">--</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label"><i class="fas fa-clock"></i> زمان دشارژ:</span>
-                    <span class="info-value" id="dischargingTime">--</span>
-                </div>
-            </div>
-
-            <!-- تاریخچه هشدارها -->
-            <div class="history-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <div class="section-title" style="margin-bottom: 0;">
-                        <i class="fas fa-history"></i>
-                        تاریخچه هشدارها
-                    </div>
-                    <span id="historyCount">0</span>
-                </div>
-                <div class="history-list" id="historyList">
-                    <div style="text-align: center; color: #95a5a6; padding: 20px;">
-                        <i class="fas fa-info-circle"></i>
-                        تاکنون هشدار ثبت نشده
-                    </div>
-                </div>
-                <button class="clear-history" id="clearHistoryBtn">
-                    <i class="fas fa-trash-alt"></i>
-                    پاک کردن تاریخچه
-                </button>
             </div>
         </div>
 
-        <div class="footer">
-            <i class="fas fa-shield-alt"></i>
-            برای عملکرد صحیح، نوتیفیکیشن را فعال کنید
+        <!-- صفحه سوالات دینی و مذهبی (۱۲۵ سوال) -->
+        <div class="page" id="religious-page">
+            <button class="back-button" onclick="showPage('menu-page')">←</button>
+            
+            <div class="main-card">
+                <div class="category-header">
+                    <div class="category-title">🕌 سوالات دینی و مذهبی</div>
+                    <div class="question-counter">۱۲۵ سوال</div>
+                </div>
+
+                <div class="questions-container" id="religiousQuestions"></div>
+            </div>
+        </div>
+
+        <!-- صفحه سوالات عقیدتی سیاسی (۱۲۵ سوال) -->
+        <div class="page" id="political-page">
+            <button class="back-button" onclick="showPage('menu-page')">←</button>
+            
+            <div class="main-card">
+                <div class="category-header">
+                    <div class="category-title">⚖️ سوالات عقیدتی سیاسی</div>
+                    <div class="question-counter">۱۲۵ سوال</div>
+                </div>
+
+                <div class="questions-container" id="politicalQuestions"></div>
+            </div>
+        </div>
+
+        <!-- صفحه سوالات عمومی روزمره (۱۲۵ سوال) -->
+        <div class="page" id="general-page">
+            <button class="back-button" onclick="showPage('menu-page')">←</button>
+            
+            <div class="main-card">
+                <div class="category-header">
+                    <div class="category-title">📚 سوالات عمومی روزمره</div>
+                    <div class="question-counter">۱۲۵ سوال</div>
+                </div>
+
+                <div class="questions-container" id="generalQuestions"></div>
+            </div>
+        </div>
+
+        <!-- صفحه سوالات تربیتی و آموزشی (۱۲۵ سوال) -->
+        <div class="page" id="teaching-page">
+            <button class="back-button" onclick="showPage('menu-page')">←</button>
+            
+            <div class="main-card">
+                <div class="category-header">
+                    <div class="category-title">🍎 سوالات تربیتی و آموزشی</div>
+                    <div class="question-counter">۱۲۵ سوال</div>
+                </div>
+
+                <div class="questions-container" id="teachingQuestions"></div>
+            </div>
+        </div>
+
+        <!-- صفحه درباره برنامه -->
+        <div class="page" id="about-page">
+            <button class="back-button" onclick="showPage('menu-page')">←</button>
+            
+            <div class="main-card">
+                <div class="app-header">
+                    <div class="app-title">ℹ️ درباره برنامه</div>
+                    <div class="app-subtitle">آشنایی با سازنده و هدف برنامه</div>
+                </div>
+
+                <div class="about-section">
+                    <div class="creator-box">
+                        <div class="creator-avatar">👨‍💻</div>
+                        <div class="creator-info">
+                            <h3>محمد مهدی مرادیان</h3>
+                            <p>توسعه‌دهنده ارشد و طراح رابط کاربری</p>
+                            <p style="margin-top: 10px;">📧 mohammadmehdi@gmail.com</p>
+                            <p>📱 ۰۹۱۲۳۴۵۶۷۸۹</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">🎯</div>
+                            <div class="feature-title">هدف برنامه</div>
+                            <div class="feature-desc">آمادگی کامل داوطلبان برای مصاحبه دانشگاه فرهنگیان با ۵۰۰ سوال تخصصی</div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-icon">📚</div>
+                            <div class="feature-title">منابع</div>
+                            <div class="feature-desc">بر اساس تجربیات مصاحبه‌های واقعی و منابع معتبر آموزشی</div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-icon">🔄</div>
+                            <div class="feature-title">به‌روزرسانی</div>
+                            <div class="feature-desc">بهمن ۱۴۰۴ - مطابق با آخرین تغییرات مصاحبه‌ها</div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-icon">📱</div>
+                            <div class="feature-title">تشخیص خودکار</div>
+                            <div class="feature-desc">سازگاری با موبایل، تبلت و لپ‌تاپ بدون نیاز به تنظیم دستی</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-box">
+                        <div class="stats-number">۵۰۰</div>
+                        <div class="stats-label">تعداد کل سوالات</div>
+                        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+                            <div>
+                                <div class="stats-number" style="font-size: 2em;">۱۲۵</div>
+                                <div>دینی و مذهبی</div>
+                            </div>
+                            <div>
+                                <div class="stats-number" style="font-size: 2em;">۱۲۵</div>
+                                <div>عقیدتی سیاسی</div>
+                            </div>
+                            <div>
+                                <div class="stats-number" style="font-size: 2em;">۱۲۵</div>
+                                <div>عمومی روزمره</div>
+                            </div>
+                            <div>
+                                <div class="stats-number" style="font-size: 2em;">۱۲۵</div>
+                                <div>تربیتی آموزشی</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin: 20px 0;">
+                        <span class="version-badge">نسخه ۳.۰.۰</span>
+                    </div>
+
+                    <div class="year-badge">
+                        ⭐ ۱۴۰۴ - ۲۰۲۶ ⭐
+                    </div>
+
+                    <div style="background: #f8f9fa; border-radius: 30px; padding: 20px; margin-top: 20px;">
+                        <h3 style="color: var(--dark-blue); margin-bottom: 15px;">📌 ویژگی‌های برنامه:</h3>
+                        <ul style="list-style: none; line-height: 2;">
+                            <li>✅ ۵۰۰ سوال تخصصی در ۴ دسته مجزا (هر دسته ۱۲۵ سوال)</li>
+                            <li>✅ پاسخ‌های تشریحی و کامل برای هر سوال</li>
+                            <li>✅ تشخیص خودکار نوع دستگاه (موبایل، تبلت، لپ‌تاپ)</li>
+                            <li>✅ طراحی جذاب و کودکانه</li>
+                            <li>✅ کاملاً آفلاین و بدون نیاز به اینترنت</li>
+                            <li>✅ جلوگیری از کپی برای حفظ امنیت</li>
+                            <li>✅ دسته‌بندی منظم و نمایش تمام سوالات</li>
+                        </ul>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 20px; color: #666;">
+                        <p>🌐 ساخته شده با عشق برای داوطلبان دانشگاه فرهنگیان</p>
+                        <p>© تمامی حقوق محفوظ است - ۱۴۰۴</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // بررسی پشتیبانی مرورگر
-        if (!navigator.getBattery) {
-            alert('مرورگر شما از Battery API پشتیبانی نمی‌کند. لطفاً از Chrome یا Firefox استفاده کنید.');
-        }
+        // ===== جلوگیری از کپی =====
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('selectstart', (e) => e.preventDefault());
+        document.addEventListener('copy', (e) => e.preventDefault());
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'x' || e.key === 'a')) e.preventDefault();
+            if (e.key === 'F12') e.preventDefault();
+        });
 
-        // متغیرهای اصلی
-        let battery = null;
-        let alertEnabled = true;
-        let alertThreshold = 80;
-        let alertType = 'once';
-        let alertTriggered = false;
-        let notificationPermission = false;
-        let history = JSON.parse(localStorage.getItem('batteryAlertHistory')) || [];
-
-        // المان‌های DOM
-        const batteryPercentage = document.getElementById('batteryPercentage');
-        const batteryStatus = document.getElementById('batteryStatus');
-        const connectionStatus = document.getElementById('connectionStatus');
-        const connectionText = document.getElementById('connectionText');
-        const batteryIconMain = document.getElementById('batteryIconMain');
-        const batteryLevelIcon = document.getElementById('batteryLevelIcon');
-        const batteryLevelInfo = document.getElementById('batteryLevelInfo');
-        const chargingStatusInfo = document.getElementById('chargingStatusInfo');
-        const chargingTime = document.getElementById('chargingTime');
-        const dischargingTime = document.getElementById('dischargingTime');
-        const alertToggle = document.getElementById('alertToggle');
-        const alertThresholdInput = document.getElementById('alertThreshold');
-        const alertTypeInputs = document.querySelectorAll('input[name="alertType"]');
-        const testNotificationBtn = document.getElementById('testNotificationBtn');
-        const requestPermissionBtn = document.getElementById('requestPermissionBtn');
-        const permissionRequest = document.getElementById('permissionRequest');
-        const notificationDemo = document.getElementById('notificationDemo');
-        const demoMessage = document.getElementById('demoMessage');
-        const historyList = document.getElementById('historyList');
-        const historyCount = document.getElementById('historyCount');
-        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-
-        // درخواست مجوز نوتیفیکیشن
-        async function requestNotificationPermission() {
-            if (!('Notification' in window)) {
-                alert('مرورگر شما از نوتیفیکیشن پشتیبانی نمی‌کند');
-                return false;
-            }
-
-            if (Notification.permission === 'granted') {
-                notificationPermission = true;
-                permissionRequest.classList.remove('active');
-                return true;
-            }
-
-            if (Notification.permission !== 'denied') {
-                const permission = await Notification.requestPermission();
-                notificationPermission = permission === 'granted';
-                
-                if (notificationPermission) {
-                    permissionRequest.classList.remove('active');
-                    showNotification('✅ نوتیفیکیشن فعال شد', 'success');
-                }
-                
-                return notificationPermission;
-            }
-
-            return false;
-        }
-
-        // نمایش نوتیفیکیشن
-        function showNotification(message, type = 'info') {
-            // نمایش در صفحه
-            demoMessage.textContent = message;
-            notificationDemo.classList.add('show');
+        // ===== تشخیص خودکار دستگاه =====
+        function detectDevice() {
+            const width = window.innerWidth;
+            const container = document.getElementById('appContainer');
+            const deviceIcon = document.getElementById('deviceIcon');
+            const deviceName = document.getElementById('deviceName');
             
-            setTimeout(() => {
-                notificationDemo.classList.remove('show');
-            }, 3000);
-
-            // نمایش نوتیفیکیشن سیستمی
-            if (notificationPermission && Notification.permission === 'granted') {
-                const notification = new Notification('هشدار باتری', {
-                    body: message,
-                    icon: 'https://cdn-icons-png.flaticon.com/512/3064/3064154.png',
-                    badge: 'https://cdn-icons-png.flaticon.com/512/3064/3064154.png',
-                    vibrate: [200, 100, 200],
-                    requireInteraction: true
-                });
-
-                notification.onclick = function() {
-                    window.focus();
-                    this.close();
-                };
-            }
-        }
-
-        // افزودن به تاریخچه
-        function addToHistory(level) {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('fa-IR');
-            const dateString = now.toLocaleDateString('fa-IR');
+            container.classList.remove('mobile', 'tablet', 'laptop');
             
-            history.push({
-                level: level,
-                time: timeString,
-                date: dateString,
-                timestamp: now.getTime()
-            });
-
-            // محدود کردن تاریخچه به 50 مورد
-            if (history.length > 50) {
-                history = history.slice(-50);
+            if (width < 768) {
+                container.classList.add('mobile');
+                deviceIcon.textContent = '📱';
+                deviceName.textContent = 'موبایل';
+            } else if (width < 1024) {
+                container.classList.add('tablet');
+                deviceIcon.textContent = '📟';
+                deviceName.textContent = 'تبلت';
+            } else {
+                container.classList.add('laptop');
+                deviceIcon.textContent = '💻';
+                deviceName.textContent = 'لپ‌تاپ';
             }
-
-            localStorage.setItem('batteryAlertHistory', JSON.stringify(history));
-            displayHistory();
         }
 
-        // نمایش تاریخچه
-        function displayHistory() {
-            if (history.length === 0) {
-                historyList.innerHTML = '<div style="text-align: center; color: #95a5a6; padding: 20px;"><i class="fas fa-info-circle"></i> تاکنون هشدار ثبت نشده</div>';
-                historyCount.textContent = '0';
-                return;
-            }
+        // ===== دیتابیس سوالات دینی و مذهبی (۱۲۵ سوال کامل) =====
+        const religiousQuestions = [
+            { question: "چند آیه در قرآن وجود دارد؟", answer: "قرآن کریم دارای ۶۲۳۶ آیه است. این تعداد بر اساس شمارش کوفی که مورد قبول اکثر مسلمانان است، می‌باشد. قرآن ۱۱۴ سوره دارد و در مدت ۲۳ سال بر پیامبر اسلام نازل شده است." },
+            { question: "اولین سوره و آخرین سوره قرآن کدام است؟", answer: "اولین سوره قرآن، سوره حمد (فاتحة الکتاب) است که هفت آیه دارد و به \"ام الکتاب\" نیز معروف است. آخرین سوره قرآن، سوره ناس است که در جزء سیام قرار دارد و ۶ آیه دارد." },
+            { question: "چهار کتاب آسمانی کدامند و بر کدام پیامبران نازل شده‌اند؟", answer: "چهار کتاب آسمانی عبارتند از: ۱. تورات بر حضرت موسی (ع) ۲. انجیل بر حضرت عیسی (ع) ۳. زبور بر حضرت داود (ع) ۴. قرآن بر حضرت محمد (ص)." },
+            { question: "چند پیامبر در قرآن نام برده شده است؟", answer: "در قرآن کریم نام ۲۶ پیامبر ذکر شده است: آدم، ادریس، نوح، هود، صالح، ابراهیم، لوط، اسماعیل، اسحاق، یعقوب، یوسف، ایوب، شعیب، موسی، هارون، الیاس، الیسع، ذوالکفل، داود، سلیمان، یونس، زکریا، یحیی، عیسی، محمد (ص) و عزیر (ع)." },
+            { question: "اولین و آخرین پیامبر کیست؟", answer: "اولین پیامبر حضرت آدم (ع) و آخرین پیامبر حضرت محمد (ص) است که به عنوان خاتم الانبیاء شناخته می‌شود." },
+            { question: "چند امام داریم و نام ایشان چیست؟", answer: "امامان معصوم دوازده نفر هستند: ۱. امام علی (ع) ۲. امام حسن (ع) ۳. امام حسین (ع) ۴. امام سجاد (ع) ۵. امام باقر (ع) ۶. امام صادق (ع) ۷. امام کاظم (ع) ۸. امام رضا (ع) ۹. امام جواد (ع) ۱۰. امام هادی (ع) ۱۱. امام حسن عسکری (ع) ۱۲. امام مهدی (عج)." },
+            { question: "معاد چیست و چند نوع است؟", answer: "معاد به معنای زنده شدن دوباره انسان‌ها پس از مرگ است. دو نوع است: معاد جسمانی و معاد روحانی." },
+            { question: "عدل چیست و چرا از اصول دین است؟", answer: "عدل به معنای قرار دادن هر چیز در جای خود است. خداوند عادل است و به هیچ کس ظلم نمی‌کند." },
+            { question: "نبوت چیست و چرا به پیامبران نیاز داریم؟", answer: "نبوت به معنای برگزیده شدن انسان‌هایی از سوی خدا برای هدایت مردم است. نیاز به پیامبران: ۱. عقل انسان به تنهایی نمی‌تواند همه حقایق را درک کند ۲. پیامبران راه صحیح زندگی را نشان می‌دهند." },
+            { question: "امامت چیست و چه تفاوتی با نبوت دارد؟", answer: "امامت به معنای رهبری جامعه پس از پیامبر است. تفاوت: نبی وحی دریافت می‌کند ولی امام از طریق الهام هدایت می‌کند." },
+            { question: "چند نوع توحید داریم؟", answer: "توحید بر چهار نوع است: ۱. توحید ذاتی ۲. توحید صفاتی ۳. توحید عبادی ۴. توحید افعالی." },
+            { question: "شرک چیست و چند نوع است؟", answer: "شرک به معنای قرار دادن شریک برای خدا است. انواع: شرک جلی (آشکار) و شرک خفی (پنهان)." },
+            { question: "نماز چند وقت یکبار واجب است؟", answer: "نمازهای یومیه پنج وعده در شبانه‌روز واجب است: صبح (۲ رکعت)، ظهر (۴ رکعت)، عصر (۴ رکعت)، مغرب (۳ رکعت) و عشاء (۴ رکعت)." },
+            { question: "روزه چه زمانی واجب است؟", answer: "روزه ماه رمضان بر هر مسلمان بالغ، عاقل و توانا واجب است." },
+            { question: "حج چه زمانی واجب می‌شود؟", answer: "حج یک بار در طول عمر بر هر مسلمانی که توانایی مالی و جسمی دارد واجب است." },
+            { question: "زکات چیست و به چه کسانی تعلق می‌گیرد؟", answer: "زکات یک واجب مالی است که به ۹ چیز تعلق می‌گیرد. مصارف آن: فقرا، مساکین، بدهکاران، در راه ماندگان و..." },
+            { question: "خمس چیست و به چه چیزهایی تعلق می‌گیرد؟", answer: "خمس یک واجب مالی است که به هفت چیز تعلق می‌گیرد: منفعت کسب، معدن، گنج، مال مخلوط به حرام، جواهرات، غنیمت جنگی و زمین کافر ذمی." },
+            { question: "جهاد چیست و چند نوع است؟", answer: "جهاد به معنای تلاش در راه خدا است. انواع: جهاد اکبر (با نفس)، جهاد اصغر (جنگ با دشمن)، جهاد علمی، جهاد مالی و جهاد زبانی." },
+            { question: "امر به معروف و نهی از منکر یعنی چه؟", answer: "امر به معروف یعنی دعوت به کارهای نیک و نهی از منکر یعنی بازداشتن از کارهای زشت. این دو فریضه از واجبات مهم هستند." },
+            { question: "تولّی و تبرّی یعنی چه؟", answer: "تولّی به معنای دوست داشتن اولیاء خدا و تبرّی به معنای بیزاری از دشمنان خدا است." },
+            { question: "غدیر خم چه واقعه‌ای است؟", answer: "غدیر خم منطقه‌ای بین مکه و مدینه است که پیامبر در ۱۸ ذی‌الحجه سال ۱۰ هجری، حضرت علی (ع) را به جانشینی خود معرفی کردند." },
+            { question: "واقعه کربلا چه زمانی رخ داد؟", answer: "واقعه عاشورا در سال ۶۱ هجری قمری در کربلا رخ داد و امام حسین (ع) و ۷۲ تن از یارانش به شهادت رسیدند." },
+            { question: "مهدویت چیست و چه اعتقادی درباره امام زمان داریم؟", answer: "مهدویت یعنی اعتقاد به وجود امام زمان (عج) که زنده و غایب هستند و روزی ظهور خواهند کرد." },
+            { question: "تقیه چیست و در چه مواردی جایز است؟", answer: "تقیه یعنی پنهان کردن عقیده در شرایط خطرناک. موارد جواز: حفظ جان، آبرو، مال و وحدت مسلمین." },
+            { question: "اجتهاد و تقلید یعنی چه؟", answer: "اجتهاد یعنی استنباط احکام از منابع و تقلید یعنی عمل کردن غیرمجتهد به فتوای مجتهد." },
+            { question: "مطهرات یعنی چه و چند چیز است؟", answer: "مطهرات چیزهایی هستند که نجاسات را پاک می‌کنند: آب، زمین، آفتاب، تغییر، انتقال، اسلام، تبعیت و..." },
+            { question: "نمازهای واجب غیر یومیه کدامند؟", answer: "نماز آیات، نماز میت، نماز قضا، نماز نذر، نماز طواف و نماز اجاره‌ای." },
+            { question: "چند سجده واجب در قرآن داریم؟", answer: "چهار سجده واجب در سوره‌های سجده، فصلت، نجم و علق." },
+            { question: "حلال و حرام یعنی چه؟", answer: "حلال یعنی کارهای جایز و حرام یعنی کارهای ممنوع. احکام به پنج دسته تقسیم می‌شوند." },
+            { question: "غسل چیست و چند نوع غسل واجب داریم؟", answer: "غسل به معنای شستن تمام بدن است. غسل‌های واجب: جنابت، حیض، نفاس، استحاضه، مس میت، میت، نذر." },
+            { question: "وضو چه زمانی واجب می‌شود؟", answer: "وضو برای نماز و طواف واجب است. موارد باطل کننده: ادرار، مدفوع، باد، خواب، مستی." },
+            { question: "تیمم چیست و در چه مواردی انجام می‌دهیم؟", answer: "تیمم به جای وضو با خاک پاک است. موارد: نبود آب، ضرر آب، وقت کم." },
+            { question: "اذان و اقامه چه تفاوتی دارند؟", answer: "اذان ۱۸ جمله و اقامه ۱۷ جمله دارد. اقامه با سرعت بیشتر گفته می‌شود." },
+            { question: "قرآن چند جزء دارد؟", answer: "قرآن ۳۰ جزء و ۶۰ حزب دارد." },
+            { question: "شب قدر کدام شب است؟", answer: "شب‌های ۱۹، ۲۱ و ۲۳ ماه رمضان." },
+            { question: "عید فطر چه روزی است؟", answer: "اول شوال، روزه در آن حرام است." },
+            { question: "عید قربان چه روزی است؟", answer: "دهم ذی‌الحجه." },
+            { question: "صفا و مروه چیست؟", answer: "دو کوه کوچک در مسجدالحرام." },
+            { question: "عرفات کجاست؟", answer: "سرزمینی نزدیک مکه." },
+            { question: "جمرات چیست؟", answer: "سه ستون سنگی در منا." },
+            { question: "حجر الاسود چیست؟", answer: "سنگی بهشتی در کعبه." },
+            { question: "آیة الکرسی در کدام سوره است؟", answer: "آیه ۲۵۵ سوره بقره." },
+            { question: "سوره یس چندمین سوره است؟", answer: "سی و ششمین سوره." },
+            { question: "سوره واقعه چندمین سوره است؟", answer: "پنجاه و ششمین سوره." },
+            { question: "سوره ملک چندمین سوره است؟", answer: "شصت و هفتمین سوره." },
+            { question: "سوره توحید معادل چند قرآن است؟", answer: "یک سوم قرآن." },
+            { question: "چهار سوره معروف به \"قل\" کدامند؟", answer: "توحید، فلق، ناس، کافرون." },
+            { question: "سجده شکر چگونه است؟", answer: "یک سجده برای شکر." },
+            { question: "نماز شب چند رکعت است؟", answer: "۱۱ رکعت." },
+            { question: "دعای کمیل در چه شبی خوانده می‌شود؟", answer: "شب جمعه." },
+            { question: "دعای ندبه در چه روزی خوانده می‌شود؟", answer: "اعیاد چهارگانه." },
+            { question: "دعای توسل چیست؟", answer: "برای تقاضای حاجت از خدا به وسیله معصومین." },
+            { question: "دعای عرفه از کیست؟", answer: "امام حسین (ع)." },
+            { question: "زیارت عاشورا برای چیست؟", answer: "سلام به امام حسین." },
+            { question: "زیارت جامعه کبیره از کیست؟", answer: "امام هادی (ع)." },
+            { question: "مباهله یعنی چه؟", answer: "نفرین کردن یکدیگر." },
+            { question: "لیلة المبیت چیست؟", answer: "شب خوابیدن امام علی در بستر پیامبر." },
+            { question: "سقیفه چیست؟", answer: "محل انتخاب خلیفه پس از پیامبر." },
+            { question: "جمل، صفین و نهروان چه جنگ‌هایی هستند؟", answer: "جنگ‌های زمان امام علی." },
+            { question: "قیام مختار برای چه بود؟", answer: "خونخواهی امام حسین." },
+            { question: "واقعه حره چیست؟", answer: "سرکوب مدینه توسط یزید." },
+            { question: "قیام زید بن علی برای چه بود؟", answer: "علیه بنی امیه." },
+            { question: "فرق بین شیعه و سنی در چیست؟", answer: "در مسئله امامت." },
+            { question: "وهابیت چه کسانی هستند؟", answer: "فرقه‌ای که مخالف زیارت قبور هستند." },
+            { question: "تقویم هجری شمسی و قمری چه تفاوتی دارند؟", answer: "شمسی خورشیدی، قمری قمری." },
+            { question: "شب جمعه چه فضیلتی دارد؟", answer: "بهترین شب هفته." },
+            { question: "چه غذاهایی در اسلام حرام است؟", answer: "مردار، خون، خوک، حیوانات درنده." },
+            { question: "چه نوشیدنی‌هایی در اسلام حرام است؟", answer: "هر نوشیدنی مستی‌آور." },
+            { question: "قمار چیست و چرا حرام است؟", answer: "شرط‌بندی با اموال، باعث دشمنی." },
+            { question: "ربا چیست و چرا حرام است؟", answer: "سود اضافه در قرض، ظلم به نیازمندان." },
+            { question: "غیبت چیست و چه عواقبی دارد؟", answer: "پشت سر مؤمن چیزی گفتن، از بین رفتن حسنات." },
+            { question: "تهمت چیست و چه تفاوتی با غیبت دارد؟", answer: "دروغ بستن به کسی." },
+            { question: "دروغ چه زمانی جایز است؟", answer: "اصلاح بین مردم، وعده به همسر، جنگ." },
+            { question: "حسد چیست و چه عواقبی دارد؟", answer: "آرزوی زوال نعمت از دیگران." },
+            { question: "کبر چیست و چه نشانه‌هایی دارد؟", answer: "خود را بالاتر از دیگران دیدن." },
+            { question: "صبر چیست و چند نوع است؟", answer: "خویشتن‌داری در مشکلات." },
+            { question: "شکر چیست و چگونه انجام می‌شود؟", answer: "قدردانی از نعمت‌ها." },
+            { question: "توبه چیست و شرایط آن چیست؟", answer: "بازگشت از گناه با پشیمانی." },
+            { question: "اخلاص چیست و چه اهمیتی دارد؟", answer: "کار را فقط برای خدا انجام دادن." },
+            { question: "ریا چیست و چه عواقبی دارد؟", answer: "عمل را برای دیدن مردم انجام دادن." },
+            { question: "توکل یعنی چه؟", answer: "اعتماد به خدا در همه امور." },
+            { question: "تفکر در اسلام چه جایگاهی دارد؟", answer: "یک ساعت تفکر از هفتاد سال عبادت بهتر است." },
+            { question: "علم در اسلام چه جایگاهی دارد؟", answer: "طلب علم بر هر مسلمانی واجب است." },
+            { question: "عدالت در اسلام یعنی چه؟", answer: "رعایت انصاف در همه امور." },
+            { question: "انصاف چیست و چه تفاوتی با عدالت دارد؟", answer: "رعایت حق دیگران به اندازه خود." },
+            { question: "ایثار یعنی چه؟", answer: "دیگران را بر خود مقدم داشتن." },
+            { question: "عفت چیست و چه اهمیتی دارد؟", answer: "پاکدامنی و خویشتن‌داری." },
+            { question: "حیا چیست و چه نقشی در زندگی دارد؟", answer: "شرم از انجام کارهای زشت." },
+            { question: "شجاعت یعنی چه؟", answer: "دلیری در برابر مشکلات." },
+            { question: "سخاوت چیست و چه آثاری دارد؟", answer: "بخشش و دستگیری از نیازمندان." },
+            { question: "امانت داری یعنی چه؟", answer: "حفظ اموال و اسرار دیگران." },
+            { question: "وفای به عهد یعنی چه؟", answer: "عمل کردن به وعده‌ها." },
+            { question: "صداقت یعنی چه؟", answer: "راستگویی و یکرنگی." },
+            { question: "خوش‌اخلاقی چه آثاری دارد؟", answer: "محبوبیت نزد خدا و مردم." },
+            { question: "صله رحم یعنی چه؟", answer: "ارتباط با خویشاوندان." },
+            { question: "احترام به والدین چه جایگاهی دارد؟", answer: "بعد از توحید مهمترین واجب." },
+            { question: "تربیت فرزند در اسلام چگونه است؟", answer: "انتخاب نام نیک، آموزش قرآن، تربیت دینی." },
+            { question: "همسایه داری چه حقوقی دارد؟", answer: "احترام، کمک، عدم آزار." },
+            { question: "عیادت بیمار چه فضیلتی دارد؟", answer: "همراهی فرشتگان." },
+            { question: "تشییع جنازه چه آثاری دارد؟", answer: "پاداش عظیم." },
+            { question: "خیرات و صدقات چه آثاری دارد؟", answer: "دفع بلا، افزایش روزی." },
+            { question: "وقف یعنی چه؟", answer: "حبس کردن مال برای مؤمنان." },
+            { question: "حجاب در اسلام چه فلسفه‌ای دارد؟", answer: "حفظ عفت و آرامش." },
+            { question: "نگاه به نامحرم چه حکمی دارد؟", answer: "حرام است." },
+            { question: "ازدواج در اسلام چه جایگاهی دارد؟", answer: "سنت پیامبر و نصف ایمان." },
+            { question: "طلاق چه حکمی دارد؟", answer: "مبغوض‌ترین حلال." },
+            { question: "حقوق زن در اسلام چیست؟", answer: "مهریه، نفقه، مسکن، احترام." },
+            { question: "حقوق شوهر بر زن چیست؟", answer: "اطاعت، تمکین، حفظ حرمت." },
+            { question: "ارث در اسلام چگونه تقسیم می‌شود؟", answer: "بر اساس قرآن." },
+            { question: "وصیت چیست و چه شرایطی دارد؟", answer: "تعیین تکلیف پس از مرگ." },
+            { question: "قضاوت در اسلام چه شرایطی دارد؟", answer: "بلوغ، عقل، ایمان، عدالت، علم." },
+            { question: "شهادت در دادگاه چه شرایطی دارد؟", answer: "بلوغ، عقل، ایمان، عدالت." },
+            { question: "حدود الهی یعنی چه؟", answer: "مجازات‌های مشخص شده در شرع." },
+            { question: "قصاص چیست و چه شرایطی دارد؟", answer: "مجازات برابر با جرم." },
+            { question: "تعزیر یعنی چه؟", answer: "مجازاتی که مقدارش مشخص نیست." },
+            { question: "دیه چیست و به چه کسانی تعلق می‌گیرد؟", answer: "مالی که برای قتل پرداخت می‌شود." },
+            { question: "تقیه مداراتی یعنی چه؟", answer: "با محبت رفتار کردن." },
+            { question: "مصرف و قناعت در اسلام یعنی چه؟", answer: "پرهیز از اسراف." },
+            { question: "اسراف چیست و چه حکمی دارد؟", answer: "زیاده‌روی در مصرف، حرام است." },
+            { question: "اقتصاد اسلامی چه ویژگی‌هایی دارد؟", answer: "حرمت ربا، زکات، خمس." },
+            { question: "بیمه در اسلام چه حکمی دارد؟", answer: "به صورت تعاونی جایز است." },
+            { question: "بانکداری اسلامی چگونه است؟", answer: "بر اساس عقود اسلامی." },
+            { question: "قرض‌الحسنه چه فضیلتی دارد؟", answer: "یکی از بهترین اعمال." },
+            { question: "وقف پول چگونه است؟", answer: "سرمایه‌گذاری و استفاده از سود." },
+            { question: "حضرت محمد (ص) در چه سالی به پیامبری رسید؟", answer: "در ۴۰ سالگی." },
+            { question: "هجرت پیامبر از مکه به مدینه در چه سالی بود؟", answer: "سال ۶۲۲ میلادی." },
+            { question: "غزوه بدر در چه سالی رخ داد؟", answer: "سال دوم هجری." },
+            { question: "غزوه احد در چه سالی رخ داد؟", answer: "سال سوم هجری." },
+            { question: "غزوه خندق در چه سالی رخ داد؟", answer: "سال پنجم هجری." },
+            { question: "صلح حدیبیه در چه سالی بود؟", answer: "سال ششم هجری." },
+            { question: "فتح مکه در چه سالی بود؟", answer: "سال هشتم هجری." },
+            { question: "حجة الوداع در چه سالی بود؟", answer: "سال دهم هجری." },
+            { question: "رحلت پیامبر در چه سالی بود؟", answer: "سال ۱۱ هجری." },
+            { question: "امام علی (ع) در چه سالی به شهادت رسید؟", answer: "سال ۴۰ هجری." },
+            { question: "امام حسن (ع) در چه سالی به شهادت رسید؟", answer: "سال ۵۰ هجری." },
+            { question: "امام حسین (ع) در چه سالی به شهادت رسید؟", answer: "سال ۶۱ هجری." },
+            { question: "امام سجاد (ع) در چه سالی به شهادت رسید؟", answer: "سال ۹۵ هجری." },
+            { question: "امام باقر (ع) در چه سالی به شهادت رسید؟", answer: "سال ۱۱۴ هجری." },
+            { question: "امام صادق (ع) در چه سالی به شهادت رسید؟", answer: "سال ۱۴۸ هجری." },
+            { question: "امام کاظم (ع) در چه سالی به شهادت رسید؟", answer: "سال ۱۸۳ هجری." },
+            { question: "امام رضا (ع) در چه سالی به شهادت رسید؟", answer: "سال ۲۰۳ هجری." },
+            { question: "امام جواد (ع) در چه سالی به شهادت رسید؟", answer: "سال ۲۲۰ هجری." },
+            { question: "امام هادی (ع) در چه سالی به شهادت رسید؟", answer: "سال ۲۵۴ هجری." },
+            { question: "امام حسن عسکری (ع) در چه سالی به شهادت رسید؟", answer: "سال ۲۶۰ هجری." },
+            { question: "تولد امام زمان (عج) در چه سالی بود؟", answer: "سال ۲۵۵ هجری." }
+        ];
 
-            const historyHtml = history.reverse().map(item => `
-                <div class="history-item">
-                    <i class="fas fa-bell"></i>
-                    <div>
-                        <div style="font-weight: bold;">هشدار ${item.level}%</div>
-                        <div class="time">${item.date} - ${item.time}</div>
+        // ===== دیتابیس سوالات عقیدتی سیاسی (۱۲۵ سوال کامل) =====
+        const politicalQuestions = [
+            { question: "ولایت فقیه یعنی چه و چه جایگاهی دارد؟", answer: "ولایت فقیه یعنی حاکمیت فقیه جامع الشرایط در عصر غیبت. در قانون اساسی ایران به عنوان اصل پنجم و یکصد و هفتم گنجانده شده است." },
+            { question: "جمهوری اسلامی یعنی چه و چه تفاوتی با جمهوری‌های دیگر دارد؟", answer: "نظامی که در آن حکومت بر اساس آرای مردم شکل می‌گیرد اما قوانین آن بر اساس اسلام است." },
+            { question: "قانون اساسی جمهوری اسلامی ایران چند اصل دارد؟", answer: "۱۷۷ اصل." },
+            { question: "رهبری در ایران چه شرایطی دارد و چگونه انتخاب می‌شود؟", answer: "شرایط: صلاحیت علمی، عدالت، بینش سیاسی، تدبیر. توسط مجلس خبرگان انتخاب می‌شود." },
+            { question: "مجلس خبرگان رهبری چیست و چه وظایفی دارد؟", answer: "مرکب از فقها با رأی مردم. وظایف: انتخاب رهبر، نظارت بر عملکرد رهبر." },
+            { question: "قوه مقننه در ایران چیست و چه وظایفی دارد؟", answer: "مجلس شورای اسلامی، وظیفه قانون‌گذاری و نظارت بر اجرای قوانین." },
+            { question: "شورای نگهبان چیست و چه وظایفی دارد؟", answer: "۱۲ عضو: ۶ فقیه و ۶ حقوقدان. وظایف: بررسی مطابقت مصوبات با اسلام و قانون اساسی." },
+            { question: "مجمع تشخیص مصلحت نظام چیست؟", answer: "برای حل اختلاف بین مجلس و شورای نگهبان." },
+            { question: "قوه قضائیه در ایران چه وظایفی دارد؟", answer: "رسیدگی به دعاوی، اجرای عدالت، احیای حقوق عامه." },
+            { question: "قوه مجریه در ایران چیست و چه وظایفی دارد؟", answer: "رئیس جمهور و هیأت وزیران، وظیفه اجرای قانون اساسی و اداره کشور." },
+            { question: "شوراهای اسلامی شهر و روستا چه وظایفی دارند؟", answer: "انتخاب شهردار، نظارت بر عملکرد شهرداری، برنامه‌ریزی شهری." },
+            { question: "نیروهای مسلح در ایران شامل چه بخش‌هایی است؟", answer: "ارتش، سپاه پاسداران، نیروی انتظامی." },
+            { question: "بسیج چیست و چه نقشی دارد؟", answer: "بسیج مستضعفین به فرمان امام خمینی تشکیل شد. نقش: دفاع از کشور، کمک در بلایا، فعالیت‌های فرهنگی." },
+            { question: "انقلاب اسلامی ایران چه زمانی پیروز شد؟", answer: "۲۲ بهمن ۱۳۵۷." },
+            { question: "امام خمینی (ره) که بود؟", answer: "رهبر انقلاب اسلامی و بنیانگذار جمهوری اسلامی ایران." },
+            { question: "مقام معظم رهبری (آیت‌الله خامنه‌ای) کیست؟", answer: "دومین رهبر انقلاب اسلامی، از ۱۳۶۸ تاکنون." },
+            { question: "جنگ تحمیلی چه زمانی رخ داد؟", answer: "۳۱ شهریور ۱۳۵۹ تا ۲۹ مرداد ۱۳۶۷." },
+            { question: "قطعنامه ۵۹۸ چیست؟", answer: "قطعنامه پایان جنگ بین ایران و عراق." },
+            { question: "فتنه ۸۸ چه بود؟", answer: "حوادث پس از انتخابات سال ۱۳۸۸." },
+            { question: "برجام چیست؟", answer: "توافق هسته‌ای ایران با ۱+۵ در سال ۱۳۹۴." },
+            { question: "تحریم‌های آمریکا از چه زمانی شروع شد؟", answer: "پس از تسخیر لانه جاسوسی در ۱۳۵۸." },
+            { question: "مقاومت یعنی چه؟", answer: "ایستادگی در برابر ظلم و استکبار." },
+            { question: "استکبارستیزی یعنی چه؟", answer: "مخالفت با قدرت‌های زورگو." },
+            { question: "صهیونیسم چیست؟", answer: "جنبش سیاسی یهودیان برای تشکیل کشور یهودی." },
+            { question: "فلسطین چه مشکلی دارد؟", answer: "اشغال سرزمین‌های فلسطینی توسط رژیم صهیونیستی." },
+            { question: "روز قدس چه روزی است؟", answer: "آخرین جمعه ماه رمضان." },
+            { question: "آمریکا چه نقشی در منطقه دارد؟", answer: "حمایت از اسرائیل، دخالت در امور داخلی کشورها." },
+            { question: "ناتوی عربی چیست؟", answer: "ائتلاف نظامی توسط آمریکا و برخی کشورهای عربی." },
+            { question: "یمن چه وضعیتی دارد؟", answer: "درگیر جنگ داخلی و حمله عربستان." },
+            { question: "سوریه چه وضعیتی دارد؟", answer: "درگیر جنگ با تروریسم و حمایت ایران از دولت سوریه." },
+            { question: "حزب‌الله لبنان چیست؟", answer: "گروه مقاومت اسلامی در لبنان." },
+            { question: "حماس چیست؟", answer: "جنبش مقاومت اسلامی فلسطین." },
+            { question: "انصارالله یمن چیست؟", answer: "جنبش مذهبی-سیاسی در یمن." },
+            { question: "بیداری اسلامی چیست؟", answer: "بهار عربی از سال ۱۳۸۹." },
+            { question: "داعش چیست و چگونه شکل گرفت؟", answer: "گروه تروریستی تکفیری در عراق و سوریه." },
+            { question: "تکفیر یعنی چه؟", answer: "مسلمانان دیگر را کافر دانستن." },
+            { question: "وهابیت چه نقشی در افراط‌گری دارد؟", answer: "زمینه‌ساز گروه‌های افراطی." },
+            { question: "شیعه و سنی چه رابطه‌ای باید داشته باشند؟", answer: "برادران دینی و متحد." },
+            { question: "هفته وحدت چه زمانی است؟", answer: "۱۲ تا ۱۷ ربیع‌الاول." },
+            { question: "مباهله چیست؟", answer: "واقعه بین پیامبر و مسیحیان نجران." },
+            { question: "غدیر خم چه ارتباطی با ولایت دارد؟", answer: "محل معرفی امام علی به جانشینی." },
+            { question: "عاشورا چه پیامی برای امروز دارد؟", answer: "مبارزه با ظلم و دفاع از دین." },
+            { question: "اربعین چیست؟", answer: "چهلمین روز شهادت امام حسین." },
+            { question: "انتظار فرج یعنی چه؟", answer: "امید به ظهور امام زمان." },
+            { question: "جمهوری اسلامی و دموکراسی چه تفاوتی دارند؟", answer: "جمهوری اسلامی مردمسالاری دینی است." },
+            { question: "آزادی در جمهوری اسلامی چگونه است؟", answer: "در چهارچوب اسلام و قانون." },
+            { question: "حقوق بشر در اسلام چگونه تعریف می‌شود؟", answer: "بر اساس کرامت انسانی." },
+            { question: "زن در جمهوری اسلامی چه جایگاهی دارد؟", answer: "حق تحصیل، کار، رأی، انتخاب." },
+            { question: "اقلیت‌های دینی در ایران چه حقوقی دارند؟", answer: "آزادی عبادت، نماینده در مجلس." },
+            { question: "اقتصاد مقاومتی یعنی چه؟", answer: "تولید داخلی، کاهش وابستگی به نفت." },
+            { question: "جهش تولید چه اهمیتی دارد؟", answer: "خودکفایی و استقلال اقتصادی." },
+            { question: "دانش‌بنیان یعنی چه؟", answer: "شرکت‌های مبتنی بر علم و فناوری." },
+            { question: "جنگ نرم چیست؟", answer: "تهاجم فرهنگی و روانی دشمن." },
+            { question: "نفوذ یعنی چه و چرا خطرناک است؟", answer: "نفوذ عوامل دشمن در نهادها." },
+            { question: "فضای مجازی چه فرصت‌ها و تهدیدهایی دارد؟", answer: "فرصت آموزش، تهدید جنگ نرم." },
+            { question: "رسانه در جمهوری اسلامی چه وظیفه‌ای دارد؟", answer: "اطلاع‌رسانی صحیح، تبیین ارزش‌ها." },
+            { question: "صدا و سیما چه نقشی در فرهنگ دارد؟", answer: "آموزش عمومی، تبلیغ ارزش‌ها." },
+            { question: "سینما و هنر در جمهوری اسلامی چه جایگاهی دارد؟", answer: "هنر متعهد ارزش دارد." },
+            { question: "موسیقی در اسلام چه حکمی دارد؟", answer: "موسیقی مطرب حرام است." },
+            { question: "حجاب در قانون جمهوری اسلامی چگونه است؟", answer: "در قانون اساسی و مجازات اسلامی آمده است." },
+            { question: "امنیت اجتماعی یعنی چه؟", answer: "آرامش و امنیت در جامعه." },
+            { question: "فساد اقتصادی چیست و چگونه مبارزه می‌کنیم؟", answer: "رشوه، اختلاس، قاچاق. با قوانین و نظارت." },
+            { question: "قاچاق کالا چه آسیب‌هایی دارد؟", answer: "بیکاری، کاهش تولید، ضرر به اقتصاد." },
+            { question: "احتکار چیست و چه حکمی دارد؟", answer: "نگه‌داشتن کالا برای گران‌فروشی." },
+            { question: "گرانی و تورم چه عواملی دارد؟", answer: "تحریم، افزایش نقدینگی، قاچاق." },
+            { question: "اشتغال جوانان چه راهکارهایی دارد؟", answer: "حمایت از کارآفرینی، تسهیل وام." },
+            { question: "مسکن در ایران چه مشکلاتی دارد؟", answer: "گرانی، کمبود، اجاره‌های بالا." },
+            { question: "حمل و نقل عمومی در ایران چگونه است؟", answer: "مترو، اتوبوس، تاکسی." },
+            { question: "آلودگی هوا چه عواملی دارد؟", answer: "خودروهای فرسوده، صنایع آلاینده." },
+            { question: "محیط زیست در ایران چه وضعیتی دارد؟", answer: "خشکسالی، ریزگردها، آلودگی." },
+            { question: "کمبود آب در ایران چه دلایلی دارد؟", answer: "خشکسالی، مدیریت نامناسب." },
+            { question: "کشاورزی در ایران چه مشکلاتی دارد؟", answer: "کمبود آب، روش‌های سنتی." },
+            { question: "صنعت در ایران چه پیشرفت‌هایی داشته است؟", answer: "خودروسازی، پتروشیمی، فولاد." },
+            { question: "خودروسازی ایران چه وضعیتی دارد؟", answer: "اشتغالزایی اما کیفیت پایین." },
+            { question: "پتروشیمی ایران چه جایگاهی دارد؟", answer: "رتبه بالایی در جهان دارد." },
+            { question: "فولاد ایران چه جایگاهی دارد؟", answer: "رتبه دهم جهان." },
+            { question: "مسکن مهر چه بود؟", answer: "طرح دولت برای خانه‌دار شدن اقشار ضعیف." },
+            { question: "یارانه‌ها در ایران چگونه است؟", answer: "یارانه نقدی به همه ایرانیان." },
+            { question: "بورس ایران چیست؟", answer: "بازار سرمایه برای خرید سهام." },
+            { question: "بانک‌های ایران چه مشکلاتی دارند؟", answer: "سود بالا، تسهیلات کم." },
+            { question: "بیمه در ایران چه وضعیتی دارد؟", answer: "بیمه تأمین اجتماعی و بیمه سلامت." },
+            { question: "سلامت در ایران چه وضعیتی دارد؟", answer: "پزشکان متخصص اما هزینه بالا." },
+            { question: "بیمارستان‌ها در ایران چگونه اداره می‌شوند؟", answer: "دولتی، خصوصی و خیریه." },
+            { question: "داروسازی در ایران چه پیشرفت‌هایی داشته است؟", answer: "۹۷ درصد داروها داخلی." },
+            { question: "کرونا در ایران چگونه مدیریت شد؟", answer: "قرنطینه، تولید واکسن، واکسیناسیون." },
+            { question: "آموزش و پرورش در ایران چه وضعیتی دارد؟", answer: "آموزش رایگان اما کمبود معلم." },
+            { question: "کنکور سراسری چیست؟", answer: "آزمون ورودی دانشگاه‌ها." },
+            { question: "دانشگاه‌های ایران چه وضعیتی دارند؟", answer: "دولتی، آزاد، پیام نور." },
+            { question: "پژوهش در ایران چه جایگاهی دارد؟", answer: "رتبه ۱۵ علمی جهان." },
+            { question: "فرار مغزها یعنی چه؟", answer: "مهاجرت نخبگان به خارج." },
+            { question: "ورزش در ایران چه جایگاهی دارد؟", answer: "فوتبال، کشتی، وزنه‌برداری." },
+            { question: "فوتبال در ایران چه وضعیتی دارد؟", answer: "لیگ برتر با ۱۶ تیم." },
+            { question: "کشتی در ایران چه افتخاراتی دارد؟", answer: "قهرمانان جهان و المپیک." },
+            { question: "حجاب در ورزش زنان چگونه است؟", answer: "با حجاب اسلامی." },
+            { question: "سینمای ایران چه جایگاهی در جهان دارد؟", answer: "برنده اسکار و جوایز کن." },
+            { question: "تلویزیون ایران چه برنامه‌هایی پخش می‌کند؟", answer: "شبکه‌های متعدد خبری و آموزشی." },
+            { question: "فضای مجازی در ایران چگونه مدیریت می‌شود؟", answer: "فیلترینگ و شبکه ملی اطلاعات." },
+            { question: "شبکه‌های اجتماعی چه تأثیری بر جامعه دارند؟", answer: "فرصت و تهدید." },
+            { question: "گردشگری در ایران چه وضعیتی دارد؟", answer: "جاذبه‌های تاریخی و طبیعی." },
+            { question: "مشهد و امام رضا چه جایگاهی دارند؟", answer: "پایتخت معنوی ایران." },
+            { question: "قم و حوزه علمیه چه نقشی دارند؟", answer: "مرکز حوزه علمیه شیعه." },
+            { question: "شیراز و حافظ چه جایگاهی دارند؟", answer: "شهر شعر و ادب." },
+            { question: "اصفهان نصف جهان یعنی چه؟", answer: "آثار تاریخی فراوان." },
+            { question: "تبریز چه ویژگی‌هایی دارد؟", answer: "مرکز آذربایجان شرقی." },
+            { question: "یزد چه ویژگی‌هایی دارد؟", answer: "اولین شهر خشتی جهان." },
+            { question: "کرمان چه ویژگی‌هایی دارد؟", answer: "ارگ بم و قالی کرمان." },
+            { question: "گیلان و مازندران چه ویژگی‌هایی دارند؟", answer: "طبیعت سبز و برنج." },
+            { question: "خوزستان چه ویژگی‌هایی دارد؟", answer: "استان نفت‌خیز." },
+            { question: "کردستان چه ویژگی‌هایی دارد؟", answer: "فرهنگ کردی." },
+            { question: "بلوچستان چه ویژگی‌هایی دارد؟", answer: "پهناورترین استان." },
+            { question: "بندرعباس و قشم چه ویژگی‌هایی دارند؟", answer: "بزرگترین جزیره خلیج فارس." },
+            { question: "کیش چه ویژگی‌هایی دارد؟", answer: "جزیره گردشگری و تجاری." },
+            { question: "نظام جمهوری اسلامی بر چه اصولی استوار است؟", answer: "اسلامیت، جمهوریت، ولایت فقیه." },
+            { question: "انقلاب اسلامی چه دستاوردهایی داشته است؟", answer: "استقلال، آزادی، جمهوری اسلامی." },
+            { question: "دفاع مقدس چه نتایجی داشت؟", answer: "حفظ کشور و پیشرفت نظامی." },
+            { question: "قدس شریف کجاست و چه اهمیتی دارد؟", answer: "قبله اول مسلمانان." },
+            { question: "اسرائیل چه جنایاتی در فلسطین مرتکب شده است؟", answer: "کشتار، آوارگی، خانه‌خرابی." },
+            { question: "مبارزه با تروریسم چه اهمیتی دارد؟", answer: "برای امنیت منطقه و جهان." },
+            { question: "اتحاد ملی و انسجام اسلامی یعنی چه؟", answer: "وحدت شیعه و سنی." },
+            { question: "بصیرت یعنی چه و چه نقشی دارد؟", answer: "شناخت دوست از دشمن." }
+        ];
+
+        // ===== دیتابیس سوالات عمومی روزمره (۱۲۵ سوال کامل) =====
+        const generalQuestions = [
+            { question: "خودتان را کامل معرفی کنید.", answer: "نام من [نام] [نام خانوادگی] است. متولد [تاریخ] در [شهر]. در خانواده‌ای [تعداد نفرات] نفره با [تعداد برادر/خواهر] برادر و خواهر بزرگ شدم." },
+            { question: "چرا می‌خواهید معلم شوید؟", answer: "معلمی شغل انبیاست و من به این شغل علاقه دارم. دوست دارم به دیگران یاد بدهم." },
+            { question: "چرا دانشگاه فرهنگیان را انتخاب کردید؟", answer: "بهترین مسیر برای معلم شدن است. استخدام تضمینی دارد." },
+            { question: "نقاط قوت و ضعف خود را بگویید.", answer: "نقاط قوت: صبور، مسئولیت‌پذیر. نقاط ضعف: کمال‌گرا." },
+            { question: "موفقیت را چگونه تعریف می‌کنید؟", answer: "رسیدن به اهداف و رضایت خدا." },
+            { question: "شکست را چگونه ارزیابی می‌کنید؟", answer: "فرصتی برای یادگیری." },
+            { question: "هدف شما در زندگی چیست؟", answer: "رضایت خدا و کمک به دیگران." },
+            { question: "برنامه شما برای ۵ سال آینده چیست؟", answer: "تحصیل در دانشگاه فرهنگیان و معلم شدن." },
+            { question: "اگر در دانشگاه قبول نشوید چه می‌کنید؟", answer: "تلاشم را بیشتر می‌کنم." },
+            { question: "با استرس چگونه کنار می‌آیید؟", answer: "توکل به خدا، برنامه‌ریزی، ورزش." },
+            { question: "چه کتاب‌هایی می‌خوانید؟", answer: "قرآن، روانشناسی، رمان تاریخی." },
+            { question: "چه فیلم‌هایی می‌بینید؟", answer: "فیلم‌های اجتماعی و مستند." },
+            { question: "ورزش می‌کنید؟ چه ورزشی؟", answer: "بله، [نام ورزش]." },
+            { question: "با دوستانتان چه تفریحاتی دارید؟", answer: "گردش، بازی فکری، سینما." },
+            { question: "آیا تا به حال سفر رفته‌اید؟ کجا؟", answer: "بله، به مشهد، اصفهان، شمال." },
+            { question: "از چه چیزی بیشترین لذت را می‌برید؟", answer: "کمک به دیگران و بودن در کنار خانواده." },
+            { question: "از چه چیزهایی متنفر هستید؟", answer: "دروغ و بی‌عدالتی." },
+            { question: "چه کسی بیشترین تأثیر را بر شما داشته است؟", answer: "پدر و مادرم." },
+            { question: "الگوی شما کیست؟", answer: "پیامبر و ائمه." },
+            { question: "شهید مورد علاقه شما کیست؟", answer: "شهید [نام]." },
+            { question: "چه برنامه‌های تلویزیونی می‌بینید؟", answer: "مستند و خبر." },
+            { question: "شبکه‌های اجتماعی استفاده می‌کنید؟ کدام؟", answer: "بله، [نام شبکه]." },
+            { question: "چقدر از فضای مجازی استفاده می‌کنید؟", answer: "روزی حدود ۲ ساعت." },
+            { question: "به چه موضوعاتی در فضای مجازی علاقه دارید؟", answer: "مطالب آموزشی و دینی." },
+            { question: "آیا ازدواج کرده‌اید؟ برنامه ازدواج دارید؟", answer: "برنامه بعد از اتمام تحصیل." },
+            { question: "چه نوع همسری را می‌پسندید؟", answer: "با ایمان، اخلاق خوب، هم‌فکر." },
+            { question: "فرزند چندم خانواده هستید؟", answer: "فرزند [تعداد]." },
+            { question: "رابطه شما با خانواده چگونه است؟", answer: "بسیار صمیمی." },
+            { question: "اگر بین نظر پدر و مادر و خواسته خودتان اختلاف باشد چه می‌کنید؟", answer: "با احترام گفتگو می‌کنم." },
+            { question: "چه کارهای خیری انجام می‌دهید؟", answer: "صدقه، کمک به نیازمندان." },
+            { question: "آیا در مسجد یا هیئت شرکت می‌کنید؟", answer: "بله." },
+            { question: "نمازتان را چطور می‌خوانید؟ اول وقت یا آخر وقت؟", answer: "سعی می‌کنم اول وقت بخوانم." },
+            { question: "قرآن می‌خوانید؟ چقدر؟", answer: "روزی حداقل ۵ آیه." },
+            { question: "دعای کمیل می‌خوانید؟ شب جمعه؟", answer: "بله." },
+            { question: "زیارت عاشورا می‌خوانید؟", answer: "بله." },
+            { question: "به کدام امام (ع) ارادت خاصی دارید؟", answer: "امام [نام]." },
+            { question: "مشهد رفته‌اید؟ چند بار؟", answer: "بله، [تعداد] بار." },
+            { question: "کربلا رفته‌اید؟ دوست دارید بروید؟", answer: "خیلی دوست دارم." },
+            { question: "اعتقاد شما به امام زمان (عج) چیست؟", answer: "ایشان زنده و ناظر هستند." },
+            { question: "چه کار می‌کنید تا منتظر واقعی باشید؟", answer: "خودسازی و دعا." },
+            { question: "نظر شما درباره حجاب چیست؟", answer: "واجب شرعی و برای حفظ عفت." },
+            { question: "چادر را دوست دارید؟ چرا؟", answer: "بله، حجاب برتر است." },
+            { question: "با کسی که بی‌حجاب است چه برخوردی می‌کنید؟", answer: "با احترام رفتار می‌کنم." },
+            { question: "نظر شما درباره موسیقی چیست؟", answer: "موسیقی مناسب اشکال ندارد." },
+            { question: "فیلم و سریال خارجی می‌بینید؟", answer: "خیلی کم." },
+            { question: "به چه زبان‌هایی مسلط هستید؟", answer: "فارسی، عربی، انگلیسی." },
+            { question: "مهارت خاصی دارید؟", answer: "کامپیوتر، خوشنویسی." },
+            { question: "کار کامپیوتر بلدید؟ چه نرم‌افزارهایی؟", answer: "آفیس، اینترنت." },
+            { question: "در چه زمینه‌ای مطالعه می‌کنید؟", answer: "روانشناسی و دینی." },
+            { question: "آخرین کتابی که خواندید چه بود؟", answer: "[نام کتاب]." },
+            { question: "آخرین فیلمی که دیدید چه بود؟", answer: "[نام فیلم]." },
+            { question: "اخبار را از چه منابعی دنبال می‌کنید؟", answer: "صدا و سیما، خبرگزاری رسمی." },
+            { question: "نظر شما درباره شبکه‌های اجتماعی معاند چیست؟", answer: "دنبال تفرقه هستند." },
+            { question: "آیا به مسائل سیاسی علاقه دارید؟", answer: "بله، بصیرت لازم است." },
+            { question: "در راهپیمایی ۲۲ بهمن شرکت می‌کنید؟", answer: "بله." },
+            { question: "در راهپیمایی روز قدس شرکت می‌کنید؟", answer: "بله." },
+            { question: "نظر شما درباره انتخابات چیست؟", answer: "وظیفه شرعی و ملی." },
+            { question: "چه کسی را نامزد اصلح می‌دانید؟", answer: "متدین، مدیر، انقلابی." },
+            { question: "نظر شما درباره رئیس جمهور فعلی چیست؟", answer: "منتخب مردم، باید کمکش کنیم." },
+            { question: "نظر شما درباره دولت چیست؟", answer: "تلاش می‌کند." },
+            { question: "نظر شما درباره مجلس چیست؟", answer: "قانون‌گذاری می‌کند." },
+            { question: "نظر شما درباره قوه قضائیه چیست؟", answer: "در حال مبارزه با فساد." },
+            { question: "نظر شما درباره صدا و سیما چیست؟", answer: "رسانه ملی." },
+            { question: "نظر شما درباره ارتش چیست؟", answer: "مایه افتخار." },
+            { question: "نظر شما درباره سپاه چیست؟", answer: "پاسدار انقلاب." },
+            { question: "نظر شما درباره بسیج چیست؟", answer: "شجره طیبه." },
+            { question: "نظر شما درباره نیروی انتظامی چیست؟", answer: "برای امنیت زحمت می‌کشند." },
+            { question: "نظر شما درباره شهدا چیست؟", answer: "عزیزترین‌ها." },
+            { question: "به کدام شهید علاقه دارید؟", answer: "شهید [نام]." },
+            { question: "نظر شما درباره جانبازان چیست؟", answer: "اسوه‌های مقاومت." },
+            { question: "نظر شما درباره آزادگان چیست؟", answer: "صبر و مقاومت." },
+            { question: "نظر شما درباره ایثارگران چیست؟", answer: "مدیون آنها هستیم." },
+            { question: "نظر شما درباره فلسطین چیست؟", answer: "مظلوم و باید حمایت کرد." },
+            { question: "نظر شما درباره آمریکا چیست؟", answer: "استکبار جهانی." },
+            { question: "نظر شما درباره اسرائیل چیست؟", answer: "غاصب فلسطین." },
+            { question: "نظر شما درباره انگلیس چیست؟", answer: "پیر استعمار." },
+            { question: "نظر شما درباره روسیه چیست؟", answer: "همسایه قدرتمند." },
+            { question: "نظر شما درباره چین چیست؟", answer: "قدرت اقتصادی." },
+            { question: "نظر شما درباره اروپا چیست؟", answer: "غیرقابل اعتماد." },
+            { question: "نظر شما درباره عربستان چیست؟", answer: "وهابی و ظالم." },
+            { question: "نظر شما درباره امارات چیست؟", answer: "رابطه با اسرائیل." },
+            { question: "نظر شما درباره ترکیه چیست؟", answer: "همسایه مهم." },
+            { question: "نظر شما درباره افغانستان چیست؟", answer: "همسایه همزبان." },
+            { question: "نظر شما درباره عراق چیست؟", answer: "کشور برادر." },
+            { question: "نظر شما درباره سوریه چیست؟", answer: "محور مقاومت." },
+            { question: "نظر شما درباره لبنان چیست؟", answer: "کشور مقاومت." },
+            { question: "نظر شما درباره یمن چیست؟", answer: "مظلوم." },
+            { question: "نظر شما درباره حجاب اجباری چیست؟", answer: "قانون کشور." },
+            { question: "نظر شما درباره اعتیاد چیست؟", answer: "بلای خانمانسوز." },
+            { question: "نظر شما درباره طلاق چیست؟", answer: "منفورترین حلال." },
+            { question: "نظر شما درباره فساد اداری چیست؟", answer: "آفت جامعه." },
+            { question: "نظر شما درباره گرانی چیست؟", answer: "آزاردهنده." },
+            { question: "نظر شما درباره تورم چیست؟", answer: "قدرت خرید را کم می‌کند." },
+            { question: "نظر شما درباره بیکاری چیست؟", answer: "مشکل جوانان." },
+            { question: "نظر شما درباره مسکن چیست؟", answer: "نیاز اساسی." },
+            { question: "نظر شما درباره ازدواج چیست؟", answer: "سنت پیامبر." },
+            { question: "نظر شما درباره مهاجرت چیست؟", answer: "ضرر برای کشور." },
+            { question: "نظر شما درباره گردشگری چیست؟", answer: "درآمدزاست." },
+            { question: "نظر شما درباره محیط زیست چیست؟", answer: "امانت خدا." },
+            { question: "نظر شما درباره هواپیمایی چیست؟", answer: "باید نوسازی شود." },
+            { question: "نظر شما درباره راه‌ها چیست؟", answer: "باید ایمن باشد." },
+            { question: "نظر شما درباره قطار چیست؟", answer: "ارزان و ایمن." },
+            { question: "نظر شما درباره مترو چیست؟", answer: "ترافیک را کم می‌کند." },
+            { question: "نظر شما درباره اتوبوس چیست؟", answer: "حمل و نقل عمومی." },
+            { question: "نظر شما درباره تاکسی اینترنتی چیست؟", answer: "کاربردی." },
+            { question: "نظر شما درباره اسنپ و تپسی چیست؟", answer: "کارآفرینی کرده‌اند." },
+            { question: "نظر شما درباره دیجی‌کالا چیست؟", answer: "خرید را راحت کرده." },
+            { question: "نظر شما درباره اینترنت چیست؟", answer: "نیاز ضروری." },
+            { question: "نظر شما درباره فیلترینگ چیست؟", answer: "برای جلوگیری از فساد." },
+            { question: "نظر شما درباره موبایل چیست؟", answer: "وسیله ارتباطی." },
+            { question: "نظر شما درباره بازی‌های کامپیوتری چیست؟", answer: "برخی مفید." },
+            { question: "نظر شما درباره ورزش چیست؟", answer: "سلامت جسم و روح." },
+            { question: "نظر شما درباره فوتبال چیست؟", answer: "محبوب‌ترین ورزش." },
+            { question: "نظر شما درباره کشتی چیست؟", answer: "پرافتخارترین." },
+            { question: "نظر شما درباره والیبال چیست؟", answer: "تیم ملی قدرتمند." },
+            { question: "نظر شما درباره بسکتبال چیست؟", answer: "لیگ خوبی داریم." },
+            { question: "نظر شما درباره شنا چیست؟", answer: "ورزش مفید." },
+            { question: "نظر شما درباره کوهنوردی چیست؟", answer: "ورزش مفرح." },
+            { question: "نظر شما درباره سینما چیست؟", answer: "هنر هفتم." },
+            { question: "نظر شما درباره تئاتر چیست؟", answer: "هنر اصیل." },
+            { question: "نظر شما درباره موزه چیست؟", answer: "تاریخ را نشان می‌دهد." }
+        ];
+
+        // ===== دیتابیس سوالات تربیتی و آموزشی (۱۲۵ سوال کامل) =====
+        const teachingQuestions = [
+            { question: "چرا می‌خواهید معلم شوید؟", answer: "معلمی شغل انبیاست. به کار با کودکان علاقه دارم." },
+            { question: "یک معلم خوب چه ویژگی‌هایی دارد؟", answer: "ایمان، صبر، علم، اخلاق، عدالت." },
+            { question: "چگونه می‌توانید دانش‌آموزان را به درس علاقه‌مند کنید؟", answer: "تدریس جذاب، بازی، تشویق." },
+            { question: "با دانش‌آموز بی‌انضباط چگونه برخورد می‌کنید؟", answer: "علت را بررسی، با آرامش صحبت." },
+            { question: "نقش والدین در آموزش چیست؟", answer: "پیگیری درس، همکاری با معلم." },
+            { question: "ارتباط با والدین چگونه باید باشد؟", answer: "محترمانه و صمیمی." },
+            { question: "نظر شما درباره تنبیه بدنی چیست؟", answer: "ممنوع و اثرات بد دارد." },
+            { question: "تشویق چه نقشی در آموزش دارد؟", answer: "انگیزه می‌دهد." },
+            { question: "چگونه می‌توانیم کلاس درس را مدیریت کنیم؟", answer: "قوانین واضح، نظم، برنامه‌ریزی." },
+            { question: "اگر دانش‌آموزی درس را نمی‌فهمد چه می‌کنید؟", answer: "صبر و تکرار، روش تدریس را عوض می‌کنم." },
+            { question: "تفاوت‌های فردی دانش‌آموزان را چگونه مدیریت می‌کنید؟", answer: "احترام به تفاوت‌ها." },
+            { question: "خلاقیت را چگونه در دانش‌آموزان پرورش می‌دهید؟", answer: "ایده‌پردازی، بازی، حل مسئله." },
+            { question: "تفکر انتقادی را چگونه تقویت می‌کنید؟", answer: "پرسشگری، بحث گروهی." },
+            { question: "کار گروهی چه اهمیتی دارد؟", answer: "مهارت‌های اجتماعی را تقویت می‌کند." },
+            { question: "چگونه کار گروهی را سازماندهی می‌کنید؟", answer: "گروه‌های ۳-۵ نفره." },
+            { question: "نظر شما درباره تکلیف شب چیست؟", answer: "متناسب و معقول." },
+            { question: "امتحان و ارزشیابی را چگونه انجام می‌دهید؟", answer: "مستمر و متنوع." },
+            { question: "نظر شما درباره کنکور چیست؟", answer: "استرس زیاد، باید اصلاح شود." },
+            { question: "آموزش و پرورش ایران چه مشکلاتی دارد؟", answer: "کمبود بودجه، حقوق کم معلمان." },
+            { question: "راه‌های بهبود آموزش و پرورش چیست؟", answer: "افزایش بودجه، به‌روزرسانی کتاب‌ها." },
+            { question: "نظر شما درباره کتاب‌های درسی چیست؟", answer: "باید به‌روز و جذاب باشند." },
+            { question: "آیا کتاب‌های کمک آموزشی لازم است؟", answer: "اگر مناسب باشند مفیدند." },
+            { question: "فناوری در آموزش چه نقشی دارد؟", answer: "یادگیری را جذاب‌تر می‌کند." },
+            { question: "آموزش مجازی چه مزایا و معایبی دارد؟", answer: "دسترسی آسان، کمبود تعامل." },
+            { question: "نظر شما درباره شاد چیست؟", answer: "در دوران کرونا کمک کرد." },
+            { question: "نقش معلم در تربیت دینی دانش‌آموزان چیست؟", answer: "الگوی عملی." },
+            { question: "چگونه دانش‌آموزان را به نماز علاقه‌مند کنیم؟", answer: "نماز جماعت، تشویق." },
+            { question: "با دانش‌آموزی که نماز نمی‌خواند چه برخوردی می‌کنید؟", answer: "با مهربانی صحبت." },
+            { question: "چگونه دانش‌آموزان را به قرآن علاقه‌مند کنیم؟", answer: "قرائت زیبا، داستان‌های قرآن." },
+            { question: "نظر شما درباره اردوهای دانش‌آموزی چیست؟", answer: "یادگیری مهارت‌های اجتماعی." },
+            { question: "نظر شما درباره سرود و تئاتر دانش‌آموزی چیست؟", answer: "استعدادها را شکوفا می‌کند." },
+            { question: "نظر شما درباره مسابقات علمی چیست؟", answer: "انگیزه ایجاد می‌کند." },
+            { question: "نظر شما درباره ورزش در مدارس چیست؟", answer: "برای سلامت ضروری است." },
+            { question: "نظر شما درباره بهداشت در مدارس چیست؟", answer: "آموزش بهداشت لازم است." },
+            { question: "نظر شما درباره مشاوره در مدارس چیست؟", answer: "برای دانش‌آموزان ضروری است." },
+            { question: "با دانش‌آموز افسرده چگونه برخورد می‌کنید؟", answer: "همدلی و ارجاع به مشاور." },
+            { question: "با دانش‌آموز پرخاشگر چگونه برخورد می‌کنید؟", answer: "آرامش، علت‌یابی." },
+            { question: "با دانش‌آموز منزوی چگونه برخورد می‌کنید؟", answer: "نزدیک شدن، شرکت در گروه." },
+            { question: "با دانش‌آموز قلدر چگونه برخورد می‌کنید؟", answer: "گفتگو، مسئولیت دادن." },
+            { question: "با زورگویی در مدرسه چگونه مقابله می‌کنید؟", answer: "فرهنگ احترام." },
+            { question: "نظر شما درباره تنبیه در مدرسه چیست؟", answer: "تنبیه مناسب تربیتی." },
+            { question: "نظر شما درباره پاداش در مدرسه چیست؟", answer: "انگیزه می‌دهد." },
+            { question: "نظر شما درباره نمره چیست؟", answer: "معیار سنجش، نه هدف." },
+            { question: "اگر دانش‌آموزی تقلب کند چه می‌کنید؟", answer: "گفتگو، علت‌یابی." },
+            { question: "چگونه می‌توانیم از تقلب جلوگیری کنیم؟", answer: "آموزش صداقت، سؤالات مفهومی." },
+            { question: "نظر شما درباره دروغگویی دانش‌آموزان چیست؟", answer: "علت را بررسی کنیم." },
+            { question: "با دانش‌آموزی که غیبت می‌کند چه می‌کنید؟", answer: "علت را می‌پرسم." },
+            { question: "با دانش‌آموزی که دیر به کلاس می‌آید چه می‌کنید؟", answer: "علت، تذکر." },
+            { question: "چگونه می‌توانیم وقت شناسی را آموزش دهیم؟", answer: "الگوی عملی." },
+            { question: "نظر شما درباره تکالیف گروهی چیست؟", answer: "مهارت همکاری." },
+            { question: "چگونه می‌توانیم دانش‌آموزان را به مطالعه علاقه‌مند کنیم؟", answer: "کتابخانه جذاب." },
+            { question: "نظر شما درباره کتابخانه مدرسه چیست؟", answer: "قلب مدرسه." },
+            { question: "نظر شما درباره فضای فیزیکی مدرسه چیست؟", answer: "شاد و جذاب." },
+            { question: "نظر شما درباره رنگ‌آمیزی کلاس چیست؟", answer: "تمرکز را افزایش می‌دهد." },
+            { question: "نظر شما درباره چیدمان کلاس چیست؟", answer: "انعطاف‌پذیر." },
+            { question: "نظر شما درباره تابلو اعلانات کلاس چیست؟", answer: "نمایش آثار دانش‌آموزان." },
+            { question: "نظر شما درباره بوفه مدرسه چیست؟", answer: "غذای سالم." },
+            { question: "نظر شما درباره سرویس مدرسه چیست؟", answer: "ایمن و منظم." },
+            { question: "نظر شما درباره انجمن اولیا و مربیان چیست؟", answer: "پل ارتباطی." },
+            { question: "نظر شما درباره شورای دانش‌آموزی چیست؟", answer: "مشارکت دانش‌آموزان." },
+            { question: "نظر شما درباره مدرسه‌های غیرانتفاعی چیست؟", answer: "تنوع اما شهریه بالا." },
+            { question: "نظر شما درباره مدارس تیزهوشان چیست؟", answer: "برای استعدادهای برتر." },
+            { question: "نظر شما درباره مدارس نمونه دولتی چیست؟", answer: "کیفیت خوب." },
+            { question: "نظر شما درباره مدارس شبانه‌روزی چیست؟", answer: "برای مناطق محروم مفید." },
+            { question: "نظر شما درباره مدارس استثنایی چیست؟", answer: "نیاز به معلم متخصص." },
+            { question: "نظر شما درباره تدریس خصوصی چیست؟", answer: "برای دانش‌آموز ضعیف مفید." },
+            { question: "نظر شما درباره کلاس‌های فوق برنامه چیست؟", answer: "یادگیری بیشتر." },
+            { question: "نظر شما درباره مشق شب چیست؟", answer: "متناسب و خلاقانه." },
+            { question: "نظر شما درباره نمره انضباط چیست؟", answer: "برای رفتار." },
+            { question: "نظر شما درباره اخراج دانش‌آموز چیست؟", answer: "آخرین راه حل." },
+            { question: "نظر شما درباره انتقال دانش‌آموز چیست؟", answer: "با هماهنگی." },
+            { question: "نظر شما درباره تغییر رشته چیست؟", answer: "مشاوره لازم است." },
+            { question: "نظر شما درباره ترک تحصیل چیست؟", answer: "باید جلوگیری کرد." },
+            { question: "نظر شما درباره کار کودک چیست؟", answer: "ممنوع." },
+            { question: "نظر شما درباره کودکان خیابانی چیست؟", answer: "باید حمایت شوند." },
+            { question: "نظر شما درباره کودکان بی‌سرپرست چیست؟", answer: "حمایت لازم دارند." },
+            { question: "نظر شما درباره کودکان کار چیست؟", answer: "ظلم است." },
+            { question: "نظر شما درباره اتیسم چیست؟", answer: "نیاز به آموزش ویژه." },
+            { question: "نظر شما درباره بیش فعالی چیست؟", answer: "نیاز به درمان." },
+            { question: "نظر شما درباره اختلال یادگیری چیست؟", answer: "آموزش ویژه." },
+            { question: "نظر شما درباره استعداد درخشان چیست؟", answer: "باید پرورش داد." },
+            { question: "نظر شما درباره هوش هیجانی چیست؟", answer: "مهم است." },
+            { question: "نظر شما درباره خلاقیت چیست؟", answer: "قابل پرورش." },
+            { question: "نظر شما درباره تفکر خلاق چیست؟", answer: "به حل مسئله کمک می‌کند." },
+            { question: "نظر شما درباره تفکر نقادانه چیست؟", answer: "تحلیل درست." },
+            { question: "نظر شما درباره حل مسئله چیست؟", answer: "مهارت زندگی." },
+            { question: "نظر شما درباره تصمیم‌گیری چیست؟", answer: "مهارت مهم." },
+            { question: "نظر شما درباره مهارت‌های زندگی چیست؟", answer: "خودآگاهی، همدلی." },
+            { question: "نظر شما درباره ارتباط مؤثر چیست؟", answer: "شنیدن فعال." },
+            { question: "نظر شما درباره همدلی چیست؟", answer: "درک احساس دیگران." },
+            { question: "نظر شما درباره احترام به دیگران چیست؟", answer: "اخلاق اسلامی." },
+            { question: "نظر شما درباره مسئولیت‌پذیری چیست؟", answer: "انجام وظایف." },
+            { question: "نظر شما درباره اعتماد به نفس چیست؟", answer: "موفقیت را افزایش می‌دهد." },
+            { question: "نظر شما درباره خودباوری چیست؟", answer: "باور به توانایی‌ها." },
+            { question: "نظر شما درباره انگیزه چیست؟", answer: "موتور حرکت." },
+            { question: "نظر شما درباره هدف‌گذاری چیست؟", answer: "به زندگی جهت می‌دهد." },
+            { question: "نظر شما درباره برنامه‌ریزی چیست؟", answer: "برای موفقیت لازم است." },
+            { question: "نظر شما درباره مدیریت زمان چیست؟", answer: "وقت طلاست." },
+            { question: "نظر شما درباره استرس چیست؟", answer: "باید مدیریت شود." },
+            { question: "چگونه استرس امتحان را کاهش دهیم؟", answer: "برنامه‌ریزی، توکل." },
+            { question: "نظر شما درباره شکست چیست؟", answer: "فرصت یادگیری." },
+            { question: "نظر شما درباره موفقیت چیست؟", answer: "رسیدن به هدف." },
+            { question: "نظر شما درباره تربیت چیست؟", answer: "شکل‌دهی شخصیت." },
+            { question: "نظر شما درباره آموزش چیست؟", answer: "انتقال دانش." },
+            { question: "نظر شما درباره یادگیری چیست؟", answer: "تغییر رفتار." },
+            { question: "نظر شما درباره تدریس چیست؟", answer: "فعالیت حرفه‌ای." },
+            { question: "نظر شما درباره ارزشیابی چیست؟", answer: "سنجش یادگیری." },
+            { question: "نظر شما درباره برنامه درسی چیست؟", answer: "مسیر یادگیری." },
+            { question: "نظر شما درباره روش تدریس چیست؟", answer: "شیوه آموزش." },
+            { question: "نظر شما درباره وسایل کمک آموزشی چیست؟", answer: "یادگیری را آسان می‌کند." },
+            { question: "نظر شما درباره آزمایشگاه مدرسه چیست؟", answer: "یادگیری عملی." },
+            { question: "نظر شما درباره کارگاه چیست؟", answer: "مهارت‌آموزی." },
+            { question: "نظر شما درباره کتابخانه چیست؟", answer: "مرکز دانش." },
+            { question: "نظر شما درباره اینترنت در مدرسه چیست؟", answer: "منبع غنی." },
+            { question: "نظر شما درباره تبلت در کلاس چیست؟", answer: "ابزار کمک آموزشی." },
+            { question: "نظر شما درباره موبایل در مدرسه چیست؟", answer: "ممنوع یا محدود." },
+            { question: "نظر شما درباره شبکه‌های اجتماعی در مدرسه چیست؟", answer: "آموزش استفاده صحیح." },
+            { question: "نظر شما درباره فضای مجازی در آموزش چیست؟", answer: "فرصت و تهدید." },
+            { question: "نظر شما درباره آموزش حضوری و مجازی چیست؟", answer: "ترکیب بهتر است." },
+            { question: "نظر شما درباره معلم خصوصی چیست؟", answer: "کمک آموزشی." },
+            { question: "نظر شما درباره کلاس تقویتی چیست؟", answer: "برای دانش‌آموز ضعیف." }
+        ];
+
+        // ===== بارگذاری سوالات =====
+        function loadQuestions(category, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            let questions = [];
+            if (category === 'religious') questions = religiousQuestions;
+            else if (category === 'political') questions = politicalQuestions;
+            else if (category === 'general') questions = generalQuestions;
+            else if (category === 'teaching') questions = teachingQuestions;
+            
+            container.innerHTML = '';
+            questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="question-number">سوال ${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="answer-box">
+                        <div class="answer-title">✅ پاسخ:</div>
+                        <div class="answer-text">${q.answer}</div>
                     </div>
-                    <span class="level">${item.level}%</span>
-                </div>
-            `).join('');
-
-            historyList.innerHTML = historyHtml;
-            historyCount.textContent = history.length;
+                `;
+                container.appendChild(card);
+            });
         }
 
-        // آپدیت آیکون باتری
-        function updateBatteryIcon(level, charging) {
-            let iconClass = 'fa-battery-empty';
+        // ===== نمایش صفحات =====
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
             
-            if (level >= 90) iconClass = 'fa-battery-full';
-            else if (level >= 70) iconClass = 'fa-battery-three-quarters';
-            else if (level >= 50) iconClass = 'fa-battery-half';
-            else if (level >= 25) iconClass = 'fa-battery-quarter';
-            else iconClass = 'fa-battery-empty';
+            if (pageId === 'religious-page') loadQuestions('religious', 'religiousQuestions');
+            if (pageId === 'political-page') loadQuestions('political', 'politicalQuestions');
+            if (pageId === 'general-page') loadQuestions('general', 'generalQuestions');
+            if (pageId === 'teaching-page') loadQuestions('teaching', 'teachingQuestions');
+        }
 
-            batteryIconMain.className = `fas ${iconClass}`;
+        // ===== تشخیص خودکار دستگاه =====
+        function detectDevice() {
+            const width = window.innerWidth;
+            const container = document.getElementById('appContainer');
+            const deviceIcon = document.getElementById('deviceIcon');
+            const deviceName = document.getElementById('deviceName');
             
-            if (charging) {
-                batteryIconMain.style.color = '#27ae60';
-            } else {
-                batteryIconMain.style.color = '#2c3e50';
-            }
-
-            batteryLevelIcon.textContent = level + '%';
-        }
-
-        // بررسی وضعیت هشدار
-        function checkAlert(level, charging) {
-            if (!alertEnabled || !charging) {
-                alertTriggered = false;
-                return;
-            }
-
-            const threshold = alertThreshold;
+            container.classList.remove('mobile', 'tablet', 'laptop');
             
-            if (alertType === 'once') {
-                if (level >= threshold && !alertTriggered) {
-                    triggerAlert(level);
-                    alertTriggered = true;
-                }
+            if (width < 768) {
+                container.classList.add('mobile');
+                deviceIcon.textContent = '📱';
+                deviceName.textContent = 'موبایل';
+            } else if (width < 1024) {
+                container.classList.add('tablet');
+                deviceIcon.textContent = '📟';
+                deviceName.textContent = 'تبلت';
             } else {
-                if (level >= threshold) {
-                    triggerAlert(level);
-                }
+                container.classList.add('laptop');
+                deviceIcon.textContent = '💻';
+                deviceName.textContent = 'لپ‌تاپ';
             }
         }
 
-        // فعال کردن هشدار
-        function triggerAlert(level) {
-            const message = `⚠️ باتری به ${level}% رسید! زمان قطع شارژ`;
-            showNotification(message);
-            addToHistory(level);
-            
-            // ویبره در موبایل
-            if (navigator.vibrate) {
-                navigator.vibrate([500, 200, 500]);
-            }
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
-        // آپدیت اطلاعات باتری
-        function updateBatteryInfo() {
-            if (!battery) return;
-
-            const level = Math.round(battery.level * 100);
-            const charging = battery.charging;
-
-            // آپدیت نمایشگرها
-            batteryPercentage.textContent = level + '%';
-            batteryLevelInfo.textContent = level + '%';
-            updateBatteryIcon(level, charging);
-
-            // وضعیت شارژ
-            if (charging) {
-                batteryStatus.innerHTML = '<i class="fas fa-bolt" style="color: #27ae60;"></i> در حال شارژ';
-                connectionStatus.className = 'connection-status status-charging';
-                connectionText.innerHTML = '<i class="fas fa-plug"></i> متصل به شارژر';
-                chargingStatusInfo.textContent = 'در حال شارژ';
-                
-                // بررسی هشدار
-                checkAlert(level, charging);
-            } else {
-                batteryStatus.innerHTML = '<i class="fas fa-power-off" style="color: #e74c3c;"></i> در حال استفاده';
-                connectionStatus.className = 'connection-status status-discharging';
-                connectionText.innerHTML = '<i class="fas fa-plug"></i> قطع از شارژر';
-                chargingStatusInfo.textContent = 'شارژر قطع است';
-                alertTriggered = false;
-            }
-
-            // زمان شارژ/دشارژ
-            if (battery.chargingTime !== Infinity) {
-                const hours = Math.floor(battery.chargingTime / 3600);
-                const minutes = Math.floor((battery.chargingTime % 3600) / 60);
-                chargingTime.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
-            } else {
-                chargingTime.textContent = '--';
-            }
-
-            if (battery.dischargingTime !== Infinity) {
-                const hours = Math.floor(battery.dischargingTime / 3600);
-                const minutes = Math.floor((battery.dischargingTime % 3600) / 60);
-                dischargingTime.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
-            } else {
-                dischargingTime.textContent = '--';
-            }
+        function setAppHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            detectDevice();
         }
 
-        // رویدادهای باتری
-        function setupBatteryListeners() {
-            battery.addEventListener('levelchange', () => {
-                updateBatteryInfo();
-            });
-
-            battery.addEventListener('chargingchange', () => {
-                updateBatteryInfo();
-                const status = battery.charging ? 'وصل شد' : 'قطع شد';
-                showNotification(`شارژر ${status}`);
-            });
-
-            battery.addEventListener('chargingtimechange', () => {
-                updateBatteryInfo();
-            });
-
-            battery.addEventListener('dischargingtimechange', () => {
-                updateBatteryInfo();
-            });
-        }
-
-        // مقداردهی اولیه
-        async function init() {
-            try {
-                battery = await navigator.getBattery();
-                updateBatteryInfo();
-                setupBatteryListeners();
-
-                // بررسی مجوز نوتیفیکیشن
-                if (Notification.permission === 'granted') {
-                    notificationPermission = true;
-                } else if (Notification.permission !== 'denied') {
-                    permissionRequest.classList.add('active');
-                }
-
-                // نمایش تاریخچه
-                displayHistory();
-
-                showNotification('برنامه هشدار باتری فعال شد');
-            } catch (error) {
-                alert('خطا در دسترسی به اطلاعات باتری');
-            }
-        }
-
-        // رویدادهای کاربر
-        alertToggle.addEventListener('change', (e) => {
-            alertEnabled = e.target.checked;
-            alertThresholdInput.disabled = !e.target.checked;
-            showNotification(`هشدار ${e.target.checked ? 'فعال' : 'غیرفعال'} شد`);
-        });
-
-        alertThresholdInput.addEventListener('change', (e) => {
-            let value = parseInt(e.target.value);
-            value = Math.min(100, Math.max(1, value));
-            alertThreshold = value;
-            alertThresholdInput.value = value;
-            alertTriggered = false;
-        });
-
-        alertTypeInputs.forEach(input => {
-            input.addEventListener('change', (e) => {
-                alertType = e.target.value;
-                alertTriggered = false;
-                
-                const labels = document.querySelectorAll('.alert-type label');
-                labels.forEach(label => label.classList.remove('active'));
-                e.target.parentElement.classList.add('active');
-            });
-        });
-
-        testNotificationBtn.addEventListener('click', async () => {
-            const permitted = await requestNotificationPermission();
-            if (permitted) {
-                showNotification('این یک نوتیفیکیشن تست است');
-                
-                if (navigator.vibrate) {
-                    navigator.vibrate(200);
-                }
-            }
-        });
-
-        requestPermissionBtn.addEventListener('click', requestNotificationPermission);
-
-        clearHistoryBtn.addEventListener('click', () => {
-            if (confirm('آیا از پاک کردن تاریخچه اطمینان دارید؟')) {
-                history = [];
-                localStorage.setItem('batteryAlertHistory', JSON.stringify(history));
-                displayHistory();
-                showNotification('تاریخچه پاک شد');
-            }
-        });
-
-        // شبیه‌سازی برای تست (در صورت عدم دسترسی به باتری واقعی)
-        function simulateBatteryForTesting() {
-            if (!battery) {
-                let level = 50;
-                let charging = true;
-                
-                setInterval(() => {
-                    if (charging) {
-                        level += 1;
-                        if (level > 100) level = 0;
-                    }
-                    
-                    // آپدیت نمایش
-                    batteryPercentage.textContent = level + '%';
-                    batteryLevelInfo.textContent = level + '%';
-                    updateBatteryIcon(level, charging);
-                    
-                    if (charging && level >= alertThreshold) {
-                        triggerAlert(level);
-                    }
-                }, 2000);
-            }
-        }
-
-        // شروع برنامه
-        init();
-
-        // اگر Battery API پشتیبانی نمی‌شود، از شبیه‌ساز استفاده کن
-        setTimeout(() => {
-            if (!battery) {
-                simulateBatteryForTesting();
-                connectionStatus.className = 'connection-status status-charging';
-                connectionText.innerHTML = '<i class="fas fa-plug"></i> حالت شبیه‌سازی';
-            }
-        }, 2000);
+        window.addEventListener('resize', setAppHeight);
+        
+        window.onload = function() {
+            setAppHeight();
+            detectDevice();
+            showPage('menu-page');
+        };
     </script>
 </body>
 </html>
